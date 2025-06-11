@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../managers/character_manager.dart';
 import '../widgets/character_card.dart';
 import '../widgets/skill_card.dart';
 import '../models/skill_groups.dart';
@@ -11,6 +13,7 @@ class SkillSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final character = Provider.of<CharacterManager>(context).activeCharacter;
     return Scaffold(
       body: Column(
         children: [
@@ -31,7 +34,7 @@ class SkillSelectionScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => RollScreen(talentName: skill.name, category: skillGroup.name, talentValue: 5, attributes: [{'label': 'MU', 'value': 13}, {'label': 'IN', 'value': 14}, {'label': 'GE', 'value': 13}]),
+                              builder: (_) => RollScreen(skill: skill, character: character!),
                             ),
                           );
                         },

@@ -1,44 +1,36 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import '../widgets/character_card.dart';
 import '../models/skill.dart';
+import '../models/character.dart';
+import '../models/rules.dart';
+import '../utils/widget_helpers.dart';
 import 'result_screen.dart';
 
 class RollScreen extends StatefulWidget {
-  final String talentName;
-  final String category;
-  final int talentValue;
-  final List<Map<String, dynamic>> attributes; // [{'label': 'MU', 'value': 13}, ...]
+  final Skill skill;
+  final Character character;
 
-  RollScreen({
-    required this.talentName,
-    required this.category,
-    required this.talentValue,
-    required this.attributes,
-  });
+  const RollScreen({required this.skill, required this.character, super.key});
 
   @override
-  _RollScreenState createState() => _RollScreenState();
+  RollScreenState createState() => RollScreenState();
 }
 
-class _RollScreenState extends State<RollScreen> {
-  final TextEditingController modifierController = TextEditingController(text: '0');
+class RollScreenState extends State<RollScreen> {
+  int modifier = 0;
 
-  void performRoll() {
-    // pass data to ResultScreen, for now dummy roll results
-    List<int> rollResults = List.generate(3, (_) => Random().nextInt(20) + 1);
+  void performRoll(int modifier) {
+    SkillRoll engine = SkillRoll.from(widget.character, widget.skill);
+    RollResult rollResults = engine.roll(modifier);
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => ResultScreen(
-          talentName: widget.talentName,
-          category: widget.category,
-          talentValue: widget.talentValue,
-          attributes: widget.attributes,
-          modifier: int.tryParse(modifierController.text) ?? 0,
+          skill: widget.skill,
+          stats: engine,
           rollResults: rollResults,
-          aggregateResult: "SUCCESS (QS=3)", // Placeholder
-          specialText: "", // Placeholder
+          modifier: modifier,
         ),
       ),
     );
@@ -46,42 +38,50 @@ class _RollScreenState extends State<RollScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SkillRoll stats = SkillRoll.from(widget.character, widget.skill);
     return Scaffold(
-      body: Column(
-        children: [
-          CharacterCard(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '${widget.category} → ${widget.talentName}',
-              style: TextStyle(fontSize: 24),
-            ),
-          ),
-          Text('Talent Value (FW): ${widget.talentValue}'),
-          SizedBox(height: 8),
-          ...widget.attributes.map((attr) => Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('${attr['label']} : ${attr['value']}'),
-                ],
-              )),
-          SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: TextField(
-              controller: modifierController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'GM Modifier',
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            CharacterCard(),
+
+            skillInfoCard(widget.skill, stats),
+            attributesCard(stats),
+
+            Card(
+              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    modifierRow(
+                      "Modifikator",
+                      modifier,
+                      () => setState(() {
+                        modifier++;
+                      }),
+                      () => setState(() {
+                        modifier--;
+                      }),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: performRoll,
-            child: Text('ROLL', style: TextStyle(fontSize: 32)),
-          ),
-        ],
+
+            SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => performRoll(modifier),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
+              ),
+              child: Text('WÜRFELN', style: TextStyle(fontSize: 32)),
+            ),
+
+            SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

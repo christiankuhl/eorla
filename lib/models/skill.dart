@@ -1,3 +1,6 @@
+import 'skill_groups.dart';
+import 'attributes.dart';
+
 enum Skill {
   fliegen(
     "TAL_1",
@@ -6,6 +9,10 @@ enum Skill {
     "Das Flugmanöver ist misslungen und muss abgebrochen werden.",
     "Dem Held ist nicht nur das Manöver gelungen, sondern er hat eine zusätzliche Aktion in dieser Runde.",
     "Der Held stürzt ab.",
+    SkillGroup.koerpertalente,
+    Attribute.mut,
+    Attribute.intuition,
+    Attribute.gewandtheit,
   ),
   gaukeleien(
     "TAL_2",
@@ -14,6 +21,10 @@ enum Skill {
     "Der Trick funktioniert nicht richtig, kleine Fehler schleichen sich bei dem Versuch ein. Das Publikum ist enttäuscht.",
     "Die Zuschauer sind fasziniert, halten den Trick gar für echte Magie, und potenzielle Geldeinnahmen des Gauklers verdoppeln sich.",
     "Der Held wird bei der Präsentation ausgebuht, da ihm ein Missgeschick passiert (mit Jonglierkeule einen Zuschauer getroffen, mit Pyrotechnik den Bürgermeister verletzt etc.).",
+    SkillGroup.koerpertalente,
+    Attribute.mut,
+    Attribute.charisma,
+    Attribute.fingerfertigkeit,
   ),
   klettern(
     "TAL_3",
@@ -22,6 +33,10 @@ enum Skill {
     "Der Held braucht viel länger als üblich, verletzt sich leicht (1W3 SP), traut sich nicht, zu klettern, oder hängt fest.",
     "Ohne Schwierigkeiten und viel schneller als gewöhnlich hat der Held den Aufstieg geschafft. Zuschauer halten ihn für den besten Kletterer Deres. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.",
     "Der Held rutscht ab und fällt (siehe Seite 340, Sturzschaden).",
+    SkillGroup.koerpertalente,
+    Attribute.mut,
+    Attribute.gewandtheit,
+    Attribute.koerperkraft,
   ),
   koerperbeherrschung(
     "TAL_4",
@@ -30,6 +45,10 @@ enum Skill {
     "Die Handlung des Helden geht teilweise schief, er braucht länger und macht Fehler oder muss die Handlung abbrechen.",
     "Dem Held gelingt seine Handlung und er hat noch eine zusätzliche Aktion zur Verfügung. Und was immer der Held getan hat: Es sah elegant aus.",
     "Der Held stürzt und erleidet Schaden (1W6 SP).",
+    SkillGroup.koerpertalente,
+    Attribute.gewandtheit,
+    Attribute.gewandtheit,
+    Attribute.konstitution,
   ),
   kraftakt(
     "TAL_5",
@@ -38,6 +57,10 @@ enum Skill {
     "Die Handlung des Helden misslingt.",
     "Der Held beeindruckt durch seine Muskelkraft alle Zuschauer und gilt fortan als einer der stärksten Aventurier. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.",
     "Die Handlung des Helden misslingt völlig. Er stürzt, verhebt sich o.Ä. und verletzt sich dabei (1W6 SP).",
+    SkillGroup.koerpertalente,
+    Attribute.konstitution,
+    Attribute.koerperkraft,
+    Attribute.koerperkraft,
   ),
   reiten(
     "TAL_6",
@@ -46,6 +69,10 @@ enum Skill {
     "Das Tier bewegt sich nicht oder nicht so, wie es soll.",
     "Das Tier macht seine Sache ausgezeichnet und wie gewünscht, der Reiter hat eine weitere Aktion zur Verfügung.",
     "Das Tier wirft den Reiter ab und er stürzt zu Boden (siehe Seite **340**, Sturzschaden).",
+    SkillGroup.koerpertalente,
+    Attribute.charisma,
+    Attribute.gewandtheit,
+    Attribute.koerperkraft,
   ),
   schwimmen(
     "TAL_7",
@@ -54,6 +81,10 @@ enum Skill {
     "Der Held traut sich nicht zu schwimmen oder kommt nicht sonderlich weit – auf jeden Fall nicht bis dahin, wohin er wollte.",
     "Der Held schwimmt die Strecke in Bestzeit. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.",
     "Der Held geht unter (siehe Seite 340ff., Erstickungsschaden). Grund dafür könnte ein Wadenkrampf sein.",
+    SkillGroup.koerpertalente,
+    Attribute.gewandtheit,
+    Attribute.konstitution,
+    Attribute.koerperkraft,
   ),
   selbstbeherrschung(
     "TAL_8",
@@ -62,6 +93,10 @@ enum Skill {
     "Dem Helden gelingt es nicht, den Schmerz zu unterdrücken oder die Ablenkung zu ignorieren.",
     "Es gelingt dem Helden, Schmerzen (bis Stufe III) und Ablenkungen einen ganzen Tag lang zu ignorieren.",
     "Der Held erhält für die nächste Stunde 2 Stufen des Zustands *Schmerz* oder ist durch die Ablenkung *Überrascht*.",
+    SkillGroup.koerpertalente,
+    Attribute.mut,
+    Attribute.mut,
+    Attribute.konstitution,
   ),
   singen(
     "TAL_9",
@@ -70,6 +105,10 @@ enum Skill {
     "Der Held vergisst den Text oder sein Auftritt gerät eher schlecht als recht.",
     "Der Gesang des Helden ist noch in vielen Wochen Thema seiner Zuhörer. Hat der Held sich um Geld bemüht, dann nimmt er mindestens das Doppelte ein als üblich. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.",
     "Der Held liegt mehrere Halbtöne daneben oder vergeigt den Rhythmus. Das Lied ist eine Qual für jeden Zuhörer, der Held wird ausgebuht.",
+    SkillGroup.koerpertalente,
+    Attribute.klugheit,
+    Attribute.charisma,
+    Attribute.konstitution,
   ),
   sinnesschaerfe(
     "TAL_10",
@@ -78,6 +117,10 @@ enum Skill {
     "Der Held bemerkt nichts.",
     "Der Held nimmt sogar kaum bemerkbare Details wahr. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.",
     "Der Held nimmt etwas anderes wahr, als das, was wirklich wichtig wäre. Er könnte zum Beispiel die in der Nähe befindlichen Blumen riechen, dafür aber nicht den auffällig stinkenden Oger, der an ihn heranschleicht.",
+    SkillGroup.koerpertalente,
+    Attribute.klugheit,
+    Attribute.intuition,
+    Attribute.intuition,
   ),
   tanzen(
     "TAL_11",
@@ -86,6 +129,10 @@ enum Skill {
     "Der Held bringt die Tanzschritte durcheinander.",
     "Die Aufmerksamkeit der Zuschauer fällt wegen des perfekten Tanzes auf den Helden. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.",
     "Der Held tritt seiner Tanzpartnerin auf die Füße und verletzt sie dabei oder er stürzt und blamiert sich.",
+    SkillGroup.koerpertalente,
+    Attribute.klugheit,
+    Attribute.charisma,
+    Attribute.gewandtheit,
   ),
   taschendiebstahl(
     "TAL_12",
@@ -94,6 +141,10 @@ enum Skill {
     "Der Versuch misslingt oder das Opfer bemerkt den Diebstahl.",
     "Das Opfer hat den Diebstahlversuch nicht bemerkt und der Held hat besonders wertvolle Beute gemacht oder gleich mehrere Ziele bestohlen. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.",
     "Der Held wird von umstehenden Personen oder dem Opfer beobachtet, ohne es zu bemerken, und der Diebstahlversuch misslingt. Außerdem ist er *Überrascht*.",
+    SkillGroup.koerpertalente,
+    Attribute.mut,
+    Attribute.fingerfertigkeit,
+    Attribute.gewandtheit,
   ),
   verbergen(
     "TAL_13",
@@ -102,6 +153,10 @@ enum Skill {
     "Der Held hat sich nur dürftig versteckt oder Geräusche beim Schleichen verursacht.",
     "Der Held hat ein perfektes Versteck gefunden oder ist lautlos wie eine Katze. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.",
     "Irgendetwas (Teller, ein Möbelstück) ist umgefallen.",
+    SkillGroup.koerpertalente,
+    Attribute.mut,
+    Attribute.intuition,
+    Attribute.gewandtheit,
   ),
   zechen(
     "TAL_14",
@@ -110,6 +165,10 @@ enum Skill {
     "Der Held erhält eine Stufe des Zustands *Betäubung* und erwacht am nächsten Tag mit Kopfschmerzen oder anderen unliebsamen Auswirkungen seines Gelages.",
     "Dem Helden gelingt es, bis zum bitteren Ende durchzuhalten, und trotzdem geht es ihm am nächsten Morgen blendend.",
     "Der Held begeht in seinem Zustand jedwede Peinlichkeit. Er zerlegt die halbe Taverne, wacht morgens nackt auf dem Markt oder in einem fremden Bett auf, plaudert Geheimnisse an den Feind aus und kann sich danach an nichts mehr erinnern.",
+    SkillGroup.koerpertalente,
+    Attribute.klugheit,
+    Attribute.konstitution,
+    Attribute.koerperkraft,
   ),
   bekehrenUndUeberzeugen(
     "TAL_15",
@@ -118,6 +177,10 @@ enum Skill {
     "Das Opfer glaubt dem Prediger nicht.",
     "Das Opfer der Überzeugungsversuche ist vollends überzeugt.",
     "Das Opfer fühlt sich vom Prediger beleidigt oder für dumm verkauft.",
+    SkillGroup.gesellschaftstalente,
+    Attribute.mut,
+    Attribute.klugheit,
+    Attribute.charisma,
   ),
   betoeren(
     "TAL_16",
@@ -126,6 +189,10 @@ enum Skill {
     "Dem Helden gelingt es vorerst nicht, Interesse beim Opfer zu wecken.",
     "Das Verführungsopfer versucht, dem betörenden Helden alle Wünsche zu erfüllen.",
     "Der Held kassiert eine schallende Ohrfeige für seinen plumpen Anmachversuch.",
+    SkillGroup.gesellschaftstalente,
+    Attribute.mut,
+    Attribute.charisma,
+    Attribute.charisma,
   ),
   einschuechtern(
     "TAL_17",
@@ -134,6 +201,10 @@ enum Skill {
     "Das Gegenüber ignoriert alle Schmähungen und Einschüchterungsversuche des Helden.",
     "Das Gegenüber des Helden ist vollkommen eingeschüchtert und wird in absehbarer Zeit nichts mehr gegen den Helden unternehmen.",
     "Anstatt eingeschüchtert oder beleidigt zu sein, geschieht das Gegenteil: Das Opfer ist wütend, völlig gelassen oder amüsiert. Oder der Held macht sich mit seinem Gehabe völlig zum Affen.",
+    SkillGroup.gesellschaftstalente,
+    Attribute.mut,
+    Attribute.intuition,
+    Attribute.charisma,
   ),
   etikette(
     "TAL_18",
@@ -142,6 +213,10 @@ enum Skill {
     "Der Held kann sich nicht an alle wichtigen Benimmregeln erinnern und fällt unangenehm auf.",
     "Auf der Feier ist der Held aufgrund seines Benehmens, Wortwitzes und Charmes der Mittelpunkt.",
     "Der Held beleidigt mit seinem Verhalten eine wichtige Persönlichkeit.",
+    SkillGroup.gesellschaftstalente,
+    Attribute.klugheit,
+    Attribute.intuition,
+    Attribute.charisma,
   ),
   gassenwissen(
     "TAL_19",
@@ -150,6 +225,10 @@ enum Skill {
     "Der Held erhält keine hilfreichen Informationen.",
     "Der Held entdeckt ein besonders gutes, aber günstiges Gasthaus, erhält mehr Informationen, als er erwartet hat, oder es gelingt ihm, einen Kontaktmann zu finden, der ihm exzellente Konditionen anbietet.",
     "Der Held gerät in den Hinterhalt einer Bande Schurken, die ihn ausplündern wollen.",
+    SkillGroup.gesellschaftstalente,
+    Attribute.klugheit,
+    Attribute.intuition,
+    Attribute.charisma,
   ),
   menschenkenntnis(
     "TAL_20",
@@ -158,6 +237,10 @@ enum Skill {
     "Der Held ist sich nicht sicher.",
     "Der Held durchschaut die Person komplett.",
     "Der Held ist einer kompletten Fehleinschätzung aufgesessen. So könnte er beispielsweise einem Lügner wirklich alles glauben, ehrlichen Leuten hingegen kein Wort.",
+    SkillGroup.gesellschaftstalente,
+    Attribute.klugheit,
+    Attribute.intuition,
+    Attribute.charisma,
   ),
   ueberreden(
     "TAL_21",
@@ -166,6 +249,10 @@ enum Skill {
     "Dem Held gelingt es nicht, sein Gegenüber zu überreden.",
     "Die Person, die der Held überreden wollte, tut weit mehr als sie muss.",
     "Die Person, die der Held überreden wollte, ist wütend auf den Helden und lässt sich in nächster Zeit nicht mehr überreden.",
+    SkillGroup.gesellschaftstalente,
+    Attribute.mut,
+    Attribute.intuition,
+    Attribute.charisma,
   ),
   verkleiden(
     "TAL_22",
@@ -174,6 +261,10 @@ enum Skill {
     "Die Verkleidung ist nicht gut gewählt und hält einem prüfenden Blick nicht stand.",
     "Die Verkleidung funktioniert tadellos.",
     "Die Kleidung wird sofort durchschaut und der Held handelt sich in der Regel Ärger ein.",
+    SkillGroup.gesellschaftstalente,
+    Attribute.intuition,
+    Attribute.charisma,
+    Attribute.gewandtheit,
   ),
   willenskraft(
     "TAL_23",
@@ -182,6 +273,10 @@ enum Skill {
     "Der Held kann nicht widerstehen.",
     "Der Held widersteht und kann von dieser Person oder Sache in nächster Zeit nicht mehr beeinflusst werden.",
     "Der Held ist der Person, die ihn beeinflussen will, vollkommen verfallen oder fällt bei Anblick eines scheußlichen Dämons in Ohnmacht.",
+    SkillGroup.gesellschaftstalente,
+    Attribute.mut,
+    Attribute.intuition,
+    Attribute.charisma,
   ),
   faehrtensuchen(
     "TAL_24",
@@ -190,6 +285,10 @@ enum Skill {
     "Der Held findet keine Spur oder kann keine neuen Erkenntnisse gewinnen.",
     "Sofern die Spur nicht komplett zerstört wurde, kann der Held ihr zielsicher bis zum Ende folgen. Er erhält mehr Informationen als üblich. Täuschungsmanöver wie das Verwischen der Spuren durchschaut er sofort.",
     "Der Held verwechselt die Spur und folgt einer falschen Fährte. So trifft er vielleicht auf eine gefährliche Kreatur oder jagt den falschen Leuten hinterher.",
+    SkillGroup.naturtalente,
+    Attribute.mut,
+    Attribute.intuition,
+    Attribute.gewandtheit,
   ),
   fesseln(
     "TAL_25",
@@ -198,6 +297,10 @@ enum Skill {
     "Dem Held gelingt nur ein Knoten von schlechter Qualität. Das Befreien daraus ist leichter als üblich.",
     "Der Held hat einen stabilen Knoten gemacht. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.",
     "Der Held hat einen Knoten gemacht, der sich in jeder Lage löst - oder der denkbar ungünstigsten.",
+    SkillGroup.naturtalente,
+    Attribute.klugheit,
+    Attribute.fingerfertigkeit,
+    Attribute.koerperkraft,
   ),
   fischenUndAngeln(
     "TAL_26",
@@ -206,6 +309,10 @@ enum Skill {
     "Kein Fisch beißt an oder geht ins Netz.",
     "Die Zahl der Rationen ist sehr hoch. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.",
     "Der Angler fällt ins Wasser und die Angel geht verloren.",
+    SkillGroup.naturtalente,
+    Attribute.fingerfertigkeit,
+    Attribute.gewandtheit,
+    Attribute.konstitution,
   ),
   orientierung(
     "TAL_27",
@@ -214,6 +321,10 @@ enum Skill {
     "Der Held weiß nicht sicher, wo es langgeht.",
     "Der Held findet den Weg ohne Schwierigkeiten selbst unter schlechtesten Bedingungen.",
     "Der Held hat sich komplett verlaufen und bewegt sich in die falsche Richtung, was ihm jedoch nicht bewusst ist.",
+    SkillGroup.naturtalente,
+    Attribute.klugheit,
+    Attribute.intuition,
+    Attribute.intuition,
   ),
   pflanzenkunde(
     "TAL_28",
@@ -222,6 +333,10 @@ enum Skill {
     "Der Held hat keine Ahnung.",
     "Der Held weiß alles über die Pflanze, auch besondere Wirkungen, und kann sie doppelt so lange haltbar machen wie üblich.",
     "Der Held verwechselt die Pflanze mit einer anderen.",
+    SkillGroup.naturtalente,
+    Attribute.klugheit,
+    Attribute.fingerfertigkeit,
+    Attribute.konstitution,
   ),
   tierkunde(
     "TAL_29",
@@ -230,6 +345,10 @@ enum Skill {
     "Der Held hat keine Ahnung.",
     "Der Held weiß alles über das Tier.",
     "Der Held glaubt, etwas über das Tier zu wissen, liegt aber gefährlich falsch (schätzt es ungiftig ein, obwohl es sehr giftig ist, oder als Pflanzenfresser, obwohl es Fleischfresser ist).",
+    SkillGroup.naturtalente,
+    Attribute.mut,
+    Attribute.mut,
+    Attribute.charisma,
   ),
   wildnisleben(
     "TAL_30",
@@ -238,6 +357,10 @@ enum Skill {
     "Der Lagerplatz ist schlecht gewählt. Die Regeneration ist um 1 gesenkt.",
     "Ein phantastischer Schlafplatz! Die Regeneration ist um 1 Punkt erhöht.",
     "Das Lager wird überschwemmt oder von Ungeziefer heimgesucht.",
+    SkillGroup.naturtalente,
+    Attribute.mut,
+    Attribute.gewandtheit,
+    Attribute.konstitution,
   ),
   brettUndGluecksspiel(
     "TAL_31",
@@ -246,6 +369,10 @@ enum Skill {
     "Der Held verliert.",
     "Der Held gewinnt auf spektakuläre Art und Weise. Wurde um Geld gespielt, verdoppelt sich sein Gewinn.",
     "Der Held wird fälschlicherweise des Falschspiels verdächtigt oder hat eine Pechsträne. Wird um Geld gespielt, verliert er mindestens den kompletten Einsatz (oder mehr).",
+    SkillGroup.wissenstalente,
+    Attribute.klugheit,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   geographie(
     "TAL_32",
@@ -254,6 +381,10 @@ enum Skill {
     "Der Held hat keine Ahnung.",
     "Der Held kennt viele Details der Region: Herrscher, Bevölkerungszahlen, Bräuche, Flussverläufe und Brücken.",
     "Der Held erinnert sich an völlig falsche geographische Details: Einwohnerzahlen von Städten stimmen nicht, Brücken befinden sich an anderer Stelle als gedacht.",
+    SkillGroup.wissenstalente,
+    Attribute.klugheit,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   geschichtswissen(
     "TAL_33",
@@ -262,6 +393,10 @@ enum Skill {
     "Der Held hat keine Ahnung.",
     "Der Held kennt besonders viele Details über ein bestimmtes Ereignis oder eine historische Person.",
     "Der Held kann zu diesem Thema nur falsche Informationen beitragen: er irrt sich in Daten und Ereignissen.",
+    SkillGroup.wissenstalente,
+    Attribute.klugheit,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   goetterUndKulte(
     "TAL_34",
@@ -270,6 +405,10 @@ enum Skill {
     "Der Held hat keine Ahnung.",
     "Der Held hat detaillierte Einsichten in das Thema und kennt selbst spezielle Rituale, Gebetstexte oder philosophische Grundlagen.",
     "Der Held verwechselt kultische Handlungen und Ansichten dieser Kirche mit einer anderen.",
+    SkillGroup.wissenstalente,
+    Attribute.klugheit,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   kriegskunst(
     "TAL_35",
@@ -278,6 +417,10 @@ enum Skill {
     "Der Held unterliegt einer Fehleinschätzung.",
     "Der Held hat einen vortrefflichen Plan, der ihm zusätzliche Vorteile im Kampf einbringt.",
     "Der Held begeht einen kapitalen Planungsfehler, der den Kampf zu seinen Ungunsten beeinflusst oder ihm zumindest extreme Nachteile beschert.",
+    SkillGroup.wissenstalente,
+    Attribute.mut,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   magiekunde(
     "TAL_36",
@@ -286,6 +429,10 @@ enum Skill {
     "Der Held hat keine Ahnung.",
     "Der Held kennt Herkunft, wirkenden Zauber und Auslöser eines alten Artefaktes.",
     "Der Held hat falsche Vorstellungen und irrt sich, sodass es zu einem gravierenden Fehlurteil kommt.",
+    SkillGroup.wissenstalente,
+    Attribute.klugheit,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   mechanik(
     "TAL_37",
@@ -294,6 +441,10 @@ enum Skill {
     "Die geplante Mechanik funktioniert nicht.",
     "Der doppelte FW zählt als FP.",
     "Was immer der Held konstruieren wollte: Das Objekt ist gefährlich oder die Konstruktion fällt in sich zusammen. Eine Falle wird mit größtmöglichem Erfolg ausgelöst.",
+    SkillGroup.wissenstalente,
+    Attribute.klugheit,
+    Attribute.klugheit,
+    Attribute.fingerfertigkeit,
   ),
   rechnen(
     "TAL_38",
@@ -302,6 +453,10 @@ enum Skill {
     "Das Ergebnis ist falsch.",
     "Schnelle und exakte Bestimmung der Lösung",
     "Das Ergebnis ist komplett falsch, der Held aber von der Richtigkeit absolut überzeugt.",
+    SkillGroup.wissenstalente,
+    Attribute.klugheit,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   rechtskunde(
     "TAL_39",
@@ -310,6 +465,10 @@ enum Skill {
     "Der Held hat keine Ahnung.",
     "Der Held kennt sich mit Besonderheiten des Gesetzes aus und kann einen Plan entwickeln, es zu seinem Vorteil auszulegen.",
     "Die Auslegung des Gesetzes ist falsch oder der Held übersieht einen wichtigen Passus.",
+    SkillGroup.wissenstalente,
+    Attribute.klugheit,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   sagenUndLegenden(
     "TAL_40",
@@ -318,6 +477,10 @@ enum Skill {
     "Der Held kennt die Legende nicht.",
     "Der Held kann sich an viele Details der Geschichte erinnern und kennt mehrere Varianten.",
     "Der Held verwechselt die Geschichte mit einer anderen oder meint sich an völlig andere Details zu erinnern.",
+    SkillGroup.wissenstalente,
+    Attribute.klugheit,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   sphaerenkunde(
     "TAL_41",
@@ -326,6 +489,10 @@ enum Skill {
     "Der Held weiß nichts über das spezielle Thema.",
     "Der Held erinnert sich an bemerkenswerte Details über einen einzelnen Dämon oder den Weg in eine verborgene Globule.",
     "Der Held unterliegt einer gefährlichen Fehleinschätzung.",
+    SkillGroup.wissenstalente,
+    Attribute.klugheit,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   sternkunde(
     "TAL_42",
@@ -334,6 +501,10 @@ enum Skill {
     "Der Held hat keine Ahnung.",
     "Der Held kann sehr genau die Bewegungen der Himmelskörper berechnen.",
     "Eine Fehleinschätzung bei einem Horoskop, einer Mondfinsternis etc.",
+    SkillGroup.wissenstalente,
+    Attribute.klugheit,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   alchimie(
     "TAL_43",
@@ -342,6 +513,10 @@ enum Skill {
     "Das Elixier ist misslungen oder eine Analyse hat kein Ergebnis gebracht.",
     "Der Held weiß exakt, welches Elixier er vor sich hat, welche Stufe es besitzt und wie lange haltbar es ist.",
     "Das Elixier sorgt für einen unangenehmen Nebeneffekt.",
+    SkillGroup.handwerkstalente,
+    Attribute.mut,
+    Attribute.klugheit,
+    Attribute.fingerfertigkeit,
   ),
   booteUndSchiffe(
     "TAL_44",
@@ -350,6 +525,10 @@ enum Skill {
     "Der Held kommt mit dem Boot oder Schiff kaum voran.",
     "Der Held nutzt günstige Strömungen und Winde, um doppelt so schnell voranzukommen wie üblich.",
     "Der Held fällt von Bord oder ein wichtiger Teil des Wasserfahrzeugs wurde beschädigt.",
+    SkillGroup.handwerkstalente,
+    Attribute.fingerfertigkeit,
+    Attribute.gewandtheit,
+    Attribute.koerperkraft,
   ),
   fahrzeuge(
     "TAL_45",
@@ -358,6 +537,10 @@ enum Skill {
     "Das Fahrzeug bewegt sich schwerfällig oder dem Helden gelingt es nicht, es in Bewegung zu setzen.",
     "Das Fahrzeug kommt gut voran und schafft die Strecke in Rekordzeit.",
     "Das Fahrzeug erleidet einen Achsenbruch oder fällt während der Fahrt mitsamt dem Fahrer um, und der Held erleidet Fallschaden.",
+    SkillGroup.handwerkstalente,
+    Attribute.charisma,
+    Attribute.fingerfertigkeit,
+    Attribute.konstitution,
   ),
   handel(
     "TAL_46",
@@ -366,6 +549,10 @@ enum Skill {
     "Der Held bekommt nicht so viel wie erhofft.",
     "Der Held bekommt die Ware zu einem Spottpreis bzw. kann sie zu Wucherpreisen loswerden - ohne dass sein Handelspartner es ihm übel nimmt. Die Preiserhöhung oder der Nachlass sollte mindestens 50 % betragen.",
     "Der Held wird über den Tisch gezogen oder der Handelspartner weigert sich, Geschäfte mit dem Helden zu machen. Die Preiserhöhung oder der Nachlass sollte mindestens 50 % betragen.",
+    SkillGroup.handwerkstalente,
+    Attribute.klugheit,
+    Attribute.intuition,
+    Attribute.charisma,
   ),
   heilkundeGift(
     "TAL_47",
@@ -374,6 +561,10 @@ enum Skill {
     "Der Held hat keine Ahnung und kennt keine Möglichkeit der Heilung.",
     "Der Patient kann vollständig entgiftet werden, ohne dass der Held das passende Gegenmittel verwenden musste.",
     "Der Held ordnet einen (schädlichen) Aderlass an oder hat den Patienten bei der Behandlung verletzt oder gar zusätzlich vergiftet (1W6 SP).",
+    SkillGroup.handwerkstalente,
+    Attribute.mut,
+    Attribute.klugheit,
+    Attribute.intuition,
   ),
   heilkundeKrankheiten(
     "TAL_48",
@@ -382,6 +573,10 @@ enum Skill {
     "Der Held hat keine Ahnung und kennt weder Heilmittel noch die passende Behandlung.",
     "Der Patient ist geheilt, ohne dass der Held ein Heilmittel verwenden musste. Zudem steckt er sich nicht beim Erkrankten an.",
     "Der Held hat dem Patienten bei der Behandlung geschadet (1W6 SP) oder der Krankheitsverlauf verschlimmert sich. Zudem besteht für den Helden bei ansteckenden Krankheiten eine 25 % höhere Chance, sich bei dem Patienten anzustecken.",
+    SkillGroup.handwerkstalente,
+    Attribute.mut,
+    Attribute.intuition,
+    Attribute.konstitution,
   ),
   heilkundeSeele(
     "TAL_49",
@@ -390,6 +585,10 @@ enum Skill {
     "Der Held hat keine Ahnung, wie er dem Patienten helfen kann.",
     "Der Patient kann einen Nachteil (Angst, Persönlichkeitsschwäche oder Schlechte Eigenschaft) für einen ganzen Tag unterdrücken.",
     "Der Held hat den Patienten bei der Behandlung verstört oder seinem Geist anderweitig geschadet. Der Patient erhält für einen Tag eine Stufe des Zustands *Furcht* oder *Verwirrung*.",
+    SkillGroup.handwerkstalente,
+    Attribute.intuition,
+    Attribute.charisma,
+    Attribute.konstitution,
   ),
   heilkundeWunden(
     "TAL_50",
@@ -398,6 +597,10 @@ enum Skill {
     "Der Held kann dem Patienten nicht helfen.",
     "Die vollen Fertigkeitspunkte werden bei der nächsten Regenerationsphase zusätzlich zur normalen Regeneration zu den Lebenspunkten des Patienten hinzuaddiert.",
     "Der Held hat den Patienten bei der Behandlung verletzt (1W6 SP).",
+    SkillGroup.handwerkstalente,
+    Attribute.klugheit,
+    Attribute.fingerfertigkeit,
+    Attribute.fingerfertigkeit,
   ),
   holzbearbeitung(
     "TAL_51",
@@ -406,6 +609,10 @@ enum Skill {
     "Der Held kommt mit der Arbeit an dem Werkstück nicht voran.",
     "Die Zahl der FP bei dieser Probe verdoppelt sich, der Held erhält aber mindestens 5 FP. Erschwernisse, die durch misslungene Sammelproben aufgebaut wurden, werden komplett abgebaut.",
     "Ein Patzer sorgt dafür, dass die angesammelten QS auf 0 sinken und keine weitere Probe für dieses Vorhaben angewandt werden kann.",
+    SkillGroup.handwerkstalente,
+    Attribute.fingerfertigkeit,
+    Attribute.gewandtheit,
+    Attribute.koerperkraft,
   ),
   lebensmittelbearbeitung(
     "TAL_52",
@@ -414,6 +621,10 @@ enum Skill {
     "Das Essen ist angebrannt oder ungenießbar.",
     "Die Mahlzeit ist ein echter Gaumenschmaus, ein gekelterter Wein ein wirklich edler Tropfen.",
     "Das Essen schmeckt nicht nur miserabel, der Konsum hat auch eine schwere Magenverstimmung, Durchfall oder Brechreiz (1W6 SP) zur Folge.",
+    SkillGroup.handwerkstalente,
+    Attribute.intuition,
+    Attribute.fingerfertigkeit,
+    Attribute.fingerfertigkeit,
   ),
   lederbearbeitung(
     "TAL_53",
@@ -422,6 +633,10 @@ enum Skill {
     "Der Held kommt mit der Arbeit an dem Werkstück nicht voran.",
     "Die Zahl der FP bei dieser Probe verdoppelt sich, der Held erhält aber mindestens 5 FP. Erschwernisse, die durch misslungene Sammelproben aufgebaut wurden, werden komplett abgebaut.",
     "Ein Patzer sorgt dafür, dass die angesammelten QS auf 0 sinken und keine weitere Probe für dieses Vorhaben angewandt werden kann.",
+    SkillGroup.handwerkstalente,
+    Attribute.fingerfertigkeit,
+    Attribute.gewandtheit,
+    Attribute.konstitution,
   ),
   malenUndZeichnen(
     "TAL_54",
@@ -430,6 +645,10 @@ enum Skill {
     "Dem Held gelingt eine mit Phantasie erkennbare, aber wenig schöne Zeichnung.",
     "Das Bild ist so gut, dass der Held für einen berühmten Maler gehalten wird.",
     "schreckliches, unmöglich erkennbares Gekrakel",
+    SkillGroup.handwerkstalente,
+    Attribute.intuition,
+    Attribute.fingerfertigkeit,
+    Attribute.fingerfertigkeit,
   ),
   metallbearbeitung(
     "TAL_55",
@@ -438,6 +657,10 @@ enum Skill {
     "Der Held kommt mit der Arbeit an dem Werkstück nicht voran.",
     "Die Zahl der FP bei dieser Probe verdoppelt sich, der Held erhält aber mindestens 5 FP. Erschwernisse, die durch misslungene Sammelproben aufgebaut wurden, werden komplett abgebaut.",
     "Ein Patzer sorgt dafür, dass die angesammelten QS auf 0 sinken und keine weitere Probe für dieses Vorhaben angewandt werden kann.",
+    SkillGroup.handwerkstalente,
+    Attribute.fingerfertigkeit,
+    Attribute.konstitution,
+    Attribute.koerperkraft,
   ),
   musizieren(
     "TAL_56",
@@ -446,6 +669,10 @@ enum Skill {
     "Die Melodie klingt schief.",
     "Der Held spielt eine Melodie, der keiner widerstehen kann und die alle Zuhörer in ihren Bann zieht.",
     "Schreckliche, unheilvolle Töne werden dem Musikinstrument entlockt. Möglicherweise wird das Instrument dabei beschädigt. Menschen suchen das Weite oder wollen dem Musikanten das Instrument entreißen.",
+    SkillGroup.handwerkstalente,
+    Attribute.charisma,
+    Attribute.fingerfertigkeit,
+    Attribute.konstitution,
   ),
   schloesserknacken(
     "TAL_57",
@@ -454,6 +681,10 @@ enum Skill {
     "Das Schloss geht nicht auf.",
     "Das Schloss springt in Rekordzeit auf. Der Held benötigt nur die Hälfte des üblichen Zeitaufwandes.",
     "Der Dietrich bricht ab, die Falle wird ausgelöst oder das Schloss verklemmt sich.",
+    SkillGroup.handwerkstalente,
+    Attribute.intuition,
+    Attribute.fingerfertigkeit,
+    Attribute.fingerfertigkeit,
   ),
   steinbearbeitung(
     "TAL_58",
@@ -462,6 +693,10 @@ enum Skill {
     "Der Held kommt mit der Arbeit an dem Werkstück nicht voran.",
     "Die Zahl der FP bei dieser Probe verdoppelt sich, der Held erhält aber mindestens 5 FP. Erschwernisse, die durch misslungene Sammelproben aufgebaut wurden, werden komplett abgebaut.",
     "Ein Patzer sorgt dafür, dass die angesammelten QS auf 0 sinken und keine weitere Probe für dieses Vorhaben angewandt werden kann.",
+    SkillGroup.handwerkstalente,
+    Attribute.fingerfertigkeit,
+    Attribute.fingerfertigkeit,
+    Attribute.koerperkraft,
   ),
   stoffbearbeitung(
     "TAL_59",
@@ -470,6 +705,10 @@ enum Skill {
     "Der Held kommt mit der Arbeit an dem Werkstück nicht voran.",
     "Die Zahl der FP bei dieser Probe verdoppelt sich, der Held erhält aber mindestens 5 FP. Erschwernisse, die durch misslungene Sammelproben aufgebaut wurden, werden komplett abgebaut.",
     "Ein Patzer sorgt dafür, dass die angesammelten QS auf 0 sinken und keine weitere Probe für dieses Vorhaben angewandt werden kann.",
+    SkillGroup.handwerkstalente,
+    Attribute.klugheit,
+    Attribute.fingerfertigkeit,
+    Attribute.fingerfertigkeit,
   );
 
   final String id;
@@ -478,6 +717,10 @@ enum Skill {
   final String failed;
   final String critical;
   final String botch;
+  final SkillGroup skillGroup;
+  final Attribute attr1;
+  final Attribute attr2;
+  final Attribute attr3;
 
   const Skill(
     this.id,
@@ -486,6 +729,10 @@ enum Skill {
     this.failed,
     this.critical,
     this.botch,
+    this.skillGroup,
+    this.attr1,
+    this.attr2,
+    this.attr3,
   );
 
   @override

@@ -1,81 +1,101 @@
+import 'package:dsaroll/utils/widget_helpers.dart';
 import 'package:flutter/material.dart';
 import '../widgets/character_card.dart';
 import '../models/skill.dart';
+import '../models/rules.dart';
 
 class ResultScreen extends StatelessWidget {
-  final String talentName;
-  final String category;
-  final int talentValue;
-  final List<Map<String, dynamic>> attributes;
+  final Skill skill;
+  final SkillRoll stats;
+  final RollResult rollResults;
   final int modifier;
-  final List<int> rollResults;
-  final String aggregateResult;
-  final String specialText;
 
-  ResultScreen({
-    required this.talentName,
-    required this.category,
-    required this.talentValue,
-    required this.attributes,
-    required this.modifier,
+  const ResultScreen({
+    required this.skill,
+    required this.stats,
     required this.rollResults,
-    required this.aggregateResult,
-    required this.specialText,
+    required this.modifier,
+    super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          CharacterCard(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '${category} → ${talentName}',
-              style: TextStyle(fontSize: 24),
-            ),
-          ),
-          Text('Talent Value (FW): $talentValue'),
-          SizedBox(height: 8),
-          ...attributes.asMap().entries.map((entry) {
-            int index = entry.key;
-            Map<String, dynamic> attr = entry.value;
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('${attr['label']} : ${attr['value']} → 🎲 ${rollResults[index]}'),
-              ],
-            );
-          }),
-          SizedBox(height: 16),
-          Text('GM Modifier used: $modifier'),
-          SizedBox(height: 16),
-          Text('Aggregate Result: $aggregateResult', style: TextStyle(fontSize: 20)),
-          if (specialText.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(specialText),
-            ),
-          SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('ROLL AGAIN'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.popUntil(
-                  context,
-                  ModalRoute.withName(Navigator.defaultRouteName),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            CharacterCard(),
+            skillInfoCard(skill, stats),
+            attributesCard(stats, rollResults: rollResults),
+
+            Card(
+              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    modifierRow("Modifikator", modifier, () => (), () => ()),
+                  ],
                 ),
-                child: Text('CHANGE TALENT'),
               ),
-            ],
-          ),
-          SizedBox(height: 16),
-        ],
+            ),
+
+            // Aggregate Result Card
+            Card(
+              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Container(
+                padding: EdgeInsets.all(16),
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Ergebnis',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(rollResults.text(), style: TextStyle(fontSize: 18)),
+                    if (rollResults.addText(skill).isNotEmpty) ...[
+                      SizedBox(height: 12),
+                      Text(
+                        rollResults.addText(skill),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+
+            // Action Buttons
+            SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('NOCHMAL WÜRFELN'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.popUntil(
+                    context,
+                    ModalRoute.withName(Navigator.defaultRouteName),
+                  ),
+                  child: Text('ZURÜCK'),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

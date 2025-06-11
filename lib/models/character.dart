@@ -16,7 +16,7 @@ class Character {
   int kk;
 
   int belastung;
-  int betaubung;
+  int betaeubung;
   int entrueckung;
   int furcht;
   int paralyse;
@@ -40,7 +40,7 @@ class Character {
     this.kk = 10,
     this.talents,
     this.belastung = 0,
-    this.betaubung = 0,
+    this.betaeubung = 0,
     this.entrueckung = 0,
     this.furcht = 0,
     this.paralyse = 0,
@@ -78,11 +78,32 @@ class Character {
   Map<String, dynamic> toJson() {
     var result = {
       "name": name,
-      "avatar": avatarMimetype != null ? avatarMimetype! + "," + base64Encode((avatar?.image as MemoryImage).bytes) : null,
+      "avatar": avatarMimetype != null ? "${avatarMimetype!},${base64Encode((avatar?.image as MemoryImage).bytes)}" : null,
       "talents": {},
       "attr": {"values": []}
     };
     return result;
+  }
+
+  int getAttribute(Attribute attr) {
+    switch (attr) {
+      case Attribute.charisma:
+        return ch;
+      case Attribute.fingerfertigkeit:
+        return ff;
+      case Attribute.gewandtheit:
+        return ge;
+      case Attribute.intuition:
+        return in_;
+      case Attribute.klugheit:
+        return kl;
+      case Attribute.koerperkraft:
+        return kk;
+      case Attribute.konstitution:
+        return ko;
+      case Attribute.mut:  
+        return mu;
+    }
   }
 }
 

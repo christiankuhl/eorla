@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/character.dart';
 import 'character_selection_screen.dart';
+import '../utils/widget_helpers.dart';
 
 class CharacterDetailScreen extends StatefulWidget {
   final Character character;
@@ -8,10 +9,10 @@ class CharacterDetailScreen extends StatefulWidget {
   const CharacterDetailScreen({required this.character, super.key});
 
   @override
-  _CharacterDetailScreenState createState() => _CharacterDetailScreenState();
+  CharacterDetailScreenState createState() => CharacterDetailScreenState();
 }
 
-class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
+class CharacterDetailScreenState extends State<CharacterDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final c = widget.character;
@@ -23,50 +24,32 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
       );
     }
 
-    Widget modifierRow(
-      String label,
-      int value,
-      VoidCallback onIncrement,
-      VoidCallback onDecrement,
-    ) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label),
-          Row(
-            children: [
-              IconButton(icon: Icon(Icons.remove), onPressed: onDecrement),
-              Text(value.toString()),
-              IconButton(icon: Icon(Icons.add), onPressed: onIncrement),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(c.name),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => CharacterSelectionScreen()),
+              );
+            },
+            child: Text('Anderer Charakter'),
           ),
         ],
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(title: Text(c.name)),
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            CircleAvatar(backgroundImage: c.avatar?.image, 
-            radius: 60),
+            CircleAvatar(backgroundImage: c.avatar?.image, radius: 60),
             SizedBox(height: 16),
             Text(
-              'Stats',
+              'Eigenschaften',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => CharacterSelectionScreen()),
-                );
-              },
-              child: Text('Switch Character'),
-            ),
 
             statRow('Mut (MU)', c.mu),
             statRow('Klugheit (KL)', c.kl),
@@ -78,7 +61,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             statRow('Körperkraft (KK)', c.kk),
             SizedBox(height: 16),
             Text(
-              'Modifiers',
+              'Zustände',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
@@ -94,12 +77,12 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ),
             modifierRow(
               'Betäubung',
-              c.betaubung,
+              c.betaeubung,
               () => setState(() {
-                if (c.betaubung < 4) c.betaubung++;
+                if (c.betaeubung < 4) c.betaeubung++;
               }),
               () => setState(() {
-                if (c.betaubung > 0) c.betaubung--;
+                if (c.betaeubung > 0) c.betaeubung--;
               }),
             ),
             modifierRow(

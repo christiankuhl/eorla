@@ -16,14 +16,14 @@ class CharacterSelectionScreen extends StatelessWidget {
     final manager = Provider.of<CharacterManager>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Choose Character')),
+      appBar: AppBar(title: Text('Charakter auswählen')),
       body: ListView.builder(
         itemCount: manager.characters.length + 1,
         itemBuilder: (context, index) {
           if (index == manager.characters.length) {
             return ListTile(
               leading: CircleAvatar(child: Icon(Icons.upload)),
-              title: Text("Import Character"),
+              title: Text("Charakter importieren"),
               onTap: () {
                 importCharacter(context);
               },
@@ -60,17 +60,20 @@ class CharacterSelectionScreen extends StatelessWidget {
 
       try {
         final Character newCharacter = Character.fromJson(jsonData);
-
-        final manager = Provider.of<CharacterManager>(context, listen: false);
-        manager.addCharacter(newCharacter);
-        await CharacterStorage.saveCharacters(manager.characters);
-        manager.setActiveCharacter(newCharacter);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => CharacterDetailScreen(character: newCharacter),
-          ),
-        );
+        if (context.mounted) {
+          final manager = Provider.of<CharacterManager>(context, listen: false);
+          manager.addCharacter(newCharacter);
+          await CharacterStorage.saveCharacters(manager.characters);
+          manager.setActiveCharacter(newCharacter);
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => CharacterDetailScreen(character: newCharacter),
+              ),
+            );
+          }
+        }
       } catch (e) {
         debugPrint('Error importing character: $e');
       }
