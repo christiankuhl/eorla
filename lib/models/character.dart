@@ -32,12 +32,12 @@ class Character {
     required this.name,
     this.mu = 0,
     this.kl = 0,
-    this.in_ = 10,
-    this.ch = 10,
-    this.ff = 10,
-    this.ge = 10,
-    this.ko = 10,
-    this.kk = 10,
+    this.in_ = 0,
+    this.ch = 0,
+    this.ff = 0,
+    this.ge = 0,
+    this.ko = 0,
+    this.kk = 0,
     this.talents,
     this.belastung = 0,
     this.betaeubung = 0,
@@ -76,11 +76,25 @@ class Character {
   }
 
   Map<String, dynamic> toJson() {
+    var values = [
+      {"id": "ATTR_1", "value": mu},
+      {"id": "ATTR_2", "value": kl},
+      {"id": "ATTR_3", "value": in_},
+      {"id": "ATTR_4", "value": ch},
+      {"id": "ATTR_5", "value": ff},
+      {"id": "ATTR_6", "value": ge},
+      {"id": "ATTR_7", "value": ko},
+      {"id": "ATTR_8", "value": kk},
+    ];
     var result = {
       "name": name,
-      "avatar": avatarMimetype != null ? "${avatarMimetype!},${base64Encode((avatar?.image as MemoryImage).bytes)}" : null,
-      "talents": {},
-      "attr": {"values": []}
+      "avatar": avatarMimetype != null
+          ? "${avatarMimetype!},${base64Encode((avatar?.image as MemoryImage).bytes)}"
+          : null,
+      "talents": <String, int>{
+        for (var v in talents!.entries) v.key.id: v.value,
+      },
+      "attr": {"values": values},
     };
     return result;
   }
@@ -101,7 +115,7 @@ class Character {
         return kk;
       case Attribute.konstitution:
         return ko;
-      case Attribute.mut:  
+      case Attribute.mut:
         return mu;
     }
   }

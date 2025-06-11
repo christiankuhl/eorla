@@ -16,6 +16,16 @@ class CharacterManager extends ChangeNotifier {
     characters.add(character);
   }
 
+  void deleteCharacter(Character character) {
+    characters.remove(character);
+
+    if (_activeCharacter == character) {
+      _activeCharacter = characters.isNotEmpty ? characters.first : null;
+    }
+
+    notifyListeners();
+  }
+
   Character? get activeCharacter => _activeCharacter;
 
   void setActiveCharacter(Character character) {

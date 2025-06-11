@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/character_card.dart';
-import '../widgets/category_card.dart';
+import '../widgets/skill_group_card.dart';
 import '../models/skill_groups.dart';
+import '../managers/character_manager.dart';
 import 'skill_selection_screen.dart';
 
 class SkillGroupSelectionScreen extends StatelessWidget {
@@ -9,6 +11,7 @@ class SkillGroupSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final character = Provider.of<CharacterManager>(context).activeCharacter;
     return Scaffold(
       body: Column(
         children: [
@@ -17,17 +20,25 @@ class SkillGroupSelectionScreen extends StatelessWidget {
             child: GridView.count(
               crossAxisCount: 2,
               children: skillGroups.keys
-                  .map((grp) => SkillGroupCard(
-                        skillGroupName: grp.name,
+                  .map(
+                    (grp) => Opacity(
+                      opacity: character != null ? 1.0 : 0.5,
+                      child: SkillGroupCard(
+                        skillGroup: grp,
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => SkillSelectionScreen(skillGroup: grp),
-                            ),
-                          );
+                          if (character != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    SkillSelectionScreen(skillGroup: grp),
+                              ),
+                            );
+                          }
                         },
-                      ))
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
           ),

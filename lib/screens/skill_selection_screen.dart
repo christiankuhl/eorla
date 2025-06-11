@@ -28,17 +28,20 @@ class SkillSelectionScreen extends StatelessWidget {
           Expanded(
             child: ListView(
               children: (skillGroups[skillGroup] ?? [])
-                  .map((skill) => SkillCard(
-                        skillName: skill.name,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => RollScreen(skill: skill, character: character!),
-                            ),
-                          );
-                        },
-                      ))
+                  .map(
+                    (skill) => SkillCard(
+                      skillName: skill.name,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                RollScreen(skill: skill, character: character!),
+                          ),
+                        );
+                      },
+                    ),
+                  )
                   .toList(),
             ),
           ),

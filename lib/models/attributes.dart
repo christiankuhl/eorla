@@ -23,5 +23,5 @@ const Map<String, Attribute> attributeKeys = {
   "ATTR_5": Attribute.fingerfertigkeit,
   "ATTR_6": Attribute.gewandtheit,
   "ATTR_7": Attribute.konstitution,
-  "ATTR_8": Attribute.koerperkraft
+  "ATTR_8": Attribute.koerperkraft,
 };

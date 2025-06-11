@@ -1,3 +1,4 @@
+import 'package:dsaroll/utils/widget_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../managers/character_manager.dart';
@@ -35,6 +36,23 @@ class CharacterSelectionScreen extends StatelessWidget {
                 backgroundImage: character.avatar?.image,
                 child: character.avatar == null ? Icon(Icons.person) : null,
               ),
+              trailing: IconButton(
+                icon: Icon(Icons.delete, color: Colors.red),
+                onPressed: () async {
+                  bool confirmed = await showDeleteConfirmation(
+                    context,
+                    character.name,
+                  );
+                  if (confirmed && context.mounted) {
+                    final manager = Provider.of<CharacterManager>(
+                      context,
+                      listen: false,
+                    );
+                    manager.deleteCharacter(character);
+                    await CharacterStorage.deleteCharacter(character.name);
+                  }
+                },
+              ),
               title: Text(character.name),
               onTap: () {
                 manager.setActiveCharacter(character);
@@ -59,24 +77,91 @@ class CharacterSelectionScreen extends StatelessWidget {
       final Map<String, dynamic> jsonData = jsonDecode(content);
 
       try {
-        final Character newCharacter = Character.fromJson(jsonData);
+        // TODO: Figure out async boundary
         if (context.mounted) {
-          final manager = Provider.of<CharacterManager>(context, listen: false);
-          manager.addCharacter(newCharacter);
-          await CharacterStorage.saveCharacters(manager.characters);
-          manager.setActiveCharacter(newCharacter);
+          showLoadingDialog(context);
+          final Character newCharacter = await Future.delayed(
+            Duration(milliseconds: 100), // optional: yield for frame
+            () => Character.fromJson(jsonData),
+          );
+
           if (context.mounted) {
-            Navigator.pushReplacement(
+            final manager = Provider.of<CharacterManager>(
               context,
-              MaterialPageRoute(
-                builder: (_) => CharacterDetailScreen(character: newCharacter),
-              ),
+              listen: false,
             );
+            manager.addCharacter(newCharacter);
+            await CharacterStorage.saveCharacters(manager.characters);
+            manager.setActiveCharacter(newCharacter);
+            if (context.mounted) {
+              Navigator.of(context).pop();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      CharacterDetailScreen(character: newCharacter),
+                ),
+              );
+            }
           }
         }
       } catch (e) {
-        debugPrint('Error importing character: $e');
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          showErrorDialog(
+            context,
+            "Importing the character produced the following error:\n$e",
+          );
+        }
       }
     }
   }
+}
+
+Future<void> showLoadingDialog(
+  BuildContext context, {
+  String message = 'Charakter wird importiert...',
+}) {
+  return showDialog(
+    context: context,
+    barrierDismissible: false, // Prevent user from closing it manually
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text(message),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Future<bool> showDeleteConfirmation(BuildContext context, String name) async {
+  return await showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Charakter löschen'),
+        content: Text('Charakter "$name" wirklich löschen?'),
+        actions: [
+          TextButton(
+            child: Text('Nein'),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          TextButton(
+            child: Text('Ja', style: TextStyle(color: Colors.red)),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
+    },
+  ) ?? false; // In case user dismisses dialog → treat as Cancel
 }

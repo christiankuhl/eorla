@@ -69,23 +69,25 @@ class SkillRoll {
     );
   }
 
-  RollResult roll(int modifier) {
-    int roll1 = Random().nextInt(20) + 1;
-    int roll2 = Random().nextInt(20) + 1;
-    int roll3 = Random().nextInt(20) + 1;
-    int state =
-        belastung +
+  int state() {
+    return belastung +
         betaeubung +
         entrueckung +
         furcht +
         paralyse +
         schmerz +
         verwirrung;
+  }
+
+  RollResult roll(int modifier) {
+    int roll1 = Random().nextInt(20) + 1;
+    int roll2 = Random().nextInt(20) + 1;
+    int roll3 = Random().nextInt(20) + 1;
     int fw =
         talentValue +
-        min(attrValue1 + modifier - state - roll1, 0).toInt() +
-        min(attrValue2 + modifier - state - roll2, 0).toInt() +
-        min(attrValue3 + modifier - state - roll3, 0).toInt();
+        min(attrValue1 + modifier - state() - roll1, 0).toInt() +
+        min(attrValue2 + modifier - state() - roll2, 0).toInt() +
+        min(attrValue3 + modifier - state() - roll3, 0).toInt();
     List<int> rolls = [roll1, roll2, roll3];
     bool botch = rolls.where((n) => n == 20).length >= 2;
     bool critical = rolls.where((n) => n == 20).length >= 2;

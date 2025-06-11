@@ -1,16 +1,18 @@
+import 'package:flutter/material.dart';
 import '../models/skill.dart';
 
 enum SkillGroup {
-  koerpertalente("Körpertalente", "1"),
-  gesellschaftstalente("Gesellschaftstalente", "2"),
-  naturtalente("Naturtalente", "3"),
-  wissenstalente("Wissenstalente", "4"),
-  handwerkstalente("Handwerkstalente", "5");
+  koerpertalente("Körpertalente", "1", Icons.directions_run),
+  gesellschaftstalente("Gesellschafts\u00ADtalente", "2", Icons.groups),
+  naturtalente("Naturtalente", "3", Icons.terrain),
+  wissenstalente("Wissenstalente", "4", Icons.menu_book),
+  handwerkstalente("Handwerkstalente", "5", Icons.construction);
 
   final String name;
   final String id;
+  final IconData icon;
 
-  const SkillGroup(this.name, this.id);
+  const SkillGroup(this.name, this.id, this.icon);
 }
 
 const Map<SkillGroup, List<Skill>> skillGroups = {
