@@ -1,0 +1,46 @@
+import 'package:flutter/material.dart';
+import '../widgets/character_card.dart';
+import '../widgets/skill_card.dart';
+import '../models/skill_groups.dart';
+import 'roll_screen.dart';
+
+class SkillSelectionScreen extends StatelessWidget {
+  final SkillGroup skillGroup;
+
+  const SkillSelectionScreen({required this.skillGroup, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          CharacterCard(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(skillGroup.name, style: TextStyle(fontSize: 24)),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              children: (skillGroups[skillGroup] ?? [])
+                  .map((skill) => SkillCard(
+                        skillName: skill.name,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => RollScreen(talentName: skill.name, category: skillGroup.name, talentValue: 5, attributes: [{'label': 'MU', 'value': 13}, {'label': 'IN', 'value': 14}, {'label': 'GE', 'value': 13}]),
+                            ),
+                          );
+                        },
+                      ))
+                  .toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
