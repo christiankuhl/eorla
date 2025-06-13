@@ -40,47 +40,49 @@ class RollScreenState extends State<RollScreen> {
   Widget build(BuildContext context) {
     SkillRoll stats = SkillRoll.from(widget.character, widget.skill);
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            CharacterCard(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              CharacterCard(),
 
-            skillInfoCard(widget.skill, stats),
-            attributesCard(stats),
+              skillInfoCard(widget.skill, stats),
+              attributesCard(stats),
 
-            Card(
-              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    modifierRow(
-                      "Modifikator",
-                      modifier,
-                      () => setState(() {
-                        modifier++;
-                      }),
-                      () => setState(() {
-                        modifier--;
-                      }),
-                    ),
-                  ],
+              Card(
+                margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      modifierRow(
+                        "Modifikator",
+                        modifier,
+                        () => setState(() {
+                          modifier++;
+                        }),
+                        () => setState(() {
+                          modifier--;
+                        }),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () => performRoll(modifier),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => performRoll(modifier),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
+                ),
+                child: Text('WÜRFELN', style: TextStyle(fontSize: 32)),
               ),
-              child: Text('WÜRFELN', style: TextStyle(fontSize: 32)),
-            ),
 
-            SizedBox(height: 24),
-          ],
+              SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );

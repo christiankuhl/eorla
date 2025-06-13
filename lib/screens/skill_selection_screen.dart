@@ -15,37 +15,41 @@ class SkillSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final character = Provider.of<CharacterManager>(context).activeCharacter;
     return Scaffold(
-      body: Column(
-        children: [
-          CharacterCard(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(skillGroup.name, style: TextStyle(fontSize: 24)),
+      body: SafeArea(
+        child: Column(
+          children: [
+            CharacterCard(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(skillGroup.name, style: TextStyle(fontSize: 24)),
+              ),
             ),
-          ),
-          Expanded(
-            child: ListView(
-              children: (skillGroups[skillGroup] ?? [])
-                  .map(
-                    (skill) => SkillCard(
-                      skillName: skill.name,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                RollScreen(skill: skill, character: character!),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                  .toList(),
+            Expanded(
+              child: ListView(
+                children: (skillGroups[skillGroup] ?? [])
+                    .map(
+                      (skill) => SkillCard(
+                        skillName: skill.name,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => RollScreen(
+                                skill: skill,
+                                character: character!,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

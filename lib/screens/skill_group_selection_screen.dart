@@ -13,36 +13,38 @@ class SkillGroupSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final character = Provider.of<CharacterManager>(context).activeCharacter;
     return Scaffold(
-      body: Column(
-        children: [
-          CharacterCard(),
-          Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              children: skillGroups.keys
-                  .map(
-                    (grp) => Opacity(
-                      opacity: character != null ? 1.0 : 0.5,
-                      child: SkillGroupCard(
-                        skillGroup: grp,
-                        onTap: () {
-                          if (character != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    SkillSelectionScreen(skillGroup: grp),
-                              ),
-                            );
-                          }
-                        },
+      body: SafeArea(
+        child: Column(
+          children: [
+            CharacterCard(),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                children: skillGroups.keys
+                    .map(
+                      (grp) => Opacity(
+                        opacity: character != null ? 1.0 : 0.5,
+                        child: SkillGroupCard(
+                          skillGroup: grp,
+                          onTap: () {
+                            if (character != null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      SkillSelectionScreen(skillGroup: grp),
+                                ),
+                              );
+                            }
+                          },
+                        ),
                       ),
-                    ),
-                  )
-                  .toList(),
+                    )
+                    .toList(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
