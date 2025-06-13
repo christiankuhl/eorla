@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../widgets/widget_helpers.dart';
 import '../widgets/character_card.dart';
 import '../widgets/skill_group_card.dart';
 import '../models/skill_groups.dart';
 import '../managers/character_manager.dart';
 import 'skill_selection_screen.dart';
+import 'combat_screen.dart';
 
-class SkillGroupSelectionScreen extends StatelessWidget {
-  const SkillGroupSelectionScreen({super.key});
+class MainScreen extends StatelessWidget {
+  const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,18 @@ class SkillGroupSelectionScreen extends StatelessWidget {
                         ),
                       ),
                     )
-                    .toList(),
+                    .toList() + [Opacity(
+                        opacity: character != null ? 1.0 : 0.5, child: mainScreenPanel("Kampf", Icons.sports_martial_arts, () {
+                            if (character != null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      CombatScreen(),
+                                ),
+                              );
+                            }
+                          }))]
               ),
             ),
           ],

@@ -169,3 +169,19 @@ void showErrorDialog(BuildContext context, String message) {
     },
   );
 }
+
+GestureDetector mainScreenPanel(String title, IconData icon, Function()? onTap) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Card(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 48),
+          SizedBox(height: 8),
+          Text(title, style: TextStyle(fontSize: 16)),
+        ],
+      ),
+    ),
+  );
+}

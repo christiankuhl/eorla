@@ -1,5 +1,5 @@
-import 'package:dsaroll/utils/widget_helpers.dart';
 import 'package:flutter/material.dart';
+import '../widgets/widget_helpers.dart';
 import '../widgets/character_card.dart';
 import '../models/skill.dart';
 import '../models/rules.dart';

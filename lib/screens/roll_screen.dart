@@ -3,7 +3,7 @@ import '../widgets/character_card.dart';
 import '../models/skill.dart';
 import '../models/character.dart';
 import '../models/rules.dart';
-import '../utils/widget_helpers.dart';
+import '../widgets/widget_helpers.dart';
 import 'result_screen.dart';
 
 class RollScreen extends StatefulWidget {

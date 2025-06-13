@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/character.dart';
 import 'character_selection_screen.dart';
-import '../utils/widget_helpers.dart';
+import '../widgets/widget_helpers.dart';
 
 class CharacterDetailScreen extends StatefulWidget {
   final Character character;
