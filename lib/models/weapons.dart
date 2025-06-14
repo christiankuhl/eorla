@@ -18,6 +18,14 @@ class Weapon {
       "id": id, "name": name, "combatTechnique": ct.id, "at": at, "pa": pa, "damageDiceNumber": damageDice, "damageDiceSides": damageDiceSides, "damageFlat": damageFlat
     };
   }
+
+  String tpText() {
+    String result = "${damageDice}W$damageDiceSides";
+    if (damageFlat > 0) {
+      result += "+$damageFlat";
+    }
+    return result;
+  }
 }
 
 enum CombatTechnique {
@@ -104,3 +112,9 @@ const Map<String, CombatTechnique> combatTechniques = {
   "CT_20": CombatTechnique.faecher,
   "CT_21": CombatTechnique.spiesswaffen,
 };
+
+enum CombatActionType {
+  attack,
+  dodge,
+  parry
+}

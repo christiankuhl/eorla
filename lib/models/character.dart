@@ -1,3 +1,4 @@
+import 'package:eorla/models/special_abilities.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../models/attributes.dart';
@@ -30,6 +31,7 @@ class Character {
   String? avatarMimetype;
 
   List<Weapon>? weapons;
+  List<SpecialAbility>? abilities;
 
   Character({
     required this.name,
@@ -52,6 +54,7 @@ class Character {
     this.avatar,
     this.avatarMimetype,
     this.weapons,
+    this.abilities,
   });
 
   factory Character.fromJson(Map<String, dynamic> json) {
@@ -64,6 +67,7 @@ class Character {
       weapons: [],
       avatar: Image.memory(base64Decode(content)),
       avatarMimetype: avatarMimetype,
+      abilities: [],
     );
     for (var item in json['attr']['values']) {
       String id = item['id'];
@@ -82,6 +86,13 @@ class Character {
         character.weapons?.add(Weapon.fromJson(value));
       }
     });
+    json['activatable'].forEach((key, value) {
+      if (specialCombatAbilities.containsKey(key)) {
+        for (var item in value) {
+          character.abilities?.add(SpecialAbility(specialCombatAbilities[key]!, item["tier"]));
+        }
+      }
+    });
     return character;
   }
 
@@ -97,6 +108,7 @@ class Character {
       {"id": "ATTR_8", "value": kk},
     ];
     var belongings = {};
+    var abilitiesOut = {};
     var result = {
       "name": name,
       "avatar": avatarMimetype != null
@@ -106,10 +118,17 @@ class Character {
         for (var v in talents!.entries) v.key.id: v.value,
       },
       "attr": {"values": values},
-      "belongings": {"items": belongings}
+      "belongings": {"items": belongings},
+      "activatable": abilitiesOut,
     };
     for (Weapon w in weapons ?? []) {
       belongings[w.id] = w.toJson();
+    }
+    for (SpecialAbility a in abilities ?? []) {
+      if (!abilitiesOut.containsKey(a.value.id)) {
+        abilitiesOut[a.value.id] = [];
+      } 
+      abilitiesOut[a.value.id].add(a.toJson());
     }
     return result;
   }
