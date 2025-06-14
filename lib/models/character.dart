@@ -96,6 +96,7 @@ class Character {
       {"id": "ATTR_7", "value": ko},
       {"id": "ATTR_8", "value": kk},
     ];
+    var belongings = {};
     var result = {
       "name": name,
       "avatar": avatarMimetype != null
@@ -105,7 +106,11 @@ class Character {
         for (var v in talents!.entries) v.key.id: v.value,
       },
       "attr": {"values": values},
+      "belongings": {"items": belongings}
     };
+    for (Weapon w in weapons ?? []) {
+      belongings[w.id] = w.toJson();
+    }
     return result;
   }
 

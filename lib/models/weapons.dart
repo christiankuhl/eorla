@@ -12,6 +12,12 @@ class Weapon {
   factory Weapon.fromJson(Map<String, dynamic> value) {
     return Weapon(value["id"], value["name"], combatTechniques[value["combatTechnique"]]!, value["at"], value["pa"], value["damageDiceNumber"], value["damageDiceSides"], value["damageFlat"]);
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id, "name": name, "combatTechnique": ct.id, "at": at, "pa": pa, "damageDiceNumber": damageDice, "damageDiceSides": damageDiceSides, "damageFlat": damageFlat
+    };
+  }
 }
 
 enum CombatTechnique {
