@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:convert';
-import 'dart:io';
 import '../managers/character_manager.dart';
 import '../widgets/widget_helpers.dart';
 import '../models/character.dart';
-import '../utils/character_storage.dart';
-import '../screens/character_detail_screen.dart';
+import '../managers/character_storage.dart';
+import 'character_detail.dart';
 
 class CharacterSelectionScreen extends StatelessWidget {
   const CharacterSelectionScreen({super.key});
@@ -66,53 +63,39 @@ class CharacterSelectionScreen extends StatelessWidget {
   }
 
   Future<void> importCharacter(BuildContext context) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['json'],
-    );
+    final Map<String, dynamic> jsonData = await getOptolithCharacterData();
+    try {
+      // TODO: Figure out async boundary
+      if (context.mounted) {
+        showLoadingDialog(context);
+        final Character newCharacter = await Future.delayed(
+          Duration(milliseconds: 100), // optional: yield for frame
+          () => Character.fromJson(jsonData),
+        );
 
-    if (result != null && result.files.single.path != null) {
-      final file = File(result.files.single.path!);
-      final String content = await file.readAsString();
-      final Map<String, dynamic> jsonData = jsonDecode(content);
-
-      try {
-        // TODO: Figure out async boundary
         if (context.mounted) {
-          showLoadingDialog(context);
-          final Character newCharacter = await Future.delayed(
-            Duration(milliseconds: 100), // optional: yield for frame
-            () => Character.fromJson(jsonData),
-          );
-
+          final manager = Provider.of<CharacterManager>(context, listen: false);
+          manager.addCharacter(newCharacter);
+          await CharacterStorage.saveCharacters(manager.characters);
+          manager.setActiveCharacter(newCharacter);
           if (context.mounted) {
-            final manager = Provider.of<CharacterManager>(
+            Navigator.of(context).pop();
+            Navigator.pushReplacement(
               context,
-              listen: false,
+              MaterialPageRoute(
+                builder: (_) => CharacterDetailScreen(character: newCharacter),
+              ),
             );
-            manager.addCharacter(newCharacter);
-            await CharacterStorage.saveCharacters(manager.characters);
-            manager.setActiveCharacter(newCharacter);
-            if (context.mounted) {
-              Navigator.of(context).pop();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      CharacterDetailScreen(character: newCharacter),
-                ),
-              );
-            }
           }
         }
-      } catch (e) {
-        if (context.mounted) {
-          Navigator.of(context).pop();
-          showErrorDialog(
-            context,
-            "Importing the character produced the following error:\n$e",
-          );
-        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        showErrorDialog(
+          context,
+          "Importing the character produced the following error:\n$e",
+        );
       }
     }
   }
@@ -142,26 +125,27 @@ Future<void> showLoadingDialog(
 
 Future<bool> showDeleteConfirmation(BuildContext context, String name) async {
   return await showDialog<bool>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Charakter löschen'),
-        content: Text('Charakter "$name" wirklich löschen?'),
-        actions: [
-          TextButton(
-            child: Text('Nein'),
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-          ),
-          TextButton(
-            child: Text('Ja', style: TextStyle(color: Colors.red)),
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-          ),
-        ],
-      );
-    },
-  ) ?? false; // In case user dismisses dialog → treat as Cancel
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Charakter löschen'),
+            content: Text('Charakter "$name" wirklich löschen?'),
+            actions: [
+              TextButton(
+                child: Text('Nein'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              TextButton(
+                child: Text('Ja', style: TextStyle(color: Colors.red)),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        },
+      ) ??
+      false; // In case user dismisses dialog → treat as Cancel
 }

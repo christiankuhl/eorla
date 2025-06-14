@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../managers/character_manager.dart';
 import '../widgets/character_card.dart';
-import '../widgets/skill_card.dart';
-import '../models/skill_groups.dart';
-import 'roll_screen.dart';
+import '../widgets/weapon_card.dart';
+import 'combat.dart';
 
-class SkillSelectionScreen extends StatelessWidget {
-  final SkillGroup skillGroup;
+class WeaponSelectionScreen extends StatelessWidget {
 
-  const SkillSelectionScreen({required this.skillGroup, super.key});
+  const WeaponSelectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +21,21 @@ class SkillSelectionScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text(skillGroup.name, style: TextStyle(fontSize: 24)),
+                child: Text("Waffen", style: TextStyle(fontSize: 24)),
               ),
             ),
             Expanded(
               child: ListView(
-                children: (skillGroups[skillGroup] ?? [])
+                children: (character?.weapons ?? [])
                     .map(
-                      (skill) => SkillCard(
-                        skillName: skill.name,
+                      (weapon) => WeaponCard(
+                        weaponName: weapon.name,
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => RollScreen(
-                                skill: skill,
+                              builder: (_) => CombatScreen(
+                                weapon: weapon,
                                 character: character!,
                               ),
                             ),

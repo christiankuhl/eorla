@@ -1,7 +1,23 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 import '../models/character.dart';
+
+
+Future<Map<String, dynamic>> getOptolithCharacterData() async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+    );
+    Map<String, dynamic> jsonData = {};
+    if (result != null && result.files.single.path != null) {
+      final file = File(result.files.single.path!);
+      final String content = await file.readAsString();
+      jsonData = jsonDecode(content);
+    }
+    return Future(() => jsonData);
+}
 
 class CharacterStorage {
   static Future<void> saveCharacters(List<Character> characters) async {

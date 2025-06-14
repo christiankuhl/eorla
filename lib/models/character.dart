@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../models/attributes.dart';
 import '../models/skill.dart';
+import '../models/weapons.dart';
 
 class Character {
   final String name;
@@ -28,6 +29,8 @@ class Character {
   Image? avatar;
   String? avatarMimetype;
 
+  List<Weapon>? weapons;
+
   Character({
     required this.name,
     this.mu = 0,
@@ -48,6 +51,7 @@ class Character {
     this.verwirrung = 0,
     this.avatar,
     this.avatarMimetype,
+    this.weapons,
   });
 
   factory Character.fromJson(Map<String, dynamic> json) {
@@ -57,6 +61,7 @@ class Character {
     Character character = Character(
       name: json['name'],
       talents: {},
+      weapons: [],
       avatar: Image.memory(base64Decode(content)),
       avatarMimetype: avatarMimetype,
     );
@@ -71,6 +76,11 @@ class Character {
     json['talents'].forEach((key, value) {
       var skill = skillKeys[key]!;
       character.talents![skill] = value;
+    });
+    json['belongings']['items'].forEach((key, value) {
+      if (isWeapon(value)) {
+        character.weapons?.add(Weapon.fromJson(value));
+      }
     });
     return character;
   }
@@ -150,4 +160,8 @@ void setCharacterField(Character character, String fieldName, int value) {
     default:
       debugPrint('Unknown field: $fieldName');
   }
+}
+
+bool isWeapon(Map<String, dynamic> item) {
+  return item.containsKey("combatTechnique");
 }

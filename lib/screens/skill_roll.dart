@@ -4,7 +4,7 @@ import '../models/skill.dart';
 import '../models/character.dart';
 import '../models/rules.dart';
 import '../widgets/widget_helpers.dart';
-import 'result_screen.dart';
+import 'skill_result.dart';
 
 class RollScreen extends StatefulWidget {
   final Skill skill;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../managers/character_manager.dart';
-import '../screens/character_detail_screen.dart';
-import '../screens/character_selection_screen.dart';
+import '../screens/character_detail.dart';
+import '../screens/character_selection.dart';
 
 class CharacterCard extends StatelessWidget {
   const CharacterCard({super.key});

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../managers/character_manager.dart';
+import '../models/weapons.dart';
+import '../models/character.dart';
 
 class CombatScreen extends StatefulWidget {
-  const CombatScreen({super.key});
+  final Character character;
+  final Weapon weapon;
+
+  const CombatScreen({required this.character, required this.weapon, super.key});
 
   @override
   CombatScreenState createState() => CombatScreenState();
@@ -12,7 +15,6 @@ class CombatScreen extends StatefulWidget {
 class CombatScreenState extends State<CombatScreen> {
   @override
   Widget build(BuildContext context) {
-    final character = Provider.of<CharacterManager>(context).activeCharacter;
     return Scaffold(body: null);
   }
 }
