@@ -83,7 +83,7 @@ class Character {
     });
     json['belongings']['items'].forEach((key, value) {
       if (isWeapon(value)) {
-        character.weapons?.add(Weapon.fromJson(value));
+        //character.weapons?.add(Weapon.fromJson(value));
       }
     });
     json['activatable'].forEach((key, value) {
