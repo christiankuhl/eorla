@@ -13,7 +13,7 @@ class Weapon {
     return Weapon(
       value["id"] ?? "unknown_weapon", // Default to "unknown_weapon" if not provided
       value["name"] ?? "Unbenannte Waffe", // Default to "Unbenannte Waffe" if not provided
-      combatTechniques[value["combatTechnique"]]! ?? CombatTechnique.schwerter, // Default to schwerter if not found
+      combatTechniques[value["combatTechnique"]] ?? CombatTechnique.schwerter, // Default to schwerter if not found
       value["at"] ?? 0, // Default to 0 if not provided
       value["pa"] ?? 0, // Default to 0 if not provided
       value["damageDiceNumber"] ?? 0, 
