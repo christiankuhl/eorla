@@ -18,7 +18,22 @@ class SkillSelectionScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            CharacterCard(),
+              SizedBox(
+              height: 100, // Adjust as needed for your CharacterCard
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () => Navigator.of(context).pop(),
+                    iconSize: 32,
+                  ),
+                  Expanded(
+                    child: CharacterCard(),
+                  ),
+                ],
+                ),
+              ), 
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Align(
