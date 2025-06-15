@@ -14,18 +14,18 @@ class CharacterCard extends StatelessWidget {
     if (character == null) {
       return GestureDetector(
         onTap: () {
-            Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => CharacterSelectionScreen()),
-                );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => CharacterSelectionScreen()),
+          );
         },
-      child: Card(
-        margin: EdgeInsets.all(8),
-        child: Container(
-          padding: EdgeInsets.all(16),
-          child: Text('No character selected'),
+        child: Card(
+          margin: EdgeInsets.all(8),
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Text('No character selected'),
+          ),
         ),
-      )
       );
     }
 
@@ -42,17 +42,17 @@ class CharacterCard extends StatelessWidget {
         margin: EdgeInsets.all(8),
         child: Row(
           children: [
+            Expanded(
+              child: Center(
+                child: Text(character.name, style: TextStyle(fontSize: 18)),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
                 backgroundImage: character.avatar?.image,
                 radius: 30,
               ),
-            ),
-            SizedBox(width: 12),
-            Text(
-              character.name,
-              style: TextStyle(fontSize: 18),
             ),
           ],
         ),

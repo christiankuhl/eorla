@@ -27,6 +27,7 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(c.name),
+        centerTitle: true,
         actions: [
           ElevatedButton(
             onPressed: () {
@@ -35,7 +36,12 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
                 MaterialPageRoute(builder: (_) => CharacterSelectionScreen()),
               );
             },
-            child: Text('Anderer Charakter'),
+            style: ElevatedButton.styleFrom(
+              shape: CircleBorder(),
+              padding: EdgeInsets.all(12),
+              elevation: 2,
+            ),
+            child: Icon(Icons.people_alt),
           ),
         ],
       ),
@@ -67,7 +73,7 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
             SizedBox(height: 8),
             modifierRow(
               'Belastung',
-              c.state.belastung,
+              roman(c.state.belastung),
               () => setState(() {
                 if (c.state.belastung < 4) c.state.belastung++;
               }),
@@ -77,7 +83,7 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ),
             modifierRow(
               'Betäubung',
-              c.state.betaeubung,
+              roman(c.state.betaeubung),
               () => setState(() {
                 if (c.state.betaeubung < 4) c.state.betaeubung++;
               }),
@@ -87,7 +93,7 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ),
             modifierRow(
               'Entrückung',
-              c.state.entrueckung,
+              roman(c.state.entrueckung),
               () => setState(() {
                 if (c.state.entrueckung < 4) c.state.entrueckung++;
               }),
@@ -97,7 +103,7 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ),
             modifierRow(
               'Furcht',
-              c.state.furcht,
+              roman(c.state.furcht),
               () => setState(() {
                 if (c.state.furcht < 4) c.state.furcht++;
               }),
@@ -107,7 +113,7 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ),
             modifierRow(
               'Paralyse',
-              c.state.paralyse,
+              roman(c.state.paralyse),
               () => setState(() {
                 if (c.state.paralyse < 4) c.state.paralyse++;
               }),
@@ -117,7 +123,7 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ),
             modifierRow(
               'Schmerz',
-              c.state.schmerz,
+              roman(c.state.schmerz),
               () => setState(() {
                 if (c.state.schmerz < 4) c.state.schmerz++;
               }),
@@ -127,7 +133,7 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ),
             modifierRow(
               'Verwirrung',
-              c.state.verwirrung,
+              roman(c.state.verwirrung),
               () => setState(() {
                 if (c.state.verwirrung < 4) c.state.verwirrung++;
               }),

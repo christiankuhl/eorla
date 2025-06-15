@@ -4,7 +4,7 @@ import '../models/skill.dart';
 
 Widget modifierRow(
   String label,
-  int value,
+  dynamic value,
   VoidCallback onIncrement,
   VoidCallback onDecrement,
 ) {
@@ -15,7 +15,11 @@ Widget modifierRow(
       Row(
         children: [
           IconButton(icon: Icon(Icons.remove), onPressed: onDecrement),
-          Text(value.toString()),
+          Container(
+            width: 17,
+            alignment: Alignment.center,
+            child: Text(value.toString()),
+          ),
           IconButton(icon: Icon(Icons.add), onPressed: onIncrement),
         ],
       ),
@@ -149,7 +153,11 @@ void showErrorDialog(BuildContext context, String message) {
   );
 }
 
-GestureDetector mainScreenPanel(String title, IconData icon, Function()? onTap) {
+GestureDetector mainScreenPanel(
+  String title,
+  IconData icon,
+  Function()? onTap,
+) {
   return GestureDetector(
     onTap: onTap,
     child: Card(
@@ -162,5 +170,26 @@ GestureDetector mainScreenPanel(String title, IconData icon, Function()? onTap) 
         ],
       ),
     ),
+  );
+}
+
+String roman(int num) {
+  if (num == 0) {
+    return "0";
+  }
+  if (num < 0) {
+    return "-${roman(-num)}";
+  }
+  return "M1000CM900D500CD400C100XC90L50XL40X10IX9V5IV4I1".replaceAllMapped(
+    RegExp(r"([IVXLCDM]+)(\d+)"),
+    (match) {
+      String result = "";
+      int value = int.parse(match.group(2)!);
+      while (num >= value) {
+        result += match.group(1)!;
+        num -= value;
+      }
+      return result;
+    },
   );
 }
