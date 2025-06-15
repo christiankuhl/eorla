@@ -76,32 +76,31 @@ class MainScreen extends StatelessWidget {
                 builder: (context, constraints) {
                   // Calculate the optimal number of columns
                   const double minItemWidth = 160.0; // Adjust as needed
-                  const double maxItemWidth = 600.0; // Adjust as needed
+                  const double maxItemWidth = 500.0; // Adjust as needed
 
                   int crossAxisCount = 1;
                   crossAxisCount = sqrt(constraints.maxWidth * allItems.length / constraints.maxHeight).ceil();
                   crossAxisCount = crossAxisCount.clamp(1, allItems.length);
                   
                   double itemWidth = constraints.maxWidth / crossAxisCount;
-                  if (itemWidth < minItemWidth) {
-                    // If the optimal width is less than the minimum, use 1 column
-                    crossAxisCount -= 1;
-                    itemWidth = constraints.maxWidth / crossAxisCount;
-                  }
-                  if (itemWidth > maxItemWidth) {
-                    // If the optimal width is greater than the maximum, use all items in one row
-                    crossAxisCount = allItems.length;
-                    itemWidth = constraints.maxWidth / crossAxisCount;
-                  } 
                   if ((allItems.length / crossAxisCount).ceil() > constraints.maxHeight / itemWidth) {
                     // If the number of items per row exceeds the height, increase the number of columns
                     int numberOfRows = (allItems.length / crossAxisCount).ceil()-1;
                     numberOfRows = numberOfRows.clamp(1, (constraints.maxHeight / itemWidth).ceil());
                     itemWidth = constraints.maxWidth / (allItems.length / numberOfRows).ceil();
-                    if (itemWidth > minItemWidth && itemWidth < maxItemWidth) {
-                      crossAxisCount = (allItems.length / numberOfRows).ceil();
-                    }
+                    //if (itemWidth > minItemWidth && itemWidth < maxItemWidth) {
+                    //  crossAxisCount = (allItems.length / numberOfRows).ceil();
+                    //}
                   }
+                  if (itemWidth < minItemWidth) {
+                    // If the optimal width is less than the minimum, use 1 column
+                    crossAxisCount -= 1;
+                    itemWidth = constraints.maxWidth / crossAxisCount;
+                  } else if (itemWidth > maxItemWidth) {
+                    // If the optimal width is greater than the maximum, use all items in one row
+                    crossAxisCount = allItems.length;
+                    itemWidth = constraints.maxWidth / crossAxisCount;
+                  } 
 
 
                   return GridView.count(
