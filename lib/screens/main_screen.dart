@@ -19,7 +19,22 @@ class MainScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            CharacterCard(),
+            SizedBox(
+              height: 100, // Adjust as needed for your CharacterCard
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: Icon(Icons.home, size: 32), 
+                  ),
+                  Expanded(
+                    child: CharacterCard(),
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
