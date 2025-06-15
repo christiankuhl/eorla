@@ -1,3 +1,4 @@
+import 'package:eorla/models/rules.dart';
 import 'package:flutter/material.dart';
 import '../models/weapons.dart';
 import '../models/character.dart';
@@ -29,6 +30,13 @@ Widget weaponInfoCard(
   Character character, {
   CombatResult? result,
 }) {
+  final stats = CombatRoll.fromWeapon(character, weapon);
+  var weaponStats = [statColumn("AT", stats.targetValue(CombatActionType.attack).toString())];
+  if (!weapon.ct.hasNoParry) {
+    weaponStats.add(statColumn("PA", stats.targetValue(CombatActionType.parry).toString()));
+  }
+  weaponStats.add(statColumn("AW", stats.targetValue(CombatActionType.dodge).toString()));
+  weaponStats.add(statColumn("TP", weapon.tpText()));
   return Card(
     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     child: Padding(
@@ -43,12 +51,7 @@ Widget weaponInfoCard(
           SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              statColumn("AT", weapon.at.toString()),
-              statColumn("PA", weapon.pa.toString()),
-              statColumn("AW", "8"), // character.dodge.toString()),
-              statColumn("TP", weapon.tpText()),
-            ],
+            children: weaponStats,
           ),
           if (result != null) ...[
             Divider(height: 24),
@@ -99,5 +102,11 @@ class CombatResult {
   final CombatActionType action;
   final String successText;
 
-  CombatResult(this.roll, this.target, this.isSuccess, this.action, this.successText);
+  CombatResult(
+    this.roll,
+    this.target,
+    this.isSuccess,
+    this.action,
+    this.successText,
+  );
 }

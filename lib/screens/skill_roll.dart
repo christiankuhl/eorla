@@ -21,7 +21,7 @@ class RollScreenState extends State<RollScreen> {
 
   void performRoll(int modifier) {
     SkillRoll engine = SkillRoll.from(widget.character, widget.skill);
-    RollResult rollResults = engine.roll(modifier);
+    SkillRollResult rollResults = engine.roll(modifier);
 
     Navigator.push(
       context,

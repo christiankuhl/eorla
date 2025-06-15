@@ -7,7 +7,7 @@ import '../models/rules.dart';
 class ResultScreen extends StatelessWidget {
   final Skill skill;
   final SkillRoll stats;
-  final RollResult rollResults;
+  final SkillRollResult rollResults;
   final int modifier;
 
   const ResultScreen({

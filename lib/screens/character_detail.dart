@@ -67,72 +67,72 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
             SizedBox(height: 8),
             modifierRow(
               'Belastung',
-              c.belastung,
+              c.state.belastung,
               () => setState(() {
-                if (c.belastung < 4) c.belastung++;
+                if (c.state.belastung < 4) c.state.belastung++;
               }),
               () => setState(() {
-                if (c.belastung > 0) c.belastung--;
+                if (c.state.belastung > 0) c.state.belastung--;
               }),
             ),
             modifierRow(
               'Betäubung',
-              c.betaeubung,
+              c.state.betaeubung,
               () => setState(() {
-                if (c.betaeubung < 4) c.betaeubung++;
+                if (c.state.betaeubung < 4) c.state.betaeubung++;
               }),
               () => setState(() {
-                if (c.betaeubung > 0) c.betaeubung--;
+                if (c.state.betaeubung > 0) c.state.betaeubung--;
               }),
             ),
             modifierRow(
               'Entrückung',
-              c.entrueckung,
+              c.state.entrueckung,
               () => setState(() {
-                if (c.entrueckung < 4) c.entrueckung++;
+                if (c.state.entrueckung < 4) c.state.entrueckung++;
               }),
               () => setState(() {
-                if (c.entrueckung > 0) c.entrueckung--;
+                if (c.state.entrueckung > 0) c.state.entrueckung--;
               }),
             ),
             modifierRow(
               'Furcht',
-              c.furcht,
+              c.state.furcht,
               () => setState(() {
-                if (c.furcht < 4) c.furcht++;
+                if (c.state.furcht < 4) c.state.furcht++;
               }),
               () => setState(() {
-                if (c.furcht > 0) c.furcht--;
+                if (c.state.furcht > 0) c.state.furcht--;
               }),
             ),
             modifierRow(
               'Paralyse',
-              c.paralyse,
+              c.state.paralyse,
               () => setState(() {
-                if (c.paralyse < 4) c.paralyse++;
+                if (c.state.paralyse < 4) c.state.paralyse++;
               }),
               () => setState(() {
-                if (c.paralyse > 0) c.paralyse--;
+                if (c.state.paralyse > 0) c.state.paralyse--;
               }),
             ),
             modifierRow(
               'Schmerz',
-              c.schmerz,
+              c.state.schmerz,
               () => setState(() {
-                if (c.schmerz < 4) c.schmerz++;
+                if (c.state.schmerz < 4) c.state.schmerz++;
               }),
               () => setState(() {
-                if (c.schmerz > 0) c.schmerz--;
+                if (c.state.schmerz > 0) c.state.schmerz--;
               }),
             ),
             modifierRow(
               'Verwirrung',
-              c.verwirrung,
+              c.state.verwirrung,
               () => setState(() {
-                if (c.verwirrung < 4) c.verwirrung++;
+                if (c.state.verwirrung < 4) c.state.verwirrung++;
               }),
               () => setState(() {
-                if (c.verwirrung > 0) c.verwirrung--;
+                if (c.state.verwirrung > 0) c.state.verwirrung--;
               }),
             ),
           ],

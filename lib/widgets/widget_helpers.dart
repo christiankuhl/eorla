@@ -47,7 +47,7 @@ Card skillInfoCard(Skill skill, SkillRoll stats) {
   );
 }
 
-Column attributesCard(SkillRoll stats, {RollResult? rollResults}) {
+Column attributesCard(SkillRoll stats, {SkillRollResult? rollResults}) {
   Text txt1, txt2, txt3;
   if (rollResults == null) {
     txt1 = Text(stats.attrValue1.toString());
@@ -97,35 +97,14 @@ Column attributesCard(SkillRoll stats, {RollResult? rollResults}) {
     ),
   );
   var children = [card];
-  if (stats.state() > 0) {
+  if (stats.characterState.value() > 0) {
     children.add(statesCard(stats));
   }
   return Column(children: children);
 }
 
 Card statesCard(SkillRoll stats) {
-  var states = [];
-  if (stats.belastung > 0) {
-    states.add("Belastung Stufe ${stats.belastung}");
-  }
-  if (stats.betaeubung > 0) {
-    states.add("Betäubung Stufe ${stats.betaeubung}");
-  }
-  if (stats.entrueckung > 0) {
-    states.add("Entrückung Stufe ${stats.entrueckung}");
-  }
-  if (stats.furcht > 0) {
-    states.add("Furcht Stufe ${stats.furcht}");
-  }
-  if (stats.paralyse > 0) {
-    states.add("Paralyse Stufe ${stats.paralyse}");
-  }
-  if (stats.schmerz > 0) {
-    states.add("Schmerz Stufe ${stats.schmerz}");
-  }
-  if (stats.verwirrung > 0) {
-    states.add("Verwirrung Stufe ${stats.verwirrung}");
-  }
+  final states = stats.characterState.getTexts();
   String statesText = states.join(", ");
   return Card(
     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),

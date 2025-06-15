@@ -1,3 +1,4 @@
+import 'package:eorla/models/rules.dart';
 import 'package:flutter/material.dart';
 import '../models/character.dart';
 import '../models/weapons.dart';
@@ -24,16 +25,9 @@ class _CombatScreenState extends State<CombatScreen> {
   int modifier = 0;
   SpecialAbility? selectedSpecial;
 
-  void rollCombat(CombatActionType type) {
-    // final engine = CombatRollEngine(
-    //   character: widget.character,
-    //   weapon: widget.weapon,
-    //   actionType: type,
-    //   modifier: modifier,
-    //   special: selectedSpecial,
-    // );
-
-    // final result = engine.roll();
+  void rollCombat(CombatActionType action) {
+    final engine = CombatRoll.fromWeapon(widget.character, widget.weapon);
+    final result = engine.roll(action, modifier);
 
     // Navigator.push(
     //   context,
