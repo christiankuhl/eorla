@@ -1,0 +1,3 @@
+[submodule "lib/models"]
+	path = lib/models
+	url = git@github.com:christiankuhl/eorla-models.git
