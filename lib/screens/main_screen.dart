@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:eorla/screens/weapon_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,51 +17,99 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final character = Provider.of<CharacterManager>(context).activeCharacter;
+    final allItems = [
+      ...skillGroups.keys.map(
+        (grp) => Opacity(
+          opacity: character != null ? 1.0 : 0.5,
+          child: SkillGroupCard(
+            skillGroup: grp,
+            onTap: () {
+              if (character != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SkillSelectionScreen(skillGroup: grp),
+                  ),
+                );
+              }
+            },
+          ),
+        ),
+      ),
+      Opacity(
+        opacity: character != null ? 1.0 : 0.5,
+        child: mainScreenPanel("Kampf", Symbols.swords, () {
+          if (character != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => WeaponSelectionScreen(),
+              ),
+            );
+          }
+        }),
+      ),
+    ];
+
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            CharacterCard(),
+            SizedBox(
+              height: 100,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: Icon(Icons.home, size: 32),
+                  ),
+                  Expanded(
+                    child: CharacterCard(),
+                  ),
+                ],
+              ),
+            ),
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                children:
-                    skillGroups.keys
-                        .map(
-                          (grp) => Opacity(
-                            opacity: character != null ? 1.0 : 0.5,
-                            child: SkillGroupCard(
-                              skillGroup: grp,
-                              onTap: () {
-                                if (character != null) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          SkillSelectionScreen(skillGroup: grp),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                          ),
-                        )
-                        .toList() +
-                    [
-                      Opacity(
-                        opacity: character != null ? 1.0 : 0.5,
-                        child: mainScreenPanel("Kampf", Symbols.swords, () {
-                          if (character != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => WeaponSelectionScreen(),
-                              ),
-                            );
-                          }
-                        }),
-                      ),
-                    ],
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Calculate the optimal number of columns
+                  const double minItemWidth = 160.0; // Adjust as needed
+                  const double maxItemWidth = 600.0; // Adjust as needed
+
+                  int crossAxisCount = 1;
+                  crossAxisCount = sqrt(constraints.maxWidth * allItems.length / constraints.maxHeight).ceil();
+                  crossAxisCount = crossAxisCount.clamp(1, allItems.length);
+                  
+                  double itemWidth = constraints.maxWidth / crossAxisCount;
+                  if (itemWidth < minItemWidth) {
+                    // If the optimal width is less than the minimum, use 1 column
+                    crossAxisCount -= 1;
+                    itemWidth = constraints.maxWidth / crossAxisCount;
+                  }
+                  if (itemWidth > maxItemWidth) {
+                    // If the optimal width is greater than the maximum, use all items in one row
+                    crossAxisCount = allItems.length;
+                    itemWidth = constraints.maxWidth / crossAxisCount;
+                  } 
+                  if ((allItems.length / crossAxisCount).ceil() > constraints.maxHeight / itemWidth) {
+                    // If the number of items per row exceeds the height, increase the number of columns
+                    int numberOfRows = (allItems.length / crossAxisCount).ceil()-1;
+                    numberOfRows = numberOfRows.clamp(1, (constraints.maxHeight / itemWidth).ceil());
+                    itemWidth = constraints.maxWidth / (allItems.length / numberOfRows).ceil();
+                    if (itemWidth > minItemWidth && itemWidth < maxItemWidth) {
+                      crossAxisCount = (allItems.length / numberOfRows).ceil();
+                    }
+                  }
+
+
+                  return GridView.count(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: 1,
+                    children: allItems,
+                  );
+                },
               ),
             ),
           ],
