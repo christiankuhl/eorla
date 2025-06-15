@@ -10,7 +10,16 @@ class Weapon {
   Weapon(this.id, this.name, this.ct, this.at, this.pa, this.damageDice, this.damageDiceSides, this.damageFlat);
 
   factory Weapon.fromJson(Map<String, dynamic> value) {
-    return Weapon(value["id"], value["name"], combatTechniques[value["combatTechnique"]]!, value["at"], value["pa"], value["damageDiceNumber"], value["damageDiceSides"], value["damageFlat"]);
+    return Weapon(
+      value["id"] ?? "unknown_weapon", // Default to "unknown_weapon" if not provided
+      value["name"] ?? "Unbenannte Waffe", // Default to "Unbenannte Waffe" if not provided
+      combatTechniques[value["combatTechnique"]]! ?? CombatTechnique.schwerter, // Default to schwerter if not found
+      value["at"] ?? 0, // Default to 0 if not provided
+      value["pa"] ?? 0, // Default to 0 if not provided
+      value["damageDiceNumber"] ?? 0, 
+      value["damageDiceSides"] ?? 6, // Default to 0 if not provided
+      value["damageFlat"] ?? 0
+      );
   }
 
   Map<String, dynamic> toJson() {
