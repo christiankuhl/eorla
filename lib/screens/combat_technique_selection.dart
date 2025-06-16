@@ -3,11 +3,10 @@ import 'package:provider/provider.dart';
 import '../managers/character_manager.dart';
 import '../widgets/character_card.dart';
 import '../widgets/weapon_card.dart';
-import 'combat.dart';
+import '../models/weapons.dart';
 
-class WeaponSelectionScreen extends StatelessWidget {
-
-  const WeaponSelectionScreen({super.key});
+class CombatTechniqueSelectionScreen extends StatelessWidget {
+  const CombatTechniqueSelectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class WeaponSelectionScreen extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: 100, // Adjust as needed for your CharacterCard
+              height: 100,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -26,9 +25,7 @@ class WeaponSelectionScreen extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     iconSize: 32,
                   ),
-                  Expanded(
-                    child: CharacterCard(),
-                  ),
+                  Expanded(child: CharacterCard()),
                 ],
               ),
             ),
@@ -36,29 +33,26 @@ class WeaponSelectionScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text("Waffen", style: TextStyle(fontSize: 24)),
+                child: Text("Kampftechniken", style: TextStyle(fontSize: 24)),
               ),
             ),
             Expanded(
               child: ListView(
-                children: (character?.weapons ?? [])
-                    .map(
-                      (weapon) => WeaponCard(
-                        weaponName: weapon.name,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CombatScreen(
-                                weapon: weapon,
-                                character: character!,
-                              ),
+                children:
+                    (character?.combatTechniques ?? <CombatTechnique, int>{})
+                        .map(
+                          (ct, ctValue) => MapEntry(
+                            ct,
+                            WeaponCard(
+                              weaponName: ct.name,
+                              onTap: () {
+                                Navigator.pop(context, ct);
+                              },
                             ),
-                          );
-                        },
-                      ),
-                    )
-                    .toList(),
+                          ),
+                        )
+                        .values
+                        .toList(),
               ),
             ),
           ],

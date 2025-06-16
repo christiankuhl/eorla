@@ -1,5 +1,7 @@
-import 'package:eorla/models/rules.dart';
+import 'package:eorla/widgets/widget_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import '../models/rules.dart';
 import '../models/weapons.dart';
 import '../models/character.dart';
 
@@ -28,69 +30,79 @@ class WeaponCard extends StatelessWidget {
 Widget weaponInfoCard(
   Weapon weapon,
   Character character, {
-  CombatResult? result,
+  required VoidCallback onAttack,
+  required VoidCallback onParry,
+  required VoidCallback onDamage,
+  VoidCallback? onDelete,
 }) {
   final stats = CombatRoll.fromWeapon(character, weapon);
-  var weaponStats = [statColumn("AT", stats.targetValue(CombatActionType.attack).toString())];
-  if (!weapon.ct.hasNoParry) {
-    weaponStats.add(statColumn("PA", stats.targetValue(CombatActionType.parry).toString()));
-  }
-  weaponStats.add(statColumn("AW", stats.targetValue(CombatActionType.dodge).toString()));
-  weaponStats.add(statColumn("TP", weapon.tpText()));
+
+  List<Widget> weaponStats = [
+    statColumn(
+      "AT",
+      stats.targetValue(CombatActionType.attack).toString(),
+      button: actionButton(Symbols.swords, onAttack),
+    ),
+    if (!weapon.ct.hasNoParry)
+      statColumn(
+        "PA",
+        stats.targetValue(CombatActionType.parry).toString(),
+        button: actionButton(Icons.security, onParry),
+      ),
+    statColumn(
+      "TP",
+      weapon.tpText(),
+      button: actionButton(Icons.whatshot, onDamage),
+    ),
+  ];
+
   return Card(
     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-    child: Padding(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            weapon.name,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: weaponStats,
-          ),
-          if (result != null) ...[
-            Divider(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Wurf", style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(result.roll.toString()),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Zielwert", style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(result.target.toString()),
-              ],
-            ),
-            SizedBox(height: 8),
-            Text(
-              result.successText, // e.g. "Treffer!" or "Parade fehlgeschlagen"
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: result.isSuccess ? Colors.green : Colors.red,
+    child: Stack(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                weapon.name,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
+              SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: weaponStats,
+              ),
+            ],
+          ),
+        ),
+        if (onDelete != null)
+          Positioned(
+            top: 4,
+            right: 4,
+            child: IconButton(
+              icon: Icon(Icons.close, size: 20, color: Colors.blue),
+              tooltip: 'Entfernen',
+              splashRadius: 20,
+              onPressed: onDelete,
             ),
-          ],
-        ],
-      ),
+          ),
+      ],
     ),
   );
 }
 
-Widget statColumn(String label, String value) {
-  return Column(
+Widget statColumn(String label, String value, {Widget? button}) {
+  List<Widget> col = [
+    Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+    SizedBox(height: 4),
+    Text(value),
+  ];
+  return Row(
     children: [
-      Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
-      SizedBox(height: 4),
-      Text(value),
+      Column(children: col),
+      if (button != null) button,
     ],
   );
 }

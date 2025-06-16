@@ -45,21 +45,19 @@ class RollScreenState extends State<RollScreen> {
           child: Column(
             children: [
               SizedBox(
-              height: 100, // Adjust as needed for your CharacterCard
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.of(context).pop(),
-                    iconSize: 32,
-                  ),
-                  Expanded(
-                    child: CharacterCard(),
-                  ),
-                ],
+                height: 100,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back),
+                      onPressed: () => Navigator.of(context).pop(),
+                      iconSize: 32,
+                    ),
+                    Expanded(child: CharacterCard()),
+                  ],
                 ),
-              ), 
+              ),
 
               skillInfoCard(widget.skill, stats),
               attributesCard(stats),

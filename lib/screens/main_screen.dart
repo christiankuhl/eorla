@@ -1,6 +1,4 @@
 import 'dart:math';
-
-import 'package:eorla/screens/weapon_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -10,6 +8,7 @@ import '../widgets/skill_group_card.dart';
 import '../models/skill_groups.dart';
 import '../managers/character_manager.dart';
 import 'skill_selection.dart';
+import 'combat.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -43,7 +42,7 @@ class MainScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => WeaponSelectionScreen(),
+                builder: (_) => CombatScreen(character: character),
               ),
             );
           }
@@ -65,9 +64,7 @@ class MainScreen extends StatelessWidget {
                     height: 48,
                     child: Icon(Icons.home, size: 32),
                   ),
-                  Expanded(
-                    child: CharacterCard(),
-                  ),
+                  Expanded(child: CharacterCard()),
                 ],
               ),
             ),
@@ -75,22 +72,30 @@ class MainScreen extends StatelessWidget {
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   // Calculate the optimal number of columns
-                  const double minItemWidth = 160.0; // Adjust as needed
-                  const double maxItemWidth = 500.0; // Adjust as needed
+                  const double minItemWidth = 160.0;
+                  const double maxItemWidth = 500.0;
 
                   int crossAxisCount = 1;
-                  crossAxisCount = sqrt(constraints.maxWidth * allItems.length / constraints.maxHeight).ceil();
+                  crossAxisCount = sqrt(
+                    constraints.maxWidth *
+                        allItems.length /
+                        constraints.maxHeight,
+                  ).ceil();
                   crossAxisCount = crossAxisCount.clamp(1, allItems.length);
-                  
+
                   double itemWidth = constraints.maxWidth / crossAxisCount;
-                  if ((allItems.length / crossAxisCount).ceil() > constraints.maxHeight / itemWidth) {
+                  if ((allItems.length / crossAxisCount).ceil() >
+                      constraints.maxHeight / itemWidth) {
                     // If the number of items per row exceeds the height, increase the number of columns
-                    int numberOfRows = (allItems.length / crossAxisCount).ceil()-1;
-                    numberOfRows = numberOfRows.clamp(1, (constraints.maxHeight / itemWidth).ceil());
-                    itemWidth = constraints.maxWidth / (allItems.length / numberOfRows).ceil();
-                    //if (itemWidth > minItemWidth && itemWidth < maxItemWidth) {
-                    //  crossAxisCount = (allItems.length / numberOfRows).ceil();
-                    //}
+                    int numberOfRows =
+                        (allItems.length / crossAxisCount).ceil() - 1;
+                    numberOfRows = numberOfRows.clamp(
+                      1,
+                      (constraints.maxHeight / itemWidth).ceil(),
+                    );
+                    itemWidth =
+                        constraints.maxWidth /
+                        (allItems.length / numberOfRows).ceil();
                   }
                   if (itemWidth < minItemWidth) {
                     // If the optimal width is less than the minimum, use 1 column
@@ -100,8 +105,7 @@ class MainScreen extends StatelessWidget {
                     // If the optimal width is greater than the maximum, use all items in one row
                     crossAxisCount = allItems.length;
                     itemWidth = constraints.maxWidth / crossAxisCount;
-                  } 
-
+                  }
 
                   return GridView.count(
                     crossAxisCount: crossAxisCount,

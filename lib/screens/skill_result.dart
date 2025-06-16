@@ -26,7 +26,7 @@ class ResultScreen extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(
-              height: 100, // Adjust as needed for your CharacterCard
+              height: 100,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

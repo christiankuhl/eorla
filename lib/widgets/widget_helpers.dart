@@ -193,3 +193,15 @@ String roman(int num) {
     },
   );
 }
+
+Widget actionButton(IconData icon, VoidCallback onPressed) {
+  return ElevatedButton(
+    onPressed: onPressed,
+    style: ElevatedButton.styleFrom(
+      shape: CircleBorder(),
+      padding: EdgeInsets.all(12),
+      elevation: 2,
+    ),
+    child: Icon(icon),
+  );
+}

@@ -6,16 +6,12 @@ import '../models/special_abilities.dart';
 import '../widgets/character_card.dart';
 import '../widgets/widget_helpers.dart';
 import '../widgets/weapon_card.dart';
+import 'combat_technique_selection.dart';
 
 class CombatScreen extends StatefulWidget {
   final Character character;
-  final Weapon weapon;
 
-  const CombatScreen({
-    required this.character,
-    required this.weapon,
-    super.key,
-  });
+  const CombatScreen({required this.character, super.key});
 
   @override
   State<CombatScreen> createState() => _CombatScreenState();
@@ -24,29 +20,52 @@ class CombatScreen extends StatefulWidget {
 class _CombatScreenState extends State<CombatScreen> {
   int modifier = 0;
   SpecialAbility? selectedSpecial;
+  Widget? genericAttack;
 
-  void rollCombat(CombatActionType action) {
-    final engine = CombatRoll.fromWeapon(widget.character, widget.weapon);
+  // TODO: Prettify this!
+  void rollCombat(CombatActionType action, Weapon weapon) {
+    final engine = CombatRoll.fromWeapon(widget.character, weapon);
     final result = engine.roll(action, modifier);
-
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (_) => CombatResultScreen(result: result),
-    //   ),
-    // );
+    String txt = "${result.text()} (${engine.targetValue(action)} → 🎲 ${result.roll})";
+    String title;
+    switch (action) {
+      case CombatActionType.attack:
+        title = "${weapon.name} - Attacke";
+      case CombatActionType.parry:
+        title = "${weapon.name} - Parade";
+      case CombatActionType.dodge:
+        title = "Ausweichen";
+    }
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(title),
+        content: Text(txt),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
-  void rollDamage() {
-    // final damage = widget.weapon.rollDamage();
-    // showDialog(
-    //   context: context,
-    //   builder: (_) => AlertDialog(
-    //     title: Text('Schaden'),
-    //     content: Text('Du verursachst $damage Schaden.'),
-    //     actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text('OK'))],
-    //   ),
-    // );
+  void rollDamage(Weapon weapon) {
+    final damage = weapon.rollDamage(widget.character);
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Schaden'),
+        content: Text('Dein Angriff verursacht $damage Trefferpunkt(e).'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -54,115 +73,143 @@ class _CombatScreenState extends State<CombatScreen> {
     final List<SpecialAbility> specialOptions =
         widget.character.abilities ?? [];
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-              height: 100, // Adjust as needed for your CharacterCard
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.of(context).pop(),
-                    iconSize: 32,
-                  ),
-                  Expanded(
-                    child: CharacterCard(),
-                  ),
-                ],
+    List<Widget> tlChildren = [
+      SizedBox(
+        height: 100,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
+              iconSize: 32,
+            ),
+            Expanded(child: CharacterCard()),
+          ],
+        ),
+      ),
+    ];
+    for (Weapon weapon in widget.character.weapons ?? []) {
+      tlChildren.add(
+        weaponInfoCard(
+          weapon,
+          widget.character,
+          onAttack: () => rollCombat(CombatActionType.attack, weapon),
+          onParry: () => rollCombat(CombatActionType.parry, weapon),
+          onDamage: () => rollDamage(weapon),
+        ),
+      );
+    }
+    if (genericAttack == null) {
+      tlChildren.add(
+        Card(
+          margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: InkWell(
+            onTap: () async {
+              final selected = await Navigator.push<CombatTechnique>(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CombatTechniqueSelectionScreen(),
+                  fullscreenDialog: true,
                 ),
-              ), 
-
-              weaponInfoCard(widget.weapon, widget.character),
-              Card(
-                margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Kampfsonderfertigkeiten",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      DropdownButton<SpecialAbility?>(
-                        value: selectedSpecial,
-                        isExpanded: true,
-                        hint: Text("Wählen..."),
-                        items: [
-                          DropdownMenuItem<SpecialAbility?>(
-                            value: null,
-                            child: Text("– Keine Sonderfertigkeit –"),
-                          ),
-                          ...specialOptions.map(
-                            (ability) => DropdownMenuItem<SpecialAbility?>(
-                              value: ability,
-                              child: Text(ability.toString()),
-                            ),
-                          ),
-                        ],
-                        onChanged: (val) =>
-                            setState(() => selectedSpecial = val),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              Card(
-                margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: modifierRow(
-                    "Modifikator",
-                    modifier,
-                    () {
-                      setState(() => modifier++);
-                    },
-                    () {
-                      setState(() => modifier--);
-                    },
-                  ),
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12.0,
-                  vertical: 6,
-                ),
-                child: Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  alignment: WrapAlignment.center,
+              );
+              if (selected != null) {
+                setState(() {
+                  Weapon weapon = genericWeapon(selected);
+                  genericAttack = weaponInfoCard(
+                    weapon,
+                    widget.character,
+                    onAttack: () => rollCombat(CombatActionType.attack, weapon),
+                    onParry: () => rollCombat(CombatActionType.parry, weapon),
+                    onDamage: () => rollDamage(weapon),
+                    onDelete: () => setState(() {
+                      genericAttack = null;
+                    }),
+                  );
+                });
+              } else {
+                setState(() {
+                  genericAttack = null;
+                });
+              }
+            },
+            borderRadius: BorderRadius.circular(4),
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Opacity(
+                opacity: 0.5,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                      onPressed: () => rollCombat(CombatActionType.attack),
-                      child: Text("Attacke"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => rollCombat(CombatActionType.parry),
-                      child: Text("Parade"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => rollCombat(CombatActionType.dodge),
-                      child: Text("Ausweichen"),
-                    ),
-                    OutlinedButton(
-                      onPressed: rollDamage,
-                      child: Text("Schaden"),
-                    ),
+                    Icon(Icons.add, size: 28),
+                    SizedBox(width: 8),
+                    Text("Andere Kampftechnik"),
                   ],
                 ),
               ),
-
-              SizedBox(height: 24),
+            ),
+          ),
+        ),
+      );
+    } else {
+      tlChildren.add(genericAttack!);
+    }
+    tlChildren += [
+      Card(
+        margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Kampfsonderfertigkeiten", style: TextStyle(fontSize: 18)),
+              DropdownButton<SpecialAbility?>(
+                value: selectedSpecial,
+                isExpanded: true,
+                hint: Text("Wählen..."),
+                items: [
+                  DropdownMenuItem<SpecialAbility?>(
+                    value: null,
+                    child: Opacity(
+                      opacity: 0.5,
+                      child: Text("– Keine Sonderfertigkeit –"),
+                    ),
+                  ),
+                  ...specialOptions.map(
+                    (ability) => DropdownMenuItem<SpecialAbility?>(
+                      value: ability,
+                      child: Text(ability.toString()),
+                    ),
+                  ),
+                ],
+                onChanged: (val) => setState(() => selectedSpecial = val),
+              ),
             ],
           ),
         ),
+      ),
+
+      Card(
+        margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: modifierRow(
+            "Modifikator",
+            modifier,
+            () {
+              setState(() => modifier++);
+            },
+            () {
+              setState(() => modifier--);
+            },
+          ),
+        ),
+      ),
+    ];
+
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(child: Column(children: tlChildren)),
       ),
     );
   }

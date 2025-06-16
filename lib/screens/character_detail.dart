@@ -29,20 +29,12 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
         title: Text(c.name),
         centerTitle: true,
         actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => CharacterSelectionScreen()),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(12),
-              elevation: 2,
-            ),
-            child: Icon(Icons.people_alt),
-          ),
+          actionButton(Icons.people_alt, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => CharacterSelectionScreen()),
+            );
+          }),
         ],
       ),
       body: SingleChildScrollView(
