@@ -115,7 +115,7 @@ class _CombatScreenState extends State<CombatScreen> {
               );
               if (selected != null) {
                 setState(() {
-                  Weapon weapon = genericWeapon(selected);
+                  Weapon weapon = genericWeapons[selected]!;
                   genericAttack = weaponInfoCard(
                     weapon,
                     widget.character,
