@@ -39,9 +39,9 @@ class CombatTechniqueSelectionScreen extends StatelessWidget {
             Expanded(
               child: ListView(
                 children:
-                    (character?.combatTechniques ?? <CombatTechnique, int>{})
+                    (combatTechniquesByID)
                         .map(
-                          (ct, ctValue) => MapEntry(
+                          (id, ct) => MapEntry(
                             ct,
                             WeaponCard(
                               weaponName: ct.name,
