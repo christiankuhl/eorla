@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/rules.dart';
 import '../models/skill.dart';
+import '../models/attributes.dart';
+import '../models/character.dart';
 
 Widget modifierRow(
   String label,
@@ -43,6 +45,30 @@ Card skillInfoCard(Skill skill, SkillRoll stats) {
           SizedBox(height: 8),
           Text(
             'Fertigkeitswert (FW): ${stats.talentValue}',
+            style: TextStyle(fontSize: 18),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Card attributeInfoCard(Attribute attr, int attrValue) {
+  return Card(
+    margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    child: Container(
+      padding: EdgeInsets.all(16),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            attr.name,
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          Text(
+            '${attr.short}: $attrValue',
             style: TextStyle(fontSize: 18),
           ),
         ],
@@ -102,13 +128,13 @@ Column attributesCard(SkillRoll stats, {SkillRollResult? rollResults}) {
   );
   var children = [card];
   if (stats.characterState.value() > 0) {
-    children.add(statesCard(stats));
+    children.add(statesCard(stats.characterState));
   }
   return Column(children: children);
 }
 
-Card statesCard(SkillRoll stats) {
-  final states = stats.characterState.getTexts();
+Card statesCard(CharacterState state) {
+  final states = state.getTexts();
   String statesText = states.join(", ");
   return Card(
     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
