@@ -88,10 +88,10 @@ class MainScreen extends StatelessWidget {
                       constraints.maxHeight / itemWidth) {
                     // If the number of items per row exceeds the height, increase the number of columns
                     int numberOfRows =
-                        (allItems.length / crossAxisCount).ceil() - 1;
+                        (allItems.length / crossAxisCount).ceil();
                     numberOfRows = numberOfRows.clamp(
                       1,
-                      (constraints.maxHeight / itemWidth).ceil(),
+                      (constraints.maxHeight / itemWidth).ceil() + 1, // Allow for one item of slack. We are in a scroll view, after all
                     );
                     itemWidth =
                         constraints.maxWidth /
