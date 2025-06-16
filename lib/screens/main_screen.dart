@@ -8,6 +8,7 @@ import '../widgets/skill_group_card.dart';
 import '../models/skill_groups.dart';
 import '../managers/character_manager.dart';
 import 'skill_selection.dart';
+import 'attribute_selection.dart';
 import 'combat.dart';
 
 class MainScreen extends StatelessWidget {
@@ -43,6 +44,33 @@ class MainScreen extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (_) => CombatScreen(character: character),
+              ),
+            );
+          }
+        }),
+      ),
+      Opacity(
+        opacity: character != null ? 1.0 : 0.5,
+        child: mainScreenPanel("Eigenschaften", Icons.list_alt, () {
+          if (character != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => AttributeSelectionScreen(),
+              ),
+            );
+          }
+        }),
+      ),
+      if (character?.hasSpells() ?? false)
+      Opacity(
+        opacity: character != null ? 1.0 : 0.5,
+        child: mainScreenPanel("Magie", Icons.auto_awesome, () {
+          if (character != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => CombatScreen(character: character), // TODO: proper route here
               ),
             );
           }
