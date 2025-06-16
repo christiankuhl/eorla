@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../managers/character_manager.dart';
 import '../widgets/character_card.dart';
 import '../widgets/weapon_card.dart';
 import '../models/weapons.dart';
@@ -10,7 +8,6 @@ class CombatTechniqueSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final character = Provider.of<CharacterManager>(context).activeCharacter;
     return Scaffold(
       body: SafeArea(
         child: Column(

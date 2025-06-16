@@ -52,7 +52,7 @@ class _CombatScreenState extends State<CombatScreen> {
   }
 
   void rollDamage(Weapon weapon) {
-    final damage = weapon.rollDamage(widget.character);
+    final damage = damageRoll(weapon, widget.character);
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
