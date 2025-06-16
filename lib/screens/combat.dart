@@ -23,16 +23,20 @@ class _CombatScreenState extends State<CombatScreen> {
   Widget? genericAttack;
 
   // TODO: Prettify this!
-  void rollCombat(CombatActionType action, Weapon weapon) {
-    final engine = CombatRoll.fromWeapon(widget.character, weapon);
+  void rollCombat(CombatActionType action, Weapon? weapon) {
+    final engine = CombatRoll.fromWeapon(
+      widget.character,
+      weapon ?? genericWeapons[CombatTechnique.schwerter]!,
+    ); // FIXME: the default value doesn't actually matter, but we need a cleaner interface
     final result = engine.roll(action, modifier);
-    String txt = "${result.text()} (${engine.targetValue(action)} → 🎲 ${result.roll})";
+    String txt =
+        "${result.text()} (${engine.targetValue(action)} → 🎲 ${result.roll})";
     String title;
     switch (action) {
       case CombatActionType.attack:
-        title = "${weapon.name} - Attacke";
+        title = "${weapon!.name} - Attacke";
       case CombatActionType.parry:
-        title = "${weapon.name} - Parade";
+        title = "${weapon!.name} - Parade";
       case CombatActionType.dodge:
         title = "Ausweichen";
     }
@@ -86,6 +90,36 @@ class _CombatScreenState extends State<CombatScreen> {
             ),
             Expanded(child: CharacterCard()),
           ],
+        ),
+      ),
+      Card(
+        margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Ausweichen",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Row(
+                children: [
+                  Column(
+                    children: [
+                      Text("AW", style: TextStyle(fontWeight: FontWeight.bold)),
+                      SizedBox(height: 4),
+                      Text((widget.character.ge / 2).round().toString()),
+                    ],
+                  ),
+                  actionButton(
+                    Icons.directions_run,
+                    () => rollCombat(CombatActionType.dodge, null),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     ];
