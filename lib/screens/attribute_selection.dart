@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../managers/character_manager.dart';
 import '../widgets/character_card.dart';
-import '../widgets/skill_card.dart';
+import '../widgets/plain_card.dart';
 import 'attribute_roll.dart';
 
 class AttributeSelectionScreen extends StatelessWidget {
@@ -44,8 +44,8 @@ class AttributeSelectionScreen extends StatelessWidget {
               child: ListView(
                 children: (attributeKeys.values)
                     .map(
-                      (attribute) => SkillCard(
-                        skillName: attribute.name,
+                      (attribute) => PlainCard(
+                        itemName: attribute.name,
                         onTap: () {
                           Navigator.push(
                             context,

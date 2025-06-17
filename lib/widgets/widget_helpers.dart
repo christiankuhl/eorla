@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/rules.dart';
-import '../models/skill.dart';
 import '../models/attributes.dart';
 import '../models/character.dart';
 

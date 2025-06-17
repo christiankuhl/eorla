@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../managers/character_manager.dart';
 import '../widgets/character_card.dart';
-import '../widgets/skill_card.dart';
+import '../widgets/plain_card.dart';
 import '../models/skill_groups.dart';
+import '../models/skill.dart';
 import 'skill_roll.dart';
 
 class SkillSelectionScreen extends StatelessWidget {
@@ -45,14 +46,14 @@ class SkillSelectionScreen extends StatelessWidget {
               child: ListView(
                 children: (skillGroups[skillGroup] ?? [])
                     .map(
-                      (skill) => SkillCard(
-                        skillName: skill.name,
+                      (skill) => PlainCard(
+                        itemName: skill.name,
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => RollScreen(
-                                skill: skill,
+                                skillOrSpell: SkillWrapper(skill),
                                 character: character!,
                               ),
                             ),

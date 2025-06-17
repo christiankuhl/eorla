@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class SkillCard extends StatelessWidget {
-  final String skillName;
+class PlainCard extends StatelessWidget {
+  final String itemName;
   final VoidCallback onTap;
 
-  const SkillCard({required this.skillName, required this.onTap, super.key});
+  const PlainCard({required this.itemName, required this.onTap, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class SkillCard extends StatelessWidget {
           height: 60,
           alignment: Alignment.center,
           child: Text(
-            skillName,
+            itemName,
             style: TextStyle(fontSize: 18),
           ),
         ),
