@@ -1,0 +1,7 @@
+builders:
+  db_injector:
+    import: "tool/inject_db.dart"
+    builder_factories: ["injectDB"]
+    build_extensions: {'lib/models/stubs/{{}}.dart': ['lib/models/generated/{{}}.dart']}
+    build_to: source
+    auto_apply: root_package
