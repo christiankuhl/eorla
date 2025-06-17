@@ -53,7 +53,16 @@ class CharacterSelectionScreen extends StatelessWidget {
               title: Text(character.name),
               onTap: () {
                 manager.setActiveCharacter(character);
-                Navigator.pop(context);
+                Navigator.popUntil(
+                  context,
+                  ModalRoute.withName(Navigator.defaultRouteName),
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CharacterDetailScreen(character: character),
+                  ),
+                );
               },
             );
           }
