@@ -30,7 +30,7 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
       widget.character.state,
     );
     String txt =
-        "${result.text()} (${atValue + modifier - widget.character.state.value()} → 🎲 ${result.roll})";
+        "${result.text()} (${atValue + modifier - widget.character.state.value()} → 🎲 ${result.roll ?? '-/-'})";
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
