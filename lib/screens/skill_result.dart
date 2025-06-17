@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import '../widgets/widget_helpers.dart';
 import '../widgets/character_card.dart';
-import '../models/skill.dart';
 import '../models/rules.dart';
 
-class ResultScreen extends StatelessWidget {
-  final Skill skill;
+class ResultScreen<T extends Trial> extends StatelessWidget {
+  final T skillOrSpell;
   final SkillRoll stats;
   final SkillRollResult rollResults;
   final int modifier;
 
   const ResultScreen({
-    required this.skill,
+    required this.skillOrSpell,
     required this.stats,
     required this.rollResults,
     required this.modifier,
@@ -41,7 +40,7 @@ class ResultScreen extends StatelessWidget {
                 ],
                 ),
               ), 
-              skillInfoCard(skill, stats),
+              skillInfoCard(skillOrSpell, stats),
               attributesCard(stats, rollResults: rollResults),
 
               Card(
@@ -75,10 +74,10 @@ class ResultScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       Text(rollResults.text(), style: TextStyle(fontSize: 18)),
-                      if (rollResults.addText(skill).isNotEmpty) ...[
+                      if (rollResults.addText(skillOrSpell).isNotEmpty) ...[
                         SizedBox(height: 12),
                         Text(
-                          rollResults.addText(skill),
+                          rollResults.addText(skillOrSpell),
                           style: TextStyle(
                             fontSize: 16,
                             fontStyle: FontStyle.italic,

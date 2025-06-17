@@ -28,7 +28,7 @@ Widget modifierRow(
   );
 }
 
-Card skillInfoCard(Skill skill, SkillRoll stats) {
+Card skillInfoCard<T extends Trial>(T skillOrSpell, SkillRoll stats) {
   return Card(
     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     child: Container(
@@ -38,7 +38,7 @@ Card skillInfoCard(Skill skill, SkillRoll stats) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$skill',
+            '${skillOrSpell.name}',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
