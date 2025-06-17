@@ -8,6 +8,7 @@ import '../widgets/skill_group_card.dart';
 import '../models/skill_groups.dart';
 import '../managers/character_manager.dart';
 import 'skill_selection.dart';
+import 'spell_selection.dart';
 import 'attribute_selection.dart';
 import 'combat.dart';
 
@@ -70,7 +71,7 @@ class MainScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => CombatScreen(character: character), // TODO: proper route here
+                builder: (_) => SpellSelectionScreen(),
               ),
             );
           }
