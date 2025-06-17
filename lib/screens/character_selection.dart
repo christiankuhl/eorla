@@ -69,7 +69,7 @@ class CharacterSelectionScreen extends StatelessWidget {
       if (context.mounted) {
         showLoadingDialog(context);
         final Character newCharacter = await Future.delayed(
-          Duration(milliseconds: 100), // optional: yield for frame
+          Duration(milliseconds: 100),
           () => Character.fromJson(jsonData),
         );
 
@@ -79,8 +79,11 @@ class CharacterSelectionScreen extends StatelessWidget {
           await CharacterStorage.saveCharacters(manager.characters);
           manager.setActiveCharacter(newCharacter);
           if (context.mounted) {
-            Navigator.of(context).pop();
-            Navigator.pushReplacement(
+            Navigator.popUntil(
+              context,
+              ModalRoute.withName(Navigator.defaultRouteName),
+            );
+            Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (_) => CharacterDetailScreen(character: newCharacter),
