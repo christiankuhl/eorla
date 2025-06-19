@@ -73,6 +73,7 @@ class CharacterSelectionScreen extends StatelessWidget {
 
   Future<void> importCharacter(BuildContext context) async {
     final Map<String, dynamic> jsonData = await getOptolithCharacterData();
+    if (jsonData.isEmpty) return;
     try {
       // TODO: Figure out async boundary
       if (context.mounted) {
