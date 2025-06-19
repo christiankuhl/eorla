@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import '../widgets/widget_helpers.dart';
 import 'rules.dart';
 import 'attributes.dart';
@@ -7,10 +6,10 @@ import 'skill.dart';
 import 'weapons.dart';
 import 'spells.dart';
 import 'special_abilities.dart';
+import 'avatar.dart';
 
 class Character {
   final String name;
-
   int mu;
   int kl;
   int in_;
@@ -20,12 +19,8 @@ class Character {
   int ko;
   int kk;
   CharacterState state;
-
   Map<Skill, int>? talents;
-
-  Image? avatar;
-  String? avatarMimetype;
-
+  Avatar avatar;
   List<Weapon>? weapons;
   List<SpecialAbility>? abilities;
   Map<CombatTechnique, int>? combatTechniques;
@@ -45,8 +40,7 @@ class Character {
     this.kk = 8,
     required this.state,
     this.talents,
-    this.avatar,
-    this.avatarMimetype,
+    required this.avatar,
     this.weapons,
     this.abilities,
     this.combatTechniques,
@@ -59,16 +53,13 @@ class Character {
   }
 
   factory Character.fromJson(Map<String, dynamic> json) {
-    var parts = json["avatar"].split(",");
-    var avatarMimetype = parts.first;
-    var content = parts.last;
+    
     Character character = Character(
       name: json['name'],
       state: CharacterState.empty(),
       talents: {},
       weapons: [],
-      avatar: Image.memory(base64Decode(content)),
-      avatarMimetype: avatarMimetype,
+      avatar: Avatar.fromJson(json["avatar"]),
       abilities: [],
       combatTechniques: {},
       spells: null,
@@ -121,9 +112,7 @@ class Character {
     var abilitiesOut = {};
     var result = {
       "name": name,
-      "avatar": avatarMimetype != null
-          ? "${avatarMimetype!},${base64Encode((avatar?.image as MemoryImage).bytes)}"
-          : null,
+      "avatar": avatar.toJson(),
       "talents": <String, int>{
         for (var v in talents!.entries) v.key.id: v.value,
       },

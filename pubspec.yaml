@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.5
+  image: ^4.5.4
   path_provider: ^2.0.14
   file_picker: ^10.2.0
   material_symbols_icons: ^4.2815.1

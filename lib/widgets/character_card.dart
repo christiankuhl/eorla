@@ -50,7 +50,7 @@ class CharacterCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
-                backgroundImage: character.avatar?.image,
+                backgroundImage: character.avatar.image,
                 radius: 30,
               ),
             ),

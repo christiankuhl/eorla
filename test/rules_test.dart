@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:eorla/models/avatar.dart';
 import 'package:eorla/models/character.dart';
 import 'package:test/test.dart';
 import 'package:eorla/models/rules.dart';
@@ -87,6 +88,7 @@ void main() {
 
 Character durchschnittsdoedel() {
   return Character(
+    avatar: Avatar.empty(),
     name: "Dödel",
     mu: 11,
     kl: 9,

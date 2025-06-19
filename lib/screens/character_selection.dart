@@ -30,8 +30,8 @@ class CharacterSelectionScreen extends StatelessWidget {
             final character = manager.characters[index];
             return ListTile(
               leading: CircleAvatar(
-                backgroundImage: character.avatar?.image,
-                child: character.avatar == null ? Icon(Icons.person) : null,
+                backgroundImage: character.avatar.image,
+                child: character.avatar.image == null ? Icon(Icons.person) : null,
               ),
               trailing: IconButton(
                 icon: Icon(Icons.delete, color: Colors.red),
