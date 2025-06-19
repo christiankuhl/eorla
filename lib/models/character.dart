@@ -1,3 +1,4 @@
+import 'package:eorla/models/optolith.dart';
 import 'package:flutter/material.dart';
 import '../widgets/widget_helpers.dart';
 import 'rules.dart';
@@ -25,6 +26,7 @@ class Character {
   List<SpecialAbility>? abilities;
   Map<CombatTechnique, int>? combatTechniques;
   Map<Spell, int>? spells;
+  Optolith optolith;
 
   Character({
     required this.name,
@@ -45,6 +47,7 @@ class Character {
     this.abilities,
     this.combatTechniques,
     this.spells,
+    required this.optolith,
   }) {
     talents ??= {};
     spells ??= {};
@@ -63,6 +66,7 @@ class Character {
       abilities: [],
       combatTechniques: {},
       spells: null,
+      optolith: Optolith(json),
     );
     for (var item in json['attr']['values']) {
       String id = item['id'];
@@ -97,7 +101,7 @@ class Character {
     return character;
   }
 
-  Map<String, dynamic> toJson() {
+  Map<dynamic, dynamic> toJson() {
     var values = [
       {"id": "ATTR_1", "value": mu},
       {"id": "ATTR_2", "value": kl},
@@ -116,7 +120,7 @@ class Character {
       "talents": <String, int>{
         for (var v in talents!.entries) v.key.id: v.value,
       },
-      "attr": {"values": values},
+      "attr": <String, dynamic>{"values": values},
       "belongings": {"items": belongings},
       "activatable": abilitiesOut,
       "ct": <String, int>{ for (var v in combatTechniques!.entries) v.key.id: v.value },
@@ -132,8 +136,8 @@ class Character {
     }
     if (spells != null) {
       result["spells"] = {for (var s in spells!.entries) s.key.id: s.value};
-    } 
-    return result;
+    }
+    return optolith.toJson(result);
   }
 
   int getAttribute(Attribute attr) {
