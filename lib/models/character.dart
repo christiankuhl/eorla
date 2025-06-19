@@ -33,14 +33,16 @@ class Character {
 
   Character({
     required this.name,
-    this.mu = 0,
-    this.kl = 0,
-    this.in_ = 0,
-    this.ch = 0,
-    this.ff = 0,
-    this.ge = 0,
-    this.ko = 0,
-    this.kk = 0,
+    // 8 is the default value used by Optolith. We need to set this here, since character export in Optolith omits entries 
+    // that are on their default values.
+    this.mu = 8,
+    this.kl = 8,
+    this.in_ = 8,
+    this.ch = 8,
+    this.ff = 8,
+    this.ge = 8,
+    this.ko = 8,
+    this.kk = 8,
     required this.state,
     this.talents,
     this.avatar,
@@ -167,7 +169,7 @@ class Character {
   }
 
   int getCT(CombatTechnique ct) {
-    return combatTechniques?[ct] ?? 6; // TODO: verify default value!
+    return combatTechniques?[ct] ?? 6; // This is the default value used by Optolith
   }
 
   bool hasSpells() {
