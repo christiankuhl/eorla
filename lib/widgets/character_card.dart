@@ -52,6 +52,9 @@ class CharacterCard extends StatelessWidget {
               child: CircleAvatar(
                 backgroundImage: character.avatar.image,
                 radius: 30,
+                child: character.avatar.image == null
+                    ? Icon(Icons.person, size: 36)
+                    : null,
               ),
             ),
           ],

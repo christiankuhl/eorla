@@ -41,7 +41,13 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            CircleAvatar(backgroundImage: c.avatar.image, radius: 60),
+            CircleAvatar(
+              backgroundImage: c.avatar.image,
+              radius: 60,
+              child: c.avatar.image == null
+                  ? Icon(Icons.person, size: 72)
+                  : null,
+            ),
             SizedBox(height: 16),
             Text(
               'Eigenschaften',
