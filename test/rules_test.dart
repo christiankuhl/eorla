@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:eorla/models/avatar.dart';
 import 'package:eorla/models/character.dart';
+import 'package:eorla/models/optolith.dart';
 import 'package:test/test.dart';
 import 'package:eorla/models/rules.dart';
 import 'package:eorla/models/skill.dart';
@@ -100,6 +101,7 @@ Character durchschnittsdoedel() {
     kk: 10,
     state: CharacterState(0, 0, 0, 0, 0, 0, 4),
     talents: {Skill.gassenwissen: 6},
+    optolith: Optolith({}),
   );
 }
 
