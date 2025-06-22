@@ -75,7 +75,7 @@ class _CombatScreenState extends State<CombatScreen> {
   @override
   Widget build(BuildContext context) {
     final List<SpecialAbility> specialOptions =
-        widget.character.abilities ?? [];
+        (widget.character.abilities ?? []) .where((a) => a.value.type != SpecialAbilityType.passive).toList();
 
     List<Widget> tlChildren = [
       SizedBox(
