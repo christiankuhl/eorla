@@ -1,5 +1,6 @@
 import 'generated/_special_abilities.dart';
 export 'generated/_special_abilities.dart';
+import '../widgets/widget_helpers.dart';
 
 const specialCombatAbilities = {
   "SA_41": SpecialAbilityBase.belastungsgewoehnung,
@@ -109,7 +110,7 @@ class SpecialAbility {
   @override
   String toString() {
     if (tier != null) {
-      return "${value.name} $tier";
+      return "${value.name} ${roman(tier!)}";
     } else {
       return value.name;
     }

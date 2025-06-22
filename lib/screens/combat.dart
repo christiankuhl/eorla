@@ -196,7 +196,47 @@ class _CombatScreenState extends State<CombatScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Kampfsonderfertigkeiten", style: TextStyle(fontSize: 18)),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Kampfsonderfertigkeiten",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  Visibility(
+                    visible: selectedSpecial?.value.rules != null,
+                    child: GestureDetector(
+                      onTap: selectedSpecial?.value.rules != null
+                          ? () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: Text(selectedSpecial.toString()),
+                                  content: Text(selectedSpecial!.value.rules),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          : null,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 4),
+                        child: Icon(
+                          Icons.help_outline,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               DropdownButton<SpecialAbility?>(
                 value: selectedSpecial,
                 isExpanded: true,
