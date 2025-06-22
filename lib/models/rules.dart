@@ -177,17 +177,21 @@ class CombatRoll {
   );
   // TODO: Sonderfertigkeiten!
   factory CombatRoll.fromWeapon(Character character, Weapon weapon) {
+    return CombatRoll.fromTechnique(character, weapon.ct, weapon: weapon);
+  }
+
+  factory CombatRoll.fromTechnique(Character character, CombatTechnique ct, {Weapon? weapon}) {
     final attackPrimary = character.getAttribute(
-      weapon.ct.group == CombatType.melee
+      ct.group == CombatType.melee
           ? Attribute.mut
           : Attribute.fingerfertigkeit,
     );
-    final parryPrimary = weapon.ct.primary
+    final parryPrimary = ct.primary
         .map((attr) => character.getAttribute(attr))
         .reduce((a, b) => a > b ? a : b);
     return CombatRoll(
-      weapon.ct,
-      character.getCT(weapon.ct),
+      ct,
+      character.getCT(ct),
       attackPrimary,
       parryPrimary,
       (character.ge / 2).round(),

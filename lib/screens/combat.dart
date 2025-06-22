@@ -23,20 +23,17 @@ class _CombatScreenState extends State<CombatScreen> {
   Widget? genericAttack;
 
   // TODO: Prettify this!
-  void rollCombat(CombatActionType action, Weapon? weapon) {
-    final engine = CombatRoll.fromWeapon(
-      widget.character,
-      weapon ?? genericWeapons[CombatTechnique.schwerter]!,
-    ); // FIXME: the default value doesn't actually matter, but we need a cleaner interface
+  void rollCombat(CombatActionType action, Weapon weapon) {
+    final engine = CombatRoll.fromWeapon(widget.character, weapon);
     final result = engine.roll(action, modifier);
     String txt =
         "${result.text()} (${engine.targetValue(action)} → 🎲 ${result.roll})";
     String title;
     switch (action) {
       case CombatActionType.attack:
-        title = "${weapon!.name} - Attacke";
+        title = "${weapon.name} - Attacke";
       case CombatActionType.parry:
-        title = "${weapon!.name} - Parade";
+        title = "${weapon.name} - Parade";
       case CombatActionType.dodge:
         title = "Ausweichen";
     }
@@ -75,7 +72,9 @@ class _CombatScreenState extends State<CombatScreen> {
   @override
   Widget build(BuildContext context) {
     final List<SpecialAbility> specialOptions =
-        (widget.character.abilities ?? []) .where((a) => a.value.type != SpecialAbilityType.passive).toList();
+        (widget.character.abilities ?? [])
+            .where((a) => a.value.type != SpecialAbilityType.passive)
+            .toList();
 
     List<Widget> tlChildren = [
       SizedBox(
@@ -114,7 +113,11 @@ class _CombatScreenState extends State<CombatScreen> {
                   ),
                   actionButton(
                     Icons.directions_run,
-                    () => rollCombat(CombatActionType.dodge, null),
+                    // Note: The default weapon does not actually matter here.
+                    () => rollCombat(
+                      CombatActionType.dodge,
+                      genericWeapons[CombatTechnique.raufen]!,
+                    ),
                   ),
                 ],
               ),
