@@ -2,6 +2,8 @@ import 'character.dart';
 import 'skill.dart';
 import 'weapons.dart';
 import 'attributes.dart';
+import 'special_abilities.dart';
+import 'special_abilities_impl.dart';
 import 'dart:math';
 
 abstract class Trial {
@@ -201,7 +203,6 @@ class CombatRoll {
     this.weapon,
     this.specialAbility,
   );
-  // TODO: Sonderfertigkeiten!
   factory CombatRoll.fromWeapon(
     Character character,
     Weapon weapon,
@@ -326,6 +327,15 @@ int damageRoll(
       weapon.damageFlat + max(primary - weapon.primaryThreshold, 0).toInt();
   for (var i = 0; i < weapon.damageDice; i++) {
     roll += Random().nextInt(weapon.damageDiceSides) + 1;
+  }
+  if (specialAbility != null) {
+    SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+      specialAbility,
+      null,
+      weapon,
+      0,
+    );
+    return impact.applyDamage(roll, weapon, character);
   }
   return roll;
 }

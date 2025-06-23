@@ -1,4 +1,5 @@
 import 'package:eorla/models/special_abilities.dart';
+import 'package:eorla/models/special_abilities_impl.dart';
 
 enum SpecialAbilityBase {
   // <db-replace-token>
