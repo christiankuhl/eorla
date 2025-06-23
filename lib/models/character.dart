@@ -8,6 +8,7 @@ import 'weapons.dart';
 import 'spells.dart';
 import 'special_abilities.dart';
 import 'avatar.dart';
+import 'races.dart';
 
 class Character {
   final String name;
@@ -19,6 +20,7 @@ class Character {
   int ge;
   int ko;
   int kk;
+  Race race;
   CharacterState state;
   Map<Skill, int>? talents;
   Avatar avatar;
@@ -40,6 +42,7 @@ class Character {
     this.ge = 8,
     this.ko = 8,
     this.kk = 8,
+    this.race = Race.menschen,
     required this.state,
     this.talents,
     required this.avatar,
@@ -68,6 +71,7 @@ class Character {
       spells: null,
       optolith: Optolith(json),
     );
+    character.race = racesById[json["r"]] ?? Race.menschen;
     for (var item in json['attr']['values']) {
       String id = item['id'];
       int value = item['value'];
@@ -177,6 +181,20 @@ class Character {
     } else {
       throw UnsupportedError('Unknown type ${talentOrSpell.runtimeType}');
     }
+  }
+
+  int getSpeed() {
+    int base = race.mov;
+    Map<String, dynamic> activatables = optolith.data["activatable"];
+    final bool maimed = activatables.containsKey("DISADV_51");
+    if (maimed) base = (base / 2).round();
+    final bool nimble = activatables.containsKey("ADV_9");
+    final bool lightfooted = activatables.containsKey("ADV_92");
+    final bool slow = activatables.containsKey("DISADV_4");
+    if (nimble) base += 1;
+    if (lightfooted) base += 1;
+    if (slow) base -= 1;
+    return base;
   }
 }
 
