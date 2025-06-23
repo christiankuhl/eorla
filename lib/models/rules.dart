@@ -63,11 +63,14 @@ class SkillRoll<T extends Trial> {
     int roll1 = random.nextInt(20) + 1;
     int roll2 = random.nextInt(20) + 1;
     int roll3 = random.nextInt(20) + 1;
+    int tgtValue1 = attrValue1 + modifier - characterState.value();
+    int tgtValue2 = attrValue2 + modifier - characterState.value();
+    int tgtValue3 = attrValue3 + modifier - characterState.value();
     int fw =
         talentValue +
-        min(attrValue1 + modifier - characterState.value() - roll1, 0).toInt() +
-        min(attrValue2 + modifier - characterState.value() - roll2, 0).toInt() +
-        min(attrValue3 + modifier - characterState.value() - roll3, 0).toInt();
+        min(tgtValue1 - roll1, 0).toInt() +
+        min(tgtValue2 - roll2, 0).toInt() +
+        min(tgtValue3 - roll3, 0).toInt();
     List<int> rolls = [roll1, roll2, roll3];
     bool botch = rolls.where((n) => n == 20).length >= 2;
     bool critical = rolls.where((n) => n == 1).length >= 2;
@@ -85,7 +88,15 @@ class SkillRoll<T extends Trial> {
     if (fw == 0) {
       qs = 1;
     }
-    return SkillRollResult(roll1, roll2, roll3, Quality(event, qs));
+    return SkillRollResult(
+      roll1,
+      roll2,
+      roll3,
+      Quality(event, qs),
+      tgtValue1: tgtValue1,
+      tgtValue2: tgtValue2,
+      tgtValue3: tgtValue3,
+    );
   }
 }
 
@@ -103,8 +114,19 @@ class SkillRollResult {
   final int? roll2;
   final int? roll3;
   final Quality quality;
+  int? tgtValue1;
+  int? tgtValue2;
+  int? tgtValue3;
 
-  SkillRollResult(this.roll1, this.roll2, this.roll3, this.quality);
+  SkillRollResult(
+    this.roll1,
+    this.roll2,
+    this.roll3,
+    this.quality, {
+    tgtValue1,
+    tgtValue2,
+    tgtValue3,
+  });
 
   String text() {
     switch (quality.type) {
@@ -140,8 +162,10 @@ class SkillRollResult {
 class AttributeRollResult {
   final int? roll;
   final RollEvent event;
+  final int targetValue;
+  String? context;
 
-  AttributeRollResult(this.roll, this.event);
+  AttributeRollResult(this.roll, this.event, this.targetValue, {context});
 
   String text() {
     switch (event) {
