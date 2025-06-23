@@ -32,7 +32,7 @@ class Character {
 
   Character({
     required this.name,
-    // 8 is the default value used by Optolith. We need to set this here, since character export in Optolith omits entries 
+    // 8 is the default value used by Optolith. We need to set this here, since character export in Optolith omits entries
     // that are on their default values.
     this.mu = 8,
     this.kl = 8,
@@ -59,7 +59,6 @@ class Character {
   }
 
   factory Character.fromJson(Map<String, dynamic> json) {
-    
     Character character = Character(
       name: json['name'],
       state: CharacterState.empty(),
@@ -92,7 +91,21 @@ class Character {
     json['activatable'].forEach((key, value) {
       if (specialCombatAbilities.containsKey(key)) {
         for (var item in value) {
-          character.abilities?.add(SpecialAbility(specialCombatAbilities[key]!, item["tier"]));
+          if ((item["tier"] ?? 0) > 1) {
+            for (var tier = 1; tier <= item["tier"]; tier++) {
+              character.abilities?.add(
+                SpecialAbility(
+                  specialCombatAbilities[key]!,
+                  tier,
+                  lowerTier: tier < item["tier"],
+                ),
+              );
+            }
+          } else {
+            character.abilities?.add(
+              SpecialAbility(specialCombatAbilities[key]!, item["tier"]),
+            );
+          }
         }
       }
     });
@@ -100,7 +113,10 @@ class Character {
       character.combatTechniques?[combatTechniquesByID[key]!] = value;
     });
     if (json.containsKey("spells")) {
-      character.spells = <Spell, int>{ for (var e in json["spells"].entries) spellsById[e.key]!: e.value.toInt() };
+      character.spells = <Spell, int>{
+        for (var e in json["spells"].entries)
+          spellsById[e.key]!: e.value.toInt(),
+      };
     }
     return character;
   }
@@ -127,15 +143,18 @@ class Character {
       "attr": <String, dynamic>{"values": values},
       "belongings": {"items": belongings},
       "activatable": abilitiesOut,
-      "ct": <String, int>{ for (var v in combatTechniques!.entries) v.key.id: v.value },
+      "ct": <String, int>{
+        for (var v in combatTechniques!.entries) v.key.id: v.value,
+      },
     };
     for (Weapon w in weapons ?? []) {
       belongings[w.id] = w.toJson();
     }
     for (SpecialAbility a in abilities ?? []) {
+      if (a.lowerTier) continue;
       if (!abilitiesOut.containsKey(a.value.id)) {
         abilitiesOut[a.value.id] = [];
-      } 
+      }
       abilitiesOut[a.value.id].add(a.toJson());
     }
     if (spells != null) {
@@ -166,7 +185,8 @@ class Character {
   }
 
   int getCT(CombatTechnique ct) {
-    return combatTechniques?[ct] ?? 6; // This is the default value used by Optolith
+    return combatTechniques?[ct] ??
+        6; // This is the default value used by Optolith
   }
 
   bool hasSpells() {
@@ -258,12 +278,12 @@ class CharacterState {
 
   int value() {
     return belastung +
-          betaeubung +
-          entrueckung +
-          furcht +
-          paralyse +
-          schmerz +
-          verwirrung;
+        betaeubung +
+        entrueckung +
+        furcht +
+        paralyse +
+        schmerz +
+        verwirrung;
   }
 
   List<String> getTexts() {

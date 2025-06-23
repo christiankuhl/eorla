@@ -96,8 +96,9 @@ const specialCombatAbilities = {
 class SpecialAbility {
   final SpecialAbilityBase value;
   final int? tier;
+  final bool lowerTier = false;
 
-  SpecialAbility(this.value, this.tier);
+  SpecialAbility(this.value, this.tier, {lowerTier});
 
   Map<String, dynamic> toJson() {
     if (tier != null) {
