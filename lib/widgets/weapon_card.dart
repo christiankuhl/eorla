@@ -1,3 +1,4 @@
+import 'package:eorla/models/special_abilities.dart';
 import 'package:eorla/widgets/widget_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -29,13 +30,14 @@ class WeaponCard extends StatelessWidget {
 
 Widget weaponInfoCard(
   Weapon weapon,
-  Character character, {
+  Character character,
+  SpecialAbility? specialAbility, {
   required VoidCallback onAttack,
   required VoidCallback onParry,
   required VoidCallback onDamage,
   VoidCallback? onDelete,
 }) {
-  final stats = CombatRoll.fromWeapon(character, weapon);
+  final stats = CombatRoll.fromWeapon(character, weapon, specialAbility);
 
   List<Widget> weaponStats = [
     statColumn(

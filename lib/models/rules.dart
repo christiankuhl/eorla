@@ -183,12 +183,13 @@ class AttributeRollResult {
 
 class CombatRoll {
   final Weapon? weapon;
-  final CombatTechnique? ct;
+  final CombatTechnique ct;
   final int ctValue;
   final int parryPrimary;
   final int attackPrimary;
   final int dodge;
-  final CharacterState characterState;
+  final Character character;
+  final SpecialAbility? specialAbility;
 
   CombatRoll(
     this.ct,
@@ -196,19 +197,32 @@ class CombatRoll {
     this.attackPrimary,
     this.parryPrimary,
     this.dodge,
-    this.characterState,
+    this.character,
     this.weapon,
+    this.specialAbility,
   );
   // TODO: Sonderfertigkeiten!
-  factory CombatRoll.fromWeapon(Character character, Weapon weapon) {
-    return CombatRoll.fromTechnique(character, weapon.ct, weapon: weapon);
+  factory CombatRoll.fromWeapon(
+    Character character,
+    Weapon weapon,
+    SpecialAbility? specialAbility,
+  ) {
+    return CombatRoll.fromTechnique(
+      character,
+      weapon.ct,
+      specialAbility,
+      weapon: weapon,
+    );
   }
 
-  factory CombatRoll.fromTechnique(Character character, CombatTechnique ct, {Weapon? weapon}) {
+  factory CombatRoll.fromTechnique(
+    Character character,
+    CombatTechnique ct,
+    SpecialAbility? specialAbility, {
+    Weapon? weapon,
+  }) {
     final attackPrimary = character.getAttribute(
-      ct.group == CombatType.melee
-          ? Attribute.mut
-          : Attribute.fingerfertigkeit,
+      ct.group == CombatType.melee ? Attribute.mut : Attribute.fingerfertigkeit,
     );
     final parryPrimary = ct.primary
         .map((attr) => character.getAttribute(attr))
@@ -219,8 +233,9 @@ class CombatRoll {
       attackPrimary,
       parryPrimary,
       (character.ge / 2).round(),
-      character.state,
+      character,
       weapon,
+      specialAbility,
     );
   }
 
@@ -243,53 +258,67 @@ class CombatRoll {
     }
   }
 
-  AttributeRollResult roll(CombatActionType action, int modifier) {
-    return attributeRoll(targetValue(action), modifier, characterState);
+  List<AttributeRollResult> roll(CombatActionType action, int modifier) {
+    if (specialAbility == null) {
+      return [attributeRoll(targetValue(action), modifier, character.state)];
+    } else {
+      SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+        specialAbility!,
+        ct,
+        weapon,
+        modifier,
+      );
+      return impact.apply(this, action);
+    }
   }
 }
 
 AttributeRollResult attributeRoll(
-  int atValue,
+  int attrValue,
   int modifier,
-  CharacterState characterState,
-  {Random? random}
-) {
+  CharacterState characterState, {
+  Random? random,
+}) {
   random ??= Random();
   int roll = random.nextInt(20) + 1;
-  if (atValue + modifier - characterState.value() < 1) {
-    return AttributeRollResult(null, RollEvent.failure);
+  if (attrValue + modifier - characterState.value() < 1) {
+    return AttributeRollResult(null, RollEvent.failure, attrValue);
   }
-  int fw = atValue + modifier - characterState.value() - roll;
+  int fw = attrValue + modifier - characterState.value() - roll;
   if (roll == 1) {
     int roll2 = random.nextInt(20) + 1;
-    int fw2 = atValue + modifier - characterState.value() - roll2;
+    int fw2 = attrValue + modifier - characterState.value() - roll2;
     if (fw2 >= 0) {
-      return AttributeRollResult(roll, RollEvent.critical);
+      return AttributeRollResult(roll, RollEvent.critical, attrValue);
     } else {
-      return AttributeRollResult(roll, RollEvent.success);
+      return AttributeRollResult(roll, RollEvent.success, attrValue);
     }
   } else if (roll == 20) {
     int roll2 = random.nextInt(20) + 1;
-    int fw2 = atValue + modifier - characterState.value() - roll2;
+    int fw2 = attrValue + modifier - characterState.value() - roll2;
     if (fw2 >= 0 && roll2 != 20) {
       if (fw >= 0) {
-        return AttributeRollResult(roll, RollEvent.success);
+        return AttributeRollResult(roll, RollEvent.success, attrValue);
       } else {
-        return AttributeRollResult(roll, RollEvent.failure);
+        return AttributeRollResult(roll, RollEvent.failure, attrValue);
       }
     } else {
-      return AttributeRollResult(roll, RollEvent.botch);
+      return AttributeRollResult(roll, RollEvent.botch, attrValue);
     }
   } else {
     if (fw >= 0) {
-      return AttributeRollResult(roll, RollEvent.success);
+      return AttributeRollResult(roll, RollEvent.success, attrValue);
     } else {
-      return AttributeRollResult(roll, RollEvent.failure);
+      return AttributeRollResult(roll, RollEvent.failure, attrValue);
     }
   }
 }
 
-int damageRoll(Weapon weapon, Character character) {
+int damageRoll(
+  Weapon weapon,
+  Character character,
+  SpecialAbility? specialAbility,
+) {
   final primary = weapon.ct.primary
       .map((attr) => character.getAttribute(attr))
       .reduce((a, b) => a > b ? a : b);

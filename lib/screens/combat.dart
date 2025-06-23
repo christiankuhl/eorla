@@ -23,11 +23,9 @@ class _CombatScreenState extends State<CombatScreen> {
   Widget? genericAttack;
 
   // TODO: Prettify this!
-  void rollCombat(CombatActionType action, Weapon weapon) {
-    final engine = CombatRoll.fromWeapon(widget.character, weapon);
+  void rollCombat(CombatActionType action, Weapon weapon, SpecialAbility? specialAbility) {
+    final engine = CombatRoll.fromWeapon(widget.character, weapon, specialAbility);
     final result = engine.roll(action, modifier);
-    String txt =
-        "${result.text()} (${engine.targetValue(action)} → 🎲 ${result.roll})";
     String title;
     switch (action) {
       case CombatActionType.attack:
@@ -36,6 +34,12 @@ class _CombatScreenState extends State<CombatScreen> {
         title = "${weapon.name} - Parade";
       case CombatActionType.dodge:
         title = "Ausweichen";
+    }
+    String txt;
+    if (result.length == 1) {
+      txt = "${result[0].text()} (${result[0].targetValue} → 🎲 ${result[0].roll})";
+    } else {
+      txt = result.map((r) => "${r.context}: ${r.text()} (${r.targetValue} → 🎲 ${r.roll})").join("\n");
     }
     showDialog(
       context: context,
@@ -52,8 +56,8 @@ class _CombatScreenState extends State<CombatScreen> {
     );
   }
 
-  void rollDamage(Weapon weapon) {
-    final damage = damageRoll(weapon, widget.character);
+  void rollDamage(Weapon weapon, SpecialAbility? selectedSpecial) {
+    final damage = damageRoll(weapon, widget.character, selectedSpecial);
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -117,6 +121,7 @@ class _CombatScreenState extends State<CombatScreen> {
                     () => rollCombat(
                       CombatActionType.dodge,
                       genericWeapons[CombatTechnique.raufen]!,
+                      selectedSpecial,
                     ),
                   ),
                 ],
@@ -131,9 +136,10 @@ class _CombatScreenState extends State<CombatScreen> {
         weaponInfoCard(
           weapon,
           widget.character,
-          onAttack: () => rollCombat(CombatActionType.attack, weapon),
-          onParry: () => rollCombat(CombatActionType.parry, weapon),
-          onDamage: () => rollDamage(weapon),
+          selectedSpecial,
+          onAttack: () => rollCombat(CombatActionType.attack, weapon, selectedSpecial),
+          onParry: () => rollCombat(CombatActionType.parry, weapon, selectedSpecial),
+          onDamage: () => rollDamage(weapon, selectedSpecial),
         ),
       );
     }
@@ -156,9 +162,10 @@ class _CombatScreenState extends State<CombatScreen> {
                   genericAttack = weaponInfoCard(
                     weapon,
                     widget.character,
-                    onAttack: () => rollCombat(CombatActionType.attack, weapon),
-                    onParry: () => rollCombat(CombatActionType.parry, weapon),
-                    onDamage: () => rollDamage(weapon),
+                    selectedSpecial,
+                    onAttack: () => rollCombat(CombatActionType.attack, weapon, selectedSpecial),
+                    onParry: () => rollCombat(CombatActionType.parry, weapon, selectedSpecial),
+                    onDamage: () => rollDamage(weapon, selectedSpecial),
                     onDelete: () => setState(() {
                       genericAttack = null;
                     }),
