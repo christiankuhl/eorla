@@ -35,4 +35,4 @@ jobs:
         run: dart run build_runner build
       
       - name: Run tests
-        run: flutter test -r expanded
+        run: flutter test -r github
