@@ -8,11 +8,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: "tests"
+  group: "code_testing"
   cancel-in-progress: false
 
 jobs:
-  test:
+  testing_push:
     if: github.ref != 'refs/heads/master'
     runs-on: ubuntu-latest
 
