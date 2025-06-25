@@ -8,15 +8,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: "pages"
+  group: "tests"
   cancel-in-progress: false
 
 jobs:
   test:
     if: github.ref != 'refs/heads/master'
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
 
     steps:
