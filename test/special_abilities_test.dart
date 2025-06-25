@@ -2221,7 +2221,8 @@ void main() {
         expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.faecher.id)));
         expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.spiesswaffen.id)));
       });
-    });group('Unterwasserkampf', () {
+    });
+    group('Unterwasserkampf', () {
       test('Combat Technique', () {
         final ability = SpecialAbility(SpecialAbilityBase.unterwasserkampf, null);
 
