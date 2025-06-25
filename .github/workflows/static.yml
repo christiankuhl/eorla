@@ -38,6 +38,9 @@ jobs:
 
       - name: Inject DB fields
         run: dart run build_runner build
+      
+      - name: Run tests
+        run: flutter test -r github
 
       - name: Build web
         run: flutter build web --base-href /eorla/
