@@ -298,7 +298,7 @@ class SpecialAbilityImpact {
   int applyDamage(Weapon weapon, Character character) {
     int roll = 0;
     if (tpcallback == null) {
-      return roll + tpMod;
+      return tpMod;
     }
     return tpcallback!(roll, character, weapon);
   }
