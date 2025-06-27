@@ -335,7 +335,6 @@ class SpecialAbilityImpact {
   //TODO: remove me.
   @Deprecated("Damage calculation will be handled by rules.")
   int applyDamage(Weapon weapon, Character character) {
-    int roll = 0;
     if (tpcallback == null) {
       return tpMod;
     }
