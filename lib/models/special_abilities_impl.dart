@@ -263,7 +263,9 @@ class SpecialAbilityImpact {
     }
   }
 
-  int applyDamage(int roll, Weapon weapon, Character character) {
+  // TODO: Check if any tpcallback uses roll parameter.
+  int applyDamage(Weapon weapon, Character character) {
+    int roll = 0;
     if (tpcallback == null) {
       return roll + tpMod;
     }

@@ -57,7 +57,8 @@ class _CombatScreenState extends State<CombatScreen> {
   }
 
   void rollDamage(Weapon weapon, SpecialAbility? selectedSpecial) {
-    final damage = damageRoll(weapon, widget.character, selectedSpecial);
+    // TODO: use both basic and special maneuver
+    final damage = damageRoll(weapon, widget.character, selectedSpecial, null);
     showDialog(
       context: context,
       builder: (_) => AlertDialog(

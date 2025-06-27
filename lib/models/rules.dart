@@ -315,27 +315,46 @@ AttributeRollResult attributeRoll(
   }
 }
 
+/// Calculates the total damage dealt by a weapon, considering the character's attributes and any special abilities.
+///
+/// [weapon] - The weapon used for the attack.
+/// [character] - The character performing the attack.
+/// [specialAbilityBaseManeuvre] - An optional special ability that modifies the base attack.
+/// [specialAbilitySpecialManeuvre] - An optional special ability that modifies the special attack.
+///
+/// Returns the total damage as an integer.
 int damageRoll(
   Weapon weapon,
   Character character,
-  SpecialAbility? specialAbility,
+  SpecialAbility? specialAbilityBaseManeuvre,
+  SpecialAbility? specialAbilitySpecialManeuvre,
 ) {
   final primary = weapon.ct.primary
       .map((attr) => character.getAttribute(attr))
       .reduce((a, b) => a > b ? a : b);
-  int roll =
+  int result =
       weapon.damageFlat + max(primary - weapon.primaryThreshold, 0).toInt();
+  final random = Random();
   for (var i = 0; i < weapon.damageDice; i++) {
-    roll += Random().nextInt(weapon.damageDiceSides) + 1;
+    result += random.nextInt(weapon.damageDiceSides) + 1;
   }
-  if (specialAbility != null) {
-    SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
-      specialAbility,
+  if (specialAbilityBaseManeuvre != null) {
+      SpecialAbilityImpact impactBase = SpecialAbilityImpact.fromActive(
+      specialAbilityBaseManeuvre,
       null,
       weapon,
       0,
     );
-    return impact.applyDamage(roll, weapon, character);
+    result += impactBase.applyDamage(weapon, character);
   }
-  return roll;
+  if (specialAbilitySpecialManeuvre != null) {
+      SpecialAbilityImpact impactSpecial = SpecialAbilityImpact.fromActive(
+      specialAbilitySpecialManeuvre,
+      null,
+      weapon,
+      0,
+    );
+    result += impactSpecial.applyDamage(weapon, character);
+  }
+  return result;
 }
