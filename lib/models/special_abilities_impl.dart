@@ -246,6 +246,18 @@ class SpecialAbilityImpact {
   }
 
   //FIXME: use callback.
+  /// Returns the applicable modifier for a given [CombatRoll] and [CombatActionType].
+  ///
+  /// If a [callback] is not provided, this method returns the default modifier
+  /// based on the [action] type:
+  /// - For [CombatActionType.attack], returns [atMod].
+  /// - For [CombatActionType.parry], returns [paMod].
+  /// - For other action types, returns 0.
+  ///
+  /// If a [callback] is provided, it is intended to return a modifier based on
+  /// the [roll] and [action], but this functionality is currently not implemented.
+  ///
+  /// Returns 0 if no applicable modifier is found.
   int getApplicableMod(CombatRoll roll, CombatActionType action) {
     if (callback == null) {
       switch (action) {
@@ -254,13 +266,12 @@ class SpecialAbilityImpact {
         case CombatActionType.parry:
           return paMod;
         default:
-          return 0;
       }
     } else {
-      return 0;
       //TODO: Modify callbacks to return a modifier.
       //return callback!(roll, action);
     }
+    return 0;
   }
 
   // TODO: remove me!
