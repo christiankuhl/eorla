@@ -53,24 +53,31 @@ class SpecialAbilityImpact {
   final int atMod;
   final int paMod;
   final int awMod;
-  final int tpMod;
-  final List<AttributeRollResult> Function(CombatRoll, CombatActionType)?
-  callback;
+  final int tpMod; // flat tp modifier, applied before multiplier
+  final double tpMult; // tp multiplyer
+  final int tpModAfterMultiplier; // flat tp modifier, applied after multiplier
+  final List<Dice> additionalDice;
+  final bool additionalDiceReplaceOriginal;
   final int modifier;
-  final int Function(int, Character, Weapon)? tpcallback;
+  final List<AttributeRollResult> Function(CombatRoll, CombatActionType)? callback;
+  final int Function(Character)? tpcallback;
 
   SpecialAbilityImpact(
     this.atMod,
     this.paMod,
     this.awMod,
     this.tpMod,
+    this.tpMult,
+    this.tpModAfterMultiplier,
+    this.additionalDice,
+    this.additionalDiceReplaceOriginal,
     this.modifier,
     this.callback,
     this.tpcallback,
   );
 
   factory SpecialAbilityImpact.none(int modifier) {
-    return SpecialAbilityImpact(0, 0, 0, 0, modifier, null, null);
+    return SpecialAbilityImpact(0, 0, 0, 0, 1, 0, [], false, modifier, null, null);
   }
 
   factory SpecialAbilityImpact.fromActive(
@@ -87,8 +94,12 @@ class SpecialAbilityImpact {
     int paMod = 0;
     int awMod = 0;
     int tpMod = 0;
+    double tpMult = 1;
+    int tpModAfterMultiplier = 0;
+    List<Dice> additionalDice = [];
+    bool additionalDiceReplaceOriginal = false;
     List<AttributeRollResult> Function(CombatRoll, CombatActionType)? callback;
-    int Function(int, Character, Weapon)? tpcallback;
+    int Function(Character)? tpcallback; //TODO: check if first int argument is necessairy
 
     switch (spec.value) {
       case SpecialAbilityBase.eisenhagel:
@@ -113,7 +124,7 @@ class SpecialAbilityImpact {
       case SpecialAbilityBase.hammerschlag:
       case SpecialAbilityBase.todesstoss:
         atMod = -2;
-        tpMod = Random().nextInt(6) + 1;
+        additionalDice = [Dice(6)];
         break;
       case SpecialAbilityBase.lanzenangriff:
         // TODO: Probe auf Reiten -> Angriff Kriegslanze ->  TP um 2 + GS/2 des Reittiers
@@ -136,8 +147,8 @@ class SpecialAbilityImpact {
         callback = multiAttack(attacks, modifier);
         break;
       case SpecialAbilityBase.sturmangriff:
-        tpcallback = (roll, character, _) =>
-            roll + (character.getSpeed() / 2).round() + 2;
+        tpcallback = (character) =>
+            (character.getSpeed() / 2).round() + 2;
         break;
       case SpecialAbilityBase.vorstoss:
         atMod = 2;
@@ -146,7 +157,8 @@ class SpecialAbilityImpact {
         break;
       case SpecialAbilityBase.zuFallBringen:
         atMod = -4;
-        tpcallback = (_, _, _) => Random().nextInt(3) + 1;
+        additionalDice = [Dice(3)];
+        additionalDiceReplaceOriginal = true;
         break;
       case SpecialAbilityBase.ballistischerSchuss:
       case SpecialAbilityBase.klingensturm:
@@ -156,7 +168,8 @@ class SpecialAbilityImpact {
         break;
       case SpecialAbilityBase.betaeubungsschlag:
         atMod = -2;
-        tpcallback = (_, _, _) => Random().nextInt(3) + 1;
+        additionalDice = [Dice(3)];
+        additionalDiceReplaceOriginal = true;
         break;
       case SpecialAbilityBase.festnageln:
       case SpecialAbilityBase.herunterstossen:
@@ -179,7 +192,7 @@ class SpecialAbilityImpact {
         ];
         callback = multiAttack(attacks, modifier, paMod: -20, awMod: -20);
         break;
-      case SpecialAbilityBase.blutgraetsche:
+      case SpecialAbilityBase.blutgraetsche: //FIXME: Probe is already raufen
         callback = alternateCombatTechnique(
           CombatTechnique.raufen,
           modifier - 2,
@@ -195,7 +208,7 @@ class SpecialAbilityImpact {
         atMod = -(spec.tier ?? 0);
         tpMod = spec.tier ?? 0;
         break;
-      case SpecialAbilityBase.graetsche:
+      case SpecialAbilityBase.graetsche: //FIXME: Probe is already raufen
         paMod = -2;
         awMod = -2;
         callback = alternateCombatTechnique(
@@ -209,16 +222,32 @@ class SpecialAbilityImpact {
         tpMod = 2;
         break;
       case SpecialAbilityBase.schildschlag:
-        tpcallback = (roll, _, weapon) => 2 * roll;
-        // TODO: TP *= 2 + kleinen/mittleren/großen Schild +–0/+1/+2 TP
+        tpMult = 2;
+        // TODO: TP *= 2 + kleinen/mittleren/großen Schild +–0/+1/+2 TP for other than default shields
+        if (weapon != null) {
+          switch (weapon.name) {
+            case "Holzschild":
+            case "Lederschild":
+              tpModAfterMultiplier = 0;
+              break;
+            case "Thorwalerschild":
+              tpModAfterMultiplier = 1;
+              break;
+            case "Großschild":
+              tpModAfterMultiplier = 2;
+              break;
+            default:
+              break;
+          }
+        }
         break;
       case SpecialAbilityBase.umrennen:
         atMod = -2;
-        tpcallback = (roll, _, _) => (roll / 2).round();
+        tpMult = 0.5;
         break;
       case SpecialAbilityBase.umwickeln:
         callback = probe(Skill.kraftakt, modifier);
-        tpcallback = (_, _, _) => 0;
+        tpMult = 0;
         // TODO: AT/PA Gegner -= QS/2 (Probe Kraftakt)
         break;
       case SpecialAbilityBase.wirbelangriff:
@@ -239,6 +268,10 @@ class SpecialAbilityImpact {
       paMod,
       awMod,
       tpMod,
+      tpMult,
+      tpModAfterMultiplier,
+      additionalDice,
+      additionalDiceReplaceOriginal,
       modifier,
       callback,
       tpcallback,
@@ -294,13 +327,14 @@ class SpecialAbilityImpact {
     }
   }
 
-  // TODO: Check if any tpcallback uses roll parameter.
+  //TODO: remove me.
+  @Deprecated("Damage calculation will be handled by rules.")
   int applyDamage(Weapon weapon, Character character) {
     int roll = 0;
     if (tpcallback == null) {
       return tpMod;
     }
-    return tpcallback!(roll, character, weapon);
+    return tpcallback!(character);
   }
 }
 

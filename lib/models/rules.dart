@@ -6,12 +6,27 @@ import 'special_abilities.dart';
 import 'special_abilities_impl.dart';
 import 'dart:math';
 
+class Dice {
+  final int sides;
+  int result = 0;
+
+  Dice(this.sides);
+
+  int roll([Random? rng]) {
+    rng ??= Random();
+    result = rng.nextInt(sides) + 1;
+    return result;
+  }
+}
+
+
 abstract class Trial {
   Attribute get attr1;
   Attribute get attr2;
   Attribute get attr3;
   String get name;
 }
+
 
 class SkillRoll<T extends Trial> {
   final Attribute attr1;
@@ -274,7 +289,7 @@ class CombatRoll {
         specialAbilityBaseManeuvre!,
         ct,
         weapon,
-        modifier,
+        modifier, //FIXME: should not be neccessairy
       );
       modifierBaseManeuvre = impact.getApplicableMod(this, action);
     }
@@ -283,7 +298,7 @@ class CombatRoll {
         specialAbilitySpecialManeuvre!,
         ct,
         weapon,
-        modifier,
+        modifier, //FIXME: should not be neccessairy
       );
       modifierSpecialManeuvre = impact.getApplicableMod(this, action);
     }
@@ -347,33 +362,74 @@ int damageRoll(
   Character character,
   SpecialAbility? specialAbilityBaseManeuvre,
   SpecialAbility? specialAbilitySpecialManeuvre,
+  {Random? random,}
 ) {
   final primary = weapon.ct.primary
       .map((attr) => character.getAttribute(attr))
       .reduce((a, b) => a > b ? a : b);
-  int result =
-      weapon.damageFlat + max(primary - weapon.primaryThreshold, 0).toInt();
-  final random = Random();
+
+  random ??= Random();
+  int result = 0;
+  int tpMod = 0;
+  double tpMult = 1;
+  int tpModAfterMultiplier = 0;
+  int tpFlat = weapon.damageFlat + max(primary - weapon.primaryThreshold, 0).toInt();
+  List<Dice> damageDice = [];
   for (var i = 0; i < weapon.damageDice; i++) {
-    result += random.nextInt(weapon.damageDiceSides) + 1;
+    damageDice.add(Dice(weapon.damageDiceSides));
   }
+
+  // Check impact from base maneuvre
   if (specialAbilityBaseManeuvre != null) {
-      SpecialAbilityImpact impactBase = SpecialAbilityImpact.fromActive(
+    SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
       specialAbilityBaseManeuvre,
-      null,
+      weapon.ct,
       weapon,
       0,
     );
-    result += impactBase.applyDamage(weapon, character);
+    if (impact.tpcallback != null) {
+      tpMod += impact.tpcallback!(character);
+    }
+    tpMod += impact.tpMod;
+    tpMult *= impact.tpMult;
+    tpModAfterMultiplier += impact.tpModAfterMultiplier;
+    if (impact.additionalDiceReplaceOriginal) {
+      damageDice = impact.additionalDice;
+      //TODO: Check if we want this behaviour.
+      tpFlat = 0;
+    } else {
+      damageDice.addAll(impact.additionalDice);
+    }
   }
+  // Check impact from special maneuvre
   if (specialAbilitySpecialManeuvre != null) {
-      SpecialAbilityImpact impactSpecial = SpecialAbilityImpact.fromActive(
+    SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
       specialAbilitySpecialManeuvre,
-      null,
+      weapon.ct,
       weapon,
       0,
     );
-    result += impactSpecial.applyDamage(weapon, character);
+    if (impact.tpcallback != null) {
+      tpMod += impact.tpcallback!(character);
+    }
+    tpMod += impact.tpMod;
+    tpMult *= impact.tpMult;
+    tpModAfterMultiplier += impact.tpModAfterMultiplier;
+    if (impact.additionalDiceReplaceOriginal) {
+      damageDice = impact.additionalDice;
+      //TODO: Check if we want this behaviour.
+      tpFlat = 0;
+    } else {
+      damageDice.addAll(impact.additionalDice);
+    }
   }
+
+  // Roll all dice and add their results to the result variable
+  for (var dice in damageDice) {
+    result += dice.roll(random);
+  }
+  // Apply modifiers and multipliers
+  result = ((result + tpFlat + tpMod) * tpMult).round() + tpModAfterMultiplier;
+  
   return result;
 }
