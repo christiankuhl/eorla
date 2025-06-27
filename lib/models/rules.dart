@@ -278,7 +278,7 @@ class CombatRoll {
       );
       modifierBaseManeuvre = impact.getApplicableMod(this, action);
     }
-    if (specialAbilityBaseManeuvre != null) {
+    if (specialAbilitySpecialManeuvre != null) {
       SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
         specialAbilitySpecialManeuvre!,
         ct,
@@ -292,6 +292,7 @@ class CombatRoll {
   }
 }
 
+//TODO: prettify this
 AttributeRollResult attributeRoll(
   int attrValue,
   int modifier,
@@ -301,34 +302,34 @@ AttributeRollResult attributeRoll(
   random ??= Random();
   int roll = random.nextInt(20) + 1;
   if (attrValue + modifier - characterState.value() < 1) {
-    return AttributeRollResult(null, RollEvent.failure, attrValue);
+    return AttributeRollResult(null, RollEvent.failure, attrValue + modifier);
   }
   int fw = attrValue + modifier - characterState.value() - roll;
   if (roll == 1) {
     int roll2 = random.nextInt(20) + 1;
     int fw2 = attrValue + modifier - characterState.value() - roll2;
     if (fw2 >= 0) {
-      return AttributeRollResult(roll, RollEvent.critical, attrValue);
+      return AttributeRollResult(roll, RollEvent.critical, attrValue + modifier);
     } else {
-      return AttributeRollResult(roll, RollEvent.success, attrValue);
+      return AttributeRollResult(roll, RollEvent.success, attrValue + modifier);
     }
   } else if (roll == 20) {
     int roll2 = random.nextInt(20) + 1;
     int fw2 = attrValue + modifier - characterState.value() - roll2;
     if (fw2 >= 0 && roll2 != 20) {
       if (fw >= 0) {
-        return AttributeRollResult(roll, RollEvent.success, attrValue);
+        return AttributeRollResult(roll, RollEvent.success, attrValue + modifier);
       } else {
-        return AttributeRollResult(roll, RollEvent.failure, attrValue);
+        return AttributeRollResult(roll, RollEvent.failure, attrValue + modifier);
       }
     } else {
-      return AttributeRollResult(roll, RollEvent.botch, attrValue);
+      return AttributeRollResult(roll, RollEvent.botch, attrValue + modifier);
     }
   } else {
     if (fw >= 0) {
-      return AttributeRollResult(roll, RollEvent.success, attrValue);
+      return AttributeRollResult(roll, RollEvent.success, attrValue + modifier);
     } else {
-      return AttributeRollResult(roll, RollEvent.failure, attrValue);
+      return AttributeRollResult(roll, RollEvent.failure, attrValue + modifier);
     }
   }
 }
