@@ -31,14 +31,14 @@ class WeaponCard extends StatelessWidget {
 Widget weaponInfoCard(
   Weapon weapon,
   Character character,
-  SpecialAbility? specialAbility, {
+  SpecialAbility? specialAbilityBaseManeuvre, 
+  SpecialAbility? specialAbilitySpecialManeuvre, {
   required VoidCallback onAttack,
   required VoidCallback onParry,
   required VoidCallback onDamage,
   VoidCallback? onDelete,
 }) {
-  //TODO: Use both baseManeuvre and specialManeuvre
-  final stats = CombatRoll.fromWeapon(character, weapon, specialAbility, null);
+  final stats = CombatRoll.fromWeapon(character, weapon, specialAbilityBaseManeuvre, specialAbilitySpecialManeuvre);
 
   List<Widget> weaponStats = [
     statColumn(

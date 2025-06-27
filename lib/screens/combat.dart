@@ -56,9 +56,8 @@ class _CombatScreenState extends State<CombatScreen> {
     );
   }
 
-  void rollDamage(Weapon weapon, SpecialAbility? selectedSpecial) {
-    // TODO: use both basic and special maneuver
-    final damage = damageRoll(weapon, widget.character, selectedSpecial, null);
+  void rollDamage(Weapon weapon, SpecialAbility? selectedSpecialBaseManeuvre, SpecialAbility? selectedSpecialSpecialManeuvre) {
+    final damage = damageRoll(weapon, widget.character, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre);
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -137,10 +136,11 @@ class _CombatScreenState extends State<CombatScreen> {
         weaponInfoCard(
           weapon,
           widget.character,
-          selectedSpecial,
+          selectedSpecial, //TODO: replace with selected base maneuvre
+          null, //TODO: replace with selected special maneuvre
           onAttack: () => rollCombat(CombatActionType.attack, weapon, selectedSpecial),
           onParry: () => rollCombat(CombatActionType.parry, weapon, selectedSpecial),
-          onDamage: () => rollDamage(weapon, selectedSpecial),
+          onDamage: () => rollDamage(weapon, selectedSpecial, null), //TODO: replace with selected base and pecial maneuvre
         ),
       );
     }
@@ -163,10 +163,11 @@ class _CombatScreenState extends State<CombatScreen> {
                   genericAttack = weaponInfoCard(
                     weapon,
                     widget.character,
-                    selectedSpecial,
+                    selectedSpecial, //TODO: replace with selected base maneuvre
+                    null, //TODO: replace with selected special maneuvre
                     onAttack: () => rollCombat(CombatActionType.attack, weapon, selectedSpecial),
                     onParry: () => rollCombat(CombatActionType.parry, weapon, selectedSpecial),
-                    onDamage: () => rollDamage(weapon, selectedSpecial),
+                    onDamage: () => rollDamage(weapon, selectedSpecial, null), //TODO: replace with selected base and pecial maneuvre
                     onDelete: () => setState(() {
                       genericAttack = null;
                     }),
