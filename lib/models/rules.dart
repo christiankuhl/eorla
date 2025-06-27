@@ -280,6 +280,20 @@ class CombatRoll {
     }
   }
 
+  /// Rolls for an attribute check based on the given [action] and [modifier].
+  ///
+  /// This method calculates the target value for the roll, applies any modifiers
+  /// from special abilities (both base and special maneuvers), and returns a list
+  /// of [AttributeRollResult] objects representing the outcome(s) of the roll.
+  ///
+  /// If a special ability impact provides a callback, that callback is used to
+  /// determine the roll results. Otherwise, applicable modifiers from special
+  /// abilities are added to the [modifier] parameter.
+  ///
+  /// - [action]: The type of combat action being performed.
+  /// - [modifier]: The base modifier to apply to the roll.
+  ///
+  /// Returns a list of [AttributeRollResult] representing the roll outcomes.
   List<AttributeRollResult> roll(CombatActionType action, int modifier) {
     int target = targetValue(action);
     int modifierBaseManeuvre = 0;
@@ -291,6 +305,10 @@ class CombatRoll {
         weapon,
         modifier, //FIXME: should not be neccessairy
       );
+      if (impact.callback != null) {
+        // the impact define all rolls
+        return impact.callback!(this, action);
+      }
       modifierBaseManeuvre = impact.getApplicableMod(this, action);
     }
     if (specialAbilitySpecialManeuvre != null) {
@@ -300,6 +318,10 @@ class CombatRoll {
         weapon,
         modifier, //FIXME: should not be neccessairy
       );
+      if (impact.callback != null) {
+        // the impact define all rolls
+        return impact.callback!(this, action);
+      }
       modifierSpecialManeuvre = impact.getApplicableMod(this, action);
     }
 

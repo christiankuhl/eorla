@@ -1,4 +1,4 @@
-import 'dart:math';
+//import 'dart:math';
 import '../models/rules.dart';
 import '../models/special_abilities.dart';
 import '../models/weapons.dart';
@@ -59,7 +59,8 @@ class SpecialAbilityImpact {
   final List<Dice> additionalDice;
   final bool additionalDiceReplaceOriginal;
   final int modifier;
-  final List<AttributeRollResult> Function(CombatRoll, CombatActionType)? callback;
+  final List<AttributeRollResult> Function(CombatRoll, CombatActionType)?
+  callback;
   final int Function(Character)? tpcallback;
 
   SpecialAbilityImpact(
@@ -77,7 +78,19 @@ class SpecialAbilityImpact {
   );
 
   factory SpecialAbilityImpact.none(int modifier) {
-    return SpecialAbilityImpact(0, 0, 0, 0, 1, 0, [], false, modifier, null, null);
+    return SpecialAbilityImpact(
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      [],
+      false,
+      modifier,
+      null,
+      null,
+    );
   }
 
   factory SpecialAbilityImpact.fromActive(
@@ -99,7 +112,8 @@ class SpecialAbilityImpact {
     List<Dice> additionalDice = [];
     bool additionalDiceReplaceOriginal = false;
     List<AttributeRollResult> Function(CombatRoll, CombatActionType)? callback;
-    int Function(Character)? tpcallback; //TODO: check if first int argument is necessairy
+    int Function(Character)?
+    tpcallback; //TODO: check if first int argument is necessairy
 
     switch (spec.value) {
       case SpecialAbilityBase.eisenhagel:
@@ -147,8 +161,7 @@ class SpecialAbilityImpact {
         callback = multiAttack(attacks, modifier);
         break;
       case SpecialAbilityBase.sturmangriff:
-        tpcallback = (character) =>
-            (character.getSpeed() / 2).round() + 2;
+        tpcallback = (character) => (character.getSpeed() / 2).round() + 2;
         break;
       case SpecialAbilityBase.vorstoss:
         atMod = 2;
@@ -278,31 +291,23 @@ class SpecialAbilityImpact {
     );
   }
 
-  //FIXME: use callback.
-  /// Returns the applicable modifier for a given [CombatRoll] and [CombatActionType].
+
+  /// Returns the modifier that should be applied for the given [CombatRoll] and [CombatActionType].
   ///
-  /// If a [callback] is not provided, this method returns the default modifier
-  /// based on the [action] type:
-  /// - For [CombatActionType.attack], returns [atMod].
-  /// - For [CombatActionType.parry], returns [paMod].
-  /// - For other action types, returns 0.
+  /// If [callback] is not set, this returns the static modifier for the action type:
+  /// - [CombatActionType.attack]: returns [atMod]
+  /// - [CombatActionType.parry]: returns [paMod]
+  /// - All other action types: returns 0
   ///
-  /// If a [callback] is provided, it is intended to return a modifier based on
-  /// the [roll] and [action], but this functionality is currently not implemented.
-  ///
-  /// Returns 0 if no applicable modifier is found.
+  /// If [callback] is set, this method currently ignores it and still returns the static modifier.
+  /// Returns 0 if no modifier is applicable.
   int getApplicableMod(CombatRoll roll, CombatActionType action) {
-    if (callback == null) {
-      switch (action) {
-        case CombatActionType.attack:
-          return atMod;
-        case CombatActionType.parry:
-          return paMod;
-        default:
-      }
-    } else {
-      //TODO: Modify callbacks to return a modifier.
-      //return callback!(roll, action);
+    switch (action) {
+      case CombatActionType.attack:
+        return atMod;
+      case CombatActionType.parry:
+        return paMod;
+      default:
     }
     return 0;
   }
