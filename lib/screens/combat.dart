@@ -140,6 +140,7 @@ class _CombatScreenState extends State<CombatScreen> {
     for (Weapon weapon in widget.character.weapons ?? []) {
       tlChildren.add(
         weaponInfoCard(
+          context,
           weapon,
           widget.character,
           selectedSpecialBaseManeuvre,
@@ -167,6 +168,7 @@ class _CombatScreenState extends State<CombatScreen> {
                 setState(() {
                   Weapon weapon = genericWeapons[selected]!;
                   genericAttack = weaponInfoCard(
+                    context,
                     weapon,
                     widget.character,
                     selectedSpecialBaseManeuvre,

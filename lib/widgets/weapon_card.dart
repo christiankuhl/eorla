@@ -29,6 +29,7 @@ class WeaponCard extends StatelessWidget {
 }
 
 Widget weaponInfoCard(
+  BuildContext context,
   Weapon weapon,
   Character character,
   SpecialAbility? specialAbilityBaseManeuvre, 
@@ -39,22 +40,24 @@ Widget weaponInfoCard(
   VoidCallback? onDelete,
 }) {
   final stats = CombatRoll.fromWeapon(character, weapon, specialAbilityBaseManeuvre, specialAbilitySpecialManeuvre);
+  final styleGood = TextStyle(color: const Color.fromARGB(255, 109, 195, 101));
+  final styleBad  = TextStyle(color: const Color.fromARGB(255, 218, 100, 100));
 
   List<Widget> weaponStats = [
     statColumn(
       "AT",
-      stats.targetValue(CombatActionType.attack).toString(),
+      stats.targetValueCard(CombatActionType.attack, styleGood: styleGood, styleBad: styleBad),
       button: actionButton(Symbols.swords, onAttack),
     ),
     if (!weapon.ct.hasNoParry)
       statColumn(
         "PA",
-        stats.targetValue(CombatActionType.parry).toString(),
+        stats.targetValueCard(CombatActionType.parry),
         button: actionButton(Icons.security, onParry),
       ),
     statColumn(
       "TP",
-      weapon.tpText(),
+      damageRollTextGenerator(weapon, character, specialAbilityBaseManeuvre, specialAbilitySpecialManeuvre, Theme.of(context).textTheme.bodyMedium, styleGood: styleGood, styleBad: styleBad),
       button: actionButton(Icons.whatshot, onDamage),
     ),
   ];
@@ -105,11 +108,12 @@ Widget weaponInfoCard(
   );
 }
 
-Widget statColumn(String label, String value, {Widget? button}) {
+
+Widget statColumn(String label, Widget value, {Widget? button}) {
   List<Widget> col = [
     Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
     SizedBox(height: 4),
-    Text(value),
+    value,
   ];
   return Row(
     children: [
