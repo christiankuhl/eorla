@@ -191,7 +191,8 @@ class CombatRoll {
   final int attackPrimary;
   final int dodge;
   final Character character;
-  final SpecialAbility? specialAbility;
+  final SpecialAbility? specialAbilityBaseManeuvre;
+  final SpecialAbility? specialAbilitySpecialManeuvre;
 
   CombatRoll(
     this.ct,
@@ -201,17 +202,20 @@ class CombatRoll {
     this.dodge,
     this.character,
     this.weapon,
-    this.specialAbility,
+    this.specialAbilityBaseManeuvre,
+    this.specialAbilitySpecialManeuvre,
   );
   factory CombatRoll.fromWeapon(
     Character character,
     Weapon weapon,
-    SpecialAbility? specialAbility,
+    SpecialAbility? specialAbilityBaseManeuvre,
+    SpecialAbility? specialAbilitySpecialManeuvre,
   ) {
     return CombatRoll.fromTechnique(
       character,
       weapon.ct,
-      specialAbility,
+      specialAbilityBaseManeuvre,
+      specialAbilitySpecialManeuvre,
       weapon: weapon,
     );
   }
@@ -219,9 +223,10 @@ class CombatRoll {
   factory CombatRoll.fromTechnique(
     Character character,
     CombatTechnique ct,
-    SpecialAbility? specialAbility, {
-    Weapon? weapon,
-  }) {
+    SpecialAbility? specialAbilityBaseManeuvre, 
+    SpecialAbility? specialAbilitySpecialManeuvre, 
+    {Weapon? weapon,}
+  ) {
     final attackPrimary = character.getAttribute(
       ct.group == CombatType.melee ? Attribute.mut : Attribute.fingerfertigkeit,
     );
@@ -236,7 +241,8 @@ class CombatRoll {
       (character.ge / 2).round(),
       character,
       weapon,
-      specialAbility,
+      specialAbilityBaseManeuvre,
+      specialAbilitySpecialManeuvre,
     );
   }
 
@@ -260,17 +266,29 @@ class CombatRoll {
   }
 
   List<AttributeRollResult> roll(CombatActionType action, int modifier) {
-    if (specialAbility == null) {
-      return [attributeRoll(targetValue(action), modifier, character.state)];
-    } else {
+    int target = targetValue(action);
+    int modifierBaseManeuvre = 0;
+    int modifierSpecialManeuvre = 0;
+    if (specialAbilityBaseManeuvre != null) {
       SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
-        specialAbility!,
+        specialAbilityBaseManeuvre!,
         ct,
         weapon,
         modifier,
       );
-      return impact.apply(this, action);
+      modifierBaseManeuvre = impact.getApplicableMod(this, action);
     }
+    if (specialAbilityBaseManeuvre != null) {
+      SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+        specialAbilitySpecialManeuvre!,
+        ct,
+        weapon,
+        modifier,
+      );
+      modifierSpecialManeuvre = impact.getApplicableMod(this, action);
+    }
+
+    return [attributeRoll(target, modifier+modifierBaseManeuvre+modifierSpecialManeuvre, character.state)];
   }
 }
 

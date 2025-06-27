@@ -24,7 +24,7 @@ class _CombatScreenState extends State<CombatScreen> {
 
   // TODO: Prettify this!
   void rollCombat(CombatActionType action, Weapon weapon, SpecialAbility? specialAbility) {
-    final engine = CombatRoll.fromWeapon(widget.character, weapon, specialAbility);
+    final engine = CombatRoll.fromWeapon(widget.character, weapon, specialAbility, null); // TODO: Use both base and special maneuvre
     final result = engine.roll(action, modifier);
     String title;
     switch (action) {

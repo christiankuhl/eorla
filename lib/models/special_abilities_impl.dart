@@ -245,6 +245,26 @@ class SpecialAbilityImpact {
     );
   }
 
+  //FIXME: use callback.
+  int getApplicableMod(CombatRoll roll, CombatActionType action) {
+    if (callback == null) {
+      switch (action) {
+        case CombatActionType.attack:
+          return atMod;
+        case CombatActionType.parry:
+          return paMod;
+        default:
+          return 0;
+      }
+    } else {
+      return 0;
+      //TODO: Modify callbacks to return a modifier.
+      //return callback!(roll, action);
+    }
+  }
+
+  // TODO: remove me!
+  @Deprecated('Use getApplicableMod to get an integer modifier instead.')
   List<AttributeRollResult> apply(CombatRoll roll, CombatActionType action) {
     if (callback == null) {
       int tgt = roll.targetValue(action);
@@ -379,7 +399,7 @@ alternateCombatTechnique(
     if (action != CombatActionType.attack) {
       return defaultDefense(roll, action, paMod, awMod, modifier);
     }
-    final engine = CombatRoll.fromTechnique(roll.character, ct, null);
+    final engine = CombatRoll.fromTechnique(roll.character, ct, null, null);
     return engine.roll(action, modifier);
   };
 }

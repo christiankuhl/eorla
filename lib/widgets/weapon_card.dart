@@ -37,7 +37,8 @@ Widget weaponInfoCard(
   required VoidCallback onDamage,
   VoidCallback? onDelete,
 }) {
-  final stats = CombatRoll.fromWeapon(character, weapon, specialAbility);
+  //TODO: Use both baseManeuvre and specialManeuvre
+  final stats = CombatRoll.fromWeapon(character, weapon, specialAbility, null);
 
   List<Widget> weaponStats = [
     statColumn(
