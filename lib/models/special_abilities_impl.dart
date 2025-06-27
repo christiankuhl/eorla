@@ -94,11 +94,14 @@ class SpecialAbilityImpact {
   }
 
   factory SpecialAbilityImpact.fromActive(
-    SpecialAbility spec,
+    SpecialAbility? spec,
     CombatTechnique? ct,
     Weapon? weapon,
     int modifier,
   ) {
+    if (spec == null) {
+      return SpecialAbilityImpact.none(modifier);
+    }
     if (!abilityImpactsTechnique(spec, ct, weapon)) {
       return SpecialAbilityImpact.none(modifier);
     }
