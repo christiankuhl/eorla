@@ -19,12 +19,13 @@ class CombatScreen extends StatefulWidget {
 
 class _CombatScreenState extends State<CombatScreen> {
   int modifier = 0;
-  SpecialAbility? selectedSpecial;
+  SpecialAbility? selectedSpecialBaseManeuvre;
+  SpecialAbility? selectedSpecialSpecialManeuvre;
   Widget? genericAttack;
 
   // TODO: Prettify this!
-  void rollCombat(CombatActionType action, Weapon weapon, SpecialAbility? specialAbility) {
-    final engine = CombatRoll.fromWeapon(widget.character, weapon, specialAbility, null); // TODO: Use both base and special maneuvre
+  void rollCombat(CombatActionType action, Weapon weapon, SpecialAbility? specialAbilityBaseManeuvre, SpecialAbility? specialAbilitySpecialManeuvre) {
+    final engine = CombatRoll.fromWeapon(widget.character, weapon, specialAbilityBaseManeuvre, specialAbilitySpecialManeuvre);
     final result = engine.roll(action, modifier);
     String title;
     switch (action) {
@@ -75,9 +76,13 @@ class _CombatScreenState extends State<CombatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<SpecialAbility> specialOptions =
+    final List<SpecialAbility> specialOptionsBaseManeuvre =
         (widget.character.abilities ?? [])
-            .where((a) => a.value.type != SpecialAbilityType.passive)
+            .where((a) => a.value.type == SpecialAbilityType.baseManeuvre)
+            .toList();
+    final List<SpecialAbility> specialOptionsSpecialManeuvre =
+        (widget.character.abilities ?? [])
+            .where((a) => a.value.type == SpecialAbilityType.specialManeuvre)
             .toList();
 
     List<Widget> tlChildren = [
@@ -121,7 +126,8 @@ class _CombatScreenState extends State<CombatScreen> {
                     () => rollCombat(
                       CombatActionType.dodge,
                       genericWeapons[CombatTechnique.raufen]!,
-                      selectedSpecial,
+                      selectedSpecialBaseManeuvre,
+                      selectedSpecialSpecialManeuvre,
                     ),
                   ),
                 ],
@@ -136,11 +142,11 @@ class _CombatScreenState extends State<CombatScreen> {
         weaponInfoCard(
           weapon,
           widget.character,
-          selectedSpecial, //TODO: replace with selected base maneuvre
-          null, //TODO: replace with selected special maneuvre
-          onAttack: () => rollCombat(CombatActionType.attack, weapon, selectedSpecial),
-          onParry: () => rollCombat(CombatActionType.parry, weapon, selectedSpecial),
-          onDamage: () => rollDamage(weapon, selectedSpecial, null), //TODO: replace with selected base and pecial maneuvre
+          selectedSpecialBaseManeuvre,
+          selectedSpecialSpecialManeuvre,
+          onAttack: () => rollCombat(CombatActionType.attack, weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
+          onParry: () => rollCombat(CombatActionType.parry, weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
+          onDamage: () => rollDamage(weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
         ),
       );
     }
@@ -163,11 +169,11 @@ class _CombatScreenState extends State<CombatScreen> {
                   genericAttack = weaponInfoCard(
                     weapon,
                     widget.character,
-                    selectedSpecial, //TODO: replace with selected base maneuvre
-                    null, //TODO: replace with selected special maneuvre
-                    onAttack: () => rollCombat(CombatActionType.attack, weapon, selectedSpecial),
-                    onParry: () => rollCombat(CombatActionType.parry, weapon, selectedSpecial),
-                    onDamage: () => rollDamage(weapon, selectedSpecial, null), //TODO: replace with selected base and pecial maneuvre
+                    selectedSpecialBaseManeuvre,
+                    selectedSpecialSpecialManeuvre,
+                    onAttack: () => rollCombat(CombatActionType.attack, weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
+                    onParry: () => rollCombat(CombatActionType.parry, weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
+                    onDamage: () => rollDamage(weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
                     onDelete: () => setState(() {
                       genericAttack = null;
                     }),
@@ -213,20 +219,20 @@ class _CombatScreenState extends State<CombatScreen> {
                 children: [
                   Expanded(
                     child: Text(
-                      "Kampfsonderfertigkeiten",
+                      "Basismanöver",
                       style: TextStyle(fontSize: 18),
                     ),
                   ),
                   Visibility(
-                    visible: selectedSpecial?.value.rules != null,
+                    visible: selectedSpecialBaseManeuvre?.value.rules != null,
                     child: GestureDetector(
-                      onTap: selectedSpecial?.value.rules != null
+                      onTap: selectedSpecialBaseManeuvre?.value.rules != null
                           ? () {
                               showDialog(
                                 context: context,
                                 builder: (_) => AlertDialog(
-                                  title: Text(selectedSpecial.toString()),
-                                  content: Text(selectedSpecial!.value.rules),
+                                  title: Text(selectedSpecialBaseManeuvre.toString()),
+                                  content: Text(selectedSpecialBaseManeuvre!.value.rules),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(context),
@@ -250,7 +256,7 @@ class _CombatScreenState extends State<CombatScreen> {
                 ],
               ),
               DropdownButton<SpecialAbility?>(
-                value: selectedSpecial,
+                value: selectedSpecialBaseManeuvre,
                 isExpanded: true,
                 hint: Text("Wählen..."),
                 items: [
@@ -261,14 +267,88 @@ class _CombatScreenState extends State<CombatScreen> {
                       child: Text("– Keine Sonderfertigkeit –"),
                     ),
                   ),
-                  ...specialOptions.map(
+                  ...specialOptionsBaseManeuvre.map(
                     (ability) => DropdownMenuItem<SpecialAbility?>(
                       value: ability,
                       child: Text(ability.toString()),
                     ),
                   ),
                 ],
-                onChanged: (val) => setState(() => selectedSpecial = val),
+                onChanged: (val) => setState(() => selectedSpecialBaseManeuvre = val),
+              ),
+            ],
+          ),
+        ),
+      ),
+      
+      Card(
+        margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Spezialmanöver",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  Visibility(
+                    visible: selectedSpecialSpecialManeuvre?.value.rules != null,
+                    child: GestureDetector(
+                      onTap: selectedSpecialSpecialManeuvre?.value.rules != null
+                          ? () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: Text(selectedSpecialSpecialManeuvre.toString()),
+                                  content: Text(selectedSpecialSpecialManeuvre!.value.rules),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          : null,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 4),
+                        child: Icon(
+                          Icons.help_outline,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              DropdownButton<SpecialAbility?>(
+                value: selectedSpecialSpecialManeuvre,
+                isExpanded: true,
+                hint: Text("Wählen..."),
+                items: [
+                  DropdownMenuItem<SpecialAbility?>(
+                    value: null,
+                    child: Opacity(
+                      opacity: 0.5,
+                      child: Text("– Keine Sonderfertigkeit –"),
+                    ),
+                  ),
+                  ...specialOptionsSpecialManeuvre.map(
+                    (ability) => DropdownMenuItem<SpecialAbility?>(
+                      value: ability,
+                      child: Text(ability.toString()),
+                    ),
+                  ),
+                ],
+                onChanged: (val) => setState(() => selectedSpecialSpecialManeuvre = val),
               ),
             ],
           ),
