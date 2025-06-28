@@ -402,7 +402,7 @@ AttributeRollResult attributeRoll(
   random ??= Random();
   int roll = random.nextInt(20) + 1;
   if (attrValue + modifier - characterState.value() < 1) {
-    return AttributeRollResult(null, RollEvent.failure, attrValue + modifier);
+    return AttributeRollResult(null, RollEvent.failure, attrValue + modifier - characterState.value());
   }
   int fw = attrValue + modifier - characterState.value() - roll;
   if (roll == 1) {
@@ -412,7 +412,7 @@ AttributeRollResult attributeRoll(
       return AttributeRollResult(
         roll,
         RollEvent.critical,
-        attrValue + modifier,
+        attrValue + modifier - characterState.value(),
       );
     } else {
       return AttributeRollResult(roll, RollEvent.success, attrValue + modifier);
@@ -425,23 +425,23 @@ AttributeRollResult attributeRoll(
         return AttributeRollResult(
           roll,
           RollEvent.success,
-          attrValue + modifier,
+          attrValue + modifier - characterState.value(),
         );
       } else {
         return AttributeRollResult(
           roll,
           RollEvent.failure,
-          attrValue + modifier,
+          attrValue + modifier - characterState.value(),
         );
       }
     } else {
-      return AttributeRollResult(roll, RollEvent.botch, attrValue + modifier);
+      return AttributeRollResult(roll, RollEvent.botch, attrValue + modifier - characterState.value());
     }
   } else {
     if (fw >= 0) {
-      return AttributeRollResult(roll, RollEvent.success, attrValue + modifier);
+      return AttributeRollResult(roll, RollEvent.success, attrValue + modifier - characterState.value());
     } else {
-      return AttributeRollResult(roll, RollEvent.failure, attrValue + modifier);
+      return AttributeRollResult(roll, RollEvent.failure, attrValue + modifier - characterState.value());
     }
   }
 }
