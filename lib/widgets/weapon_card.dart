@@ -52,7 +52,7 @@ Widget weaponInfoCard(
     if (!weapon.ct.hasNoParry)
       statColumn(
         "PA",
-        stats.targetValueCard(CombatActionType.parry),
+        stats.targetValueCard(CombatActionType.parry, styleGood: styleGood, styleBad: styleBad),
         button: actionButton(Icons.security, onParry),
       ),
     statColumn(

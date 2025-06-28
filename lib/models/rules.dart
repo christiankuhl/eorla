@@ -298,9 +298,23 @@ class CombatRoll {
         if (weapon != null) {
           pa += weapon!.pa;
         }
-        return Text((pa).toString(), style: styleNormal);
+        int impactMod = impact1.paMod + impact2.paMod;
+        if (impactMod < 0) {
+          return Text((pa + impactMod).toString(), style: styleBad);
+        }
+        if (impactMod > 0) {
+          return Text((pa + impactMod).toString(), style: styleGood);
+        }
+        return Text((pa + impactMod).toString(), style: styleNormal);
       case CombatActionType.dodge:
-        return Text((dodge).toString(), style: styleNormal);
+        int impactMod = impact1.awMod + impact2.awMod;
+        if (impactMod < 0) {
+          return Text((dodge + impactMod).toString(), style: styleBad);
+        }
+        if (impactMod > 0) {
+          return Text((dodge + impactMod).toString(), style: styleGood);
+        }
+        return Text((dodge + impactMod).toString(), style: styleNormal);
     }
   }
 

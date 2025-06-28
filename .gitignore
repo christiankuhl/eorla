@@ -48,3 +48,6 @@ app.*.map.json
 # Code generation
 lib/models/generated/*
 devtools_options.yaml
+
+# Windows
+/windows/*
