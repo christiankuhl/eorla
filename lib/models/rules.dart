@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'character.dart';
 import 'skill.dart';
 import 'weapons.dart';
@@ -5,6 +7,19 @@ import 'attributes.dart';
 import 'special_abilities.dart';
 import 'special_abilities_impl.dart';
 import 'dart:math';
+
+class Dice {
+  final int sides;
+  int result = 0;
+
+  Dice(this.sides);
+
+  int roll([Random? rng]) {
+    rng ??= Random();
+    result = rng.nextInt(sides) + 1;
+    return result;
+  }
+}
 
 abstract class Trial {
   Attribute get attr1;
@@ -191,7 +206,8 @@ class CombatRoll {
   final int attackPrimary;
   final int dodge;
   final Character character;
-  final SpecialAbility? specialAbility;
+  final SpecialAbility? specialAbilityBaseManeuvre;
+  final SpecialAbility? specialAbilitySpecialManeuvre;
 
   CombatRoll(
     this.ct,
@@ -201,17 +217,20 @@ class CombatRoll {
     this.dodge,
     this.character,
     this.weapon,
-    this.specialAbility,
+    this.specialAbilityBaseManeuvre,
+    this.specialAbilitySpecialManeuvre,
   );
   factory CombatRoll.fromWeapon(
     Character character,
     Weapon weapon,
-    SpecialAbility? specialAbility,
+    SpecialAbility? specialAbilityBaseManeuvre,
+    SpecialAbility? specialAbilitySpecialManeuvre,
   ) {
     return CombatRoll.fromTechnique(
       character,
       weapon.ct,
-      specialAbility,
+      specialAbilityBaseManeuvre,
+      specialAbilitySpecialManeuvre,
       weapon: weapon,
     );
   }
@@ -219,7 +238,8 @@ class CombatRoll {
   factory CombatRoll.fromTechnique(
     Character character,
     CombatTechnique ct,
-    SpecialAbility? specialAbility, {
+    SpecialAbility? specialAbilityBaseManeuvre,
+    SpecialAbility? specialAbilitySpecialManeuvre, {
     Weapon? weapon,
   }) {
     final attackPrimary = character.getAttribute(
@@ -236,8 +256,52 @@ class CombatRoll {
       (character.ge / 2).round(),
       character,
       weapon,
-      specialAbility,
+      specialAbilityBaseManeuvre,
+      specialAbilitySpecialManeuvre,
     );
+  }
+
+  Text targetValueCard(
+    CombatActionType action, {
+    TextStyle? styleNormal,
+    TextStyle? styleGood,
+    TextStyle? styleBad,
+  }) {
+    SpecialAbilityImpact impact1 = SpecialAbilityImpact.fromActive(
+      specialAbilityBaseManeuvre,
+      weapon?.ct,
+      weapon,
+      0,
+    );
+    SpecialAbilityImpact impact2 = SpecialAbilityImpact.fromActive(
+      specialAbilitySpecialManeuvre,
+      weapon?.ct,
+      weapon,
+      0,
+    );
+    switch (action) {
+      case CombatActionType.attack:
+        int at = ctValue + (max(attackPrimary - 8, 0) / 3).toInt();
+        if (weapon != null) {
+          at += weapon!.at;
+        }
+        int impactMod = impact1.atMod + impact2.atMod;
+        if (impactMod < 0) {
+          return Text((at + impactMod).toString(), style: styleBad);
+        }
+        if (impactMod > 0) {
+          return Text((at + impactMod).toString(), style: styleGood);
+        }
+        return Text((at + impactMod).toString(), style: styleNormal);
+      case CombatActionType.parry:
+        int pa = (ctValue / 2).ceil() + (max(parryPrimary - 8, 0) / 3).toInt();
+        if (weapon != null) {
+          pa += weapon!.pa;
+        }
+        return Text((pa).toString(), style: styleNormal);
+      case CombatActionType.dodge:
+        return Text((dodge).toString(), style: styleNormal);
+    }
   }
 
   int targetValue(CombatActionType action) {
@@ -259,21 +323,62 @@ class CombatRoll {
     }
   }
 
+  /// Rolls for an attribute check based on the given [action] and [modifier].
+  ///
+  /// This method calculates the target value for the roll, applies any modifiers
+  /// from special abilities (both base and special maneuvers), and returns a list
+  /// of [AttributeRollResult] objects representing the outcome(s) of the roll.
+  ///
+  /// If a special ability impact provides a callback, that callback is used to
+  /// determine the roll results. Otherwise, applicable modifiers from special
+  /// abilities are added to the [modifier] parameter.
+  ///
+  /// - [action]: The type of combat action being performed.
+  /// - [modifier]: The base modifier to apply to the roll.
+  ///
+  /// Returns a list of [AttributeRollResult] representing the roll outcomes.
   List<AttributeRollResult> roll(CombatActionType action, int modifier) {
-    if (specialAbility == null) {
-      return [attributeRoll(targetValue(action), modifier, character.state)];
-    } else {
+    int target = targetValue(action);
+    int modifierBaseManeuvre = 0;
+    int modifierSpecialManeuvre = 0;
+    if (specialAbilityBaseManeuvre != null) {
       SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
-        specialAbility!,
+        specialAbilityBaseManeuvre!,
         ct,
         weapon,
-        modifier,
+        modifier, //FIXME: should not be neccessairy
       );
-      return impact.apply(this, action);
+      if (impact.callback != null) {
+        // the impact define all rolls
+        return impact.callback!(this, action);
+      }
+      modifierBaseManeuvre = impact.getApplicableMod(this, action);
     }
+    if (specialAbilitySpecialManeuvre != null) {
+      SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+        specialAbilitySpecialManeuvre!,
+        ct,
+        weapon,
+        modifier, //FIXME: should not be neccessairy
+      );
+      if (impact.callback != null) {
+        // the impact define all rolls
+        return impact.callback!(this, action);
+      }
+      modifierSpecialManeuvre = impact.getApplicableMod(this, action);
+    }
+
+    return [
+      attributeRoll(
+        target,
+        modifier + modifierBaseManeuvre + modifierSpecialManeuvre,
+        character.state,
+      ),
+    ];
   }
 }
 
+//TODO: prettify this
 AttributeRollResult attributeRoll(
   int attrValue,
   int modifier,
@@ -283,59 +388,256 @@ AttributeRollResult attributeRoll(
   random ??= Random();
   int roll = random.nextInt(20) + 1;
   if (attrValue + modifier - characterState.value() < 1) {
-    return AttributeRollResult(null, RollEvent.failure, attrValue);
+    return AttributeRollResult(null, RollEvent.failure, attrValue + modifier);
   }
   int fw = attrValue + modifier - characterState.value() - roll;
   if (roll == 1) {
     int roll2 = random.nextInt(20) + 1;
     int fw2 = attrValue + modifier - characterState.value() - roll2;
     if (fw2 >= 0) {
-      return AttributeRollResult(roll, RollEvent.critical, attrValue);
+      return AttributeRollResult(
+        roll,
+        RollEvent.critical,
+        attrValue + modifier,
+      );
     } else {
-      return AttributeRollResult(roll, RollEvent.success, attrValue);
+      return AttributeRollResult(roll, RollEvent.success, attrValue + modifier);
     }
   } else if (roll == 20) {
     int roll2 = random.nextInt(20) + 1;
     int fw2 = attrValue + modifier - characterState.value() - roll2;
     if (fw2 >= 0 && roll2 != 20) {
       if (fw >= 0) {
-        return AttributeRollResult(roll, RollEvent.success, attrValue);
+        return AttributeRollResult(
+          roll,
+          RollEvent.success,
+          attrValue + modifier,
+        );
       } else {
-        return AttributeRollResult(roll, RollEvent.failure, attrValue);
+        return AttributeRollResult(
+          roll,
+          RollEvent.failure,
+          attrValue + modifier,
+        );
       }
     } else {
-      return AttributeRollResult(roll, RollEvent.botch, attrValue);
+      return AttributeRollResult(roll, RollEvent.botch, attrValue + modifier);
     }
   } else {
     if (fw >= 0) {
-      return AttributeRollResult(roll, RollEvent.success, attrValue);
+      return AttributeRollResult(roll, RollEvent.success, attrValue + modifier);
     } else {
-      return AttributeRollResult(roll, RollEvent.failure, attrValue);
+      return AttributeRollResult(roll, RollEvent.failure, attrValue + modifier);
     }
   }
 }
 
+/// Calculates the total damage dealt by a weapon, considering the character's attributes and any special abilities.
+///
+/// [weapon] - The weapon used for the attack.
+/// [character] - The character performing the attack.
+/// [specialAbilityBaseManeuvre] - An optional special ability that modifies the base attack.
+/// [specialAbilitySpecialManeuvre] - An optional special ability that modifies the special attack.
+///
+/// Returns the total damage as an integer.
 int damageRoll(
   Weapon weapon,
   Character character,
-  SpecialAbility? specialAbility,
-) {
+  SpecialAbility? specialAbilityBaseManeuvre,
+  SpecialAbility? specialAbilitySpecialManeuvre, {
+  Random? random,
+}) {
   final primary = weapon.ct.primary
       .map((attr) => character.getAttribute(attr))
       .reduce((a, b) => a > b ? a : b);
-  int roll =
+
+  random ??= Random();
+  int result = 0;
+  int tpMod = 0;
+  double tpMult = 1;
+  int tpModAfterMultiplier = 0;
+  int tpFlat =
       weapon.damageFlat + max(primary - weapon.primaryThreshold, 0).toInt();
+  List<Dice> damageDice = [];
   for (var i = 0; i < weapon.damageDice; i++) {
-    roll += Random().nextInt(weapon.damageDiceSides) + 1;
+    damageDice.add(Dice(weapon.damageDiceSides));
   }
-  if (specialAbility != null) {
+
+  // Check impact from base maneuvre
+  if (specialAbilityBaseManeuvre != null) {
     SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
-      specialAbility,
-      null,
+      specialAbilityBaseManeuvre,
+      weapon.ct,
       weapon,
       0,
     );
-    return impact.applyDamage(roll, weapon, character);
+    if (impact.tpcallback != null) {
+      tpMod += impact.tpcallback!(character);
+    }
+    tpMod += impact.tpMod;
+    tpMult *= impact.tpMult;
+    tpModAfterMultiplier += impact.tpModAfterMultiplier;
+    if (impact.additionalDiceReplaceOriginal) {
+      damageDice = impact.additionalDice;
+      //TODO: Check if we want this behaviour.
+      tpFlat = 0;
+    } else {
+      damageDice.addAll(impact.additionalDice);
+    }
   }
-  return roll;
+  // Check impact from special maneuvre
+  if (specialAbilitySpecialManeuvre != null) {
+    SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+      specialAbilitySpecialManeuvre,
+      weapon.ct,
+      weapon,
+      0,
+    );
+    if (impact.tpcallback != null) {
+      tpMod += impact.tpcallback!(character);
+    }
+    tpMod += impact.tpMod;
+    tpMult *= impact.tpMult;
+    tpModAfterMultiplier += impact.tpModAfterMultiplier;
+    if (impact.additionalDiceReplaceOriginal) {
+      damageDice = impact.additionalDice;
+      //TODO: Check if we want this behaviour.
+      tpFlat = 0;
+    } else {
+      damageDice.addAll(impact.additionalDice);
+    }
+  }
+
+  // Roll all dice and add their results to the result variable
+  for (var dice in damageDice) {
+    result += dice.roll(random);
+  }
+  // Apply modifiers and multipliers
+  result = ((result + tpFlat + tpMod) * tpMult).round() + tpModAfterMultiplier;
+
+  return result;
+}
+
+RichText damageRollTextGenerator(
+  Weapon weapon,
+  Character character,
+  SpecialAbility? specialAbilityBaseManeuvre,
+  SpecialAbility? specialAbilitySpecialManeuvre,
+  TextStyle? styleNormal,
+   {
+  TextStyle? styleGood,
+  TextStyle? styleBad,
+}) {
+  final primary = weapon.ct.primary
+      .map((attr) => character.getAttribute(attr))
+      .reduce((a, b) => a > b ? a : b);
+
+  int tpMod = 0;
+  double tpMult = 1;
+  int tpModAfterMultiplier = 0;
+  int tpFlat =
+      weapon.damageFlat + max(primary - weapon.primaryThreshold, 0).toInt();
+  List<Dice> damageDice = [];
+  int diceChange = 0;
+  for (var i = 0; i < weapon.damageDice; i++) {
+    damageDice.add(Dice(weapon.damageDiceSides));
+  }
+
+  // Check impact from base maneuvre
+  if (specialAbilityBaseManeuvre != null) {
+    SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+      specialAbilityBaseManeuvre,
+      weapon.ct,
+      weapon,
+      0,
+    );
+    if (impact.tpcallback != null) {
+      tpMod += impact.tpcallback!(character);
+    }
+    tpMod += impact.tpMod;
+    tpMult *= impact.tpMult;
+    tpModAfterMultiplier += impact.tpModAfterMultiplier;
+    if (impact.additionalDiceReplaceOriginal) {
+      damageDice = impact.additionalDice;
+      //TODO: Check if we want this behaviour.
+      tpFlat = 0;
+      diceChange = -5;
+    } else {
+      damageDice.addAll(impact.additionalDice);
+      if (impact.additionalDice.isNotEmpty) {diceChange += 1;}
+    }
+  }
+  // Check impact from special maneuvre
+  if (specialAbilitySpecialManeuvre != null) {
+    SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+      specialAbilitySpecialManeuvre,
+      weapon.ct,
+      weapon,
+      0,
+    );
+    if (impact.tpcallback != null) {
+      tpMod += impact.tpcallback!(character);
+    }
+    tpMod += impact.tpMod;
+    tpMult *= impact.tpMult;
+    tpModAfterMultiplier += impact.tpModAfterMultiplier;
+    if (impact.additionalDiceReplaceOriginal) {
+      damageDice = impact.additionalDice;
+      //TODO: Check if we want this behaviour.
+      tpFlat = 0;
+      diceChange = -5;
+    } else {
+      damageDice.addAll(impact.additionalDice);
+      if (impact.additionalDice.isNotEmpty) {diceChange += 1;}
+    }
+  }
+
+  List<TextSpan> result = [];
+  if (tpMult == 1) {
+    result.add(TextSpan(text: diceCountString(damageDice), style: diceChange == 0 ? null : (diceChange <= 0 ? styleBad : styleGood)));
+    if (tpFlat + tpMod + tpModAfterMultiplier != 0) {
+      if (result.isNotEmpty && tpFlat + tpMod + tpModAfterMultiplier > 0) {
+        result.add(const TextSpan(text: "+"));
+      }
+      result.add(TextSpan(text: "${tpFlat + tpMod + tpModAfterMultiplier}", style: tpMod + tpModAfterMultiplier == 0 ? null : (tpMod + tpModAfterMultiplier <= 0 ? styleBad : styleGood)));
+    }
+  } else {
+    String diceText = diceCountString(damageDice);
+    if (diceText != "") {
+      result.add(const TextSpan(text: "("));
+      result.add(TextSpan(text: diceText, style: diceChange == 0 ? null : (diceChange <= 0 ? styleBad : styleGood)));
+    }
+    if (tpFlat + tpMod != 0) {
+      if (result.isNotEmpty && tpFlat + tpMod > 0) {
+        result.add(const TextSpan(text: "+"));
+        result.add(TextSpan(text: "${tpFlat + tpMod}", style: tpMod == 0 ? null : (tpMod <= 0 ? styleBad : styleGood)));
+        result.add(const TextSpan(text: ")*"));
+      }
+    }
+    if (result.isNotEmpty) {
+      result.add(TextSpan(text: tpMult.toStringAsFixed(tpMult.truncateToDouble() == tpMult ? 0 : 1), style: tpMult <= 1 ? styleBad : styleGood));
+    }
+    if (result.isNotEmpty && tpModAfterMultiplier != 0) {
+      result.add(const TextSpan(text: "+"));
+    }
+    if (result.isEmpty || tpModAfterMultiplier!= 0) {
+      result.add(TextSpan(text: tpModAfterMultiplier.toString(), style: tpModAfterMultiplier <= 0 ? styleBad : styleGood));
+    }
+  }
+
+  return RichText(
+    text: TextSpan(
+      style: styleNormal,
+      children: result,
+    ),
+  );
+}
+
+String diceCountString(List<Dice> damageDice) {
+  final Map<int, int> counts = {};
+  for (final dice in damageDice) {
+    counts[dice.sides] = (counts[dice.sides] ?? 0) + 1;
+  }
+  // Example output: "2W6 + 1W8"
+  return counts.entries.map((e) => "${e.value}W${e.key}").join("+");
 }
