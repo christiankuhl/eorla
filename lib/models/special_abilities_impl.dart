@@ -4,6 +4,7 @@ import '../models/special_abilities.dart';
 import '../models/weapons.dart';
 import '../models/skill.dart';
 import '../models/character.dart';
+import 'dice.dart';
 
 sealed class ApplicableCombatTechniques {
   const ApplicableCombatTechniques();
@@ -141,7 +142,7 @@ class SpecialAbilityImpact {
       case SpecialAbilityBase.hammerschlag:
       case SpecialAbilityBase.todesstoss:
         atMod = -2;
-        additionalDice = [Dice(6)];
+        additionalDice = [Dice.create(6)];
         break;
       case SpecialAbilityBase.lanzenangriff:
         // TODO: Probe auf Reiten -> Angriff Kriegslanze ->  TP um 2 + GS/2 des Reittiers
@@ -173,7 +174,7 @@ class SpecialAbilityImpact {
         break;
       case SpecialAbilityBase.zuFallBringen:
         atMod = -4;
-        additionalDice = [Dice(3)];
+        additionalDice = [Dice.create(3)];
         additionalDiceReplaceOriginal = true;
         break;
       case SpecialAbilityBase.ballistischerSchuss:
@@ -184,7 +185,7 @@ class SpecialAbilityImpact {
         break;
       case SpecialAbilityBase.betaeubungsschlag:
         atMod = -2;
-        additionalDice = [Dice(3)];
+        additionalDice = [Dice.create(3)];
         additionalDiceReplaceOriginal = true;
         break;
       case SpecialAbilityBase.festnageln:

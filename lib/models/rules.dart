@@ -7,17 +7,68 @@ import 'attributes.dart';
 import 'special_abilities.dart';
 import 'special_abilities_impl.dart';
 import 'dart:math';
+import 'dice.dart';
 
-class Dice {
-  final int sides;
-  int result = 0;
+class GenerericRollResult {
+  final List<Dice> dice;
+  final int combinedResult;
+  final String title;
 
-  Dice(this.sides);
+  GenerericRollResult(
+    this.dice,
+    this.combinedResult,
+    this.title,
+  );
 
-  int roll([Random? rng]) {
-    rng ??= Random();
-    result = rng.nextInt(sides) + 1;
-    return result;
+  Widget titleAsWidget() {
+    return Text(title);
+  }
+
+  // All RollResults should have a function displaying its output
+  // Subclasses may override this to return any Flutter Widget for display, if they also handle the dice List being empty.
+  Widget contentAsWidget() {
+    if (dice.isEmpty) {
+      return Text("No dice rolled.");
+    }
+    // If any of the dice result is still the default of -999999 return error Text
+    if (dice.any((d) => d.result == -999999)) {
+      return Text("Error: Some dice have not been rolled.");
+    }
+    return resultsWidget();
+  }
+
+  // Subclasses may override this to return any Flutter Widget for display.
+  Widget resultsWidget() {
+    final rolls = dice.map((d) => d.result).join(", ");
+    return Text("Rolls: [$rolls], Combined Result: $combinedResult");
+  }
+}
+
+class DamageRollResult extends GenerericRollResult {
+  DamageRollResult(List<Dice> dice, int combinedResult)
+      : super(dice, combinedResult, "Schaden");
+  
+  @override
+  Widget resultsWidget() {
+    return IntrinsicHeight(
+      child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: dice
+                .map((d) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: d.displayWidget(DiceDisplayMode.fancy),
+                    ))
+                .toList(),
+          ),
+        const SizedBox(height: 8),
+        Text("Dein Angriff verursacht $combinedResult Trefferpunkt(e)."),
+      ],
+      ),
+    );
   }
 }
 
@@ -454,7 +505,7 @@ AttributeRollResult attributeRoll(
 /// [specialAbilitySpecialManeuvre] - An optional special ability that modifies the special attack.
 ///
 /// Returns the total damage as an integer.
-int damageRoll(
+DamageRollResult damageRoll(
   Weapon weapon,
   Character character,
   SpecialAbility? specialAbilityBaseManeuvre,
@@ -474,7 +525,7 @@ int damageRoll(
       weapon.damageFlat + max(primary - weapon.primaryThreshold, 0).toInt();
   List<Dice> damageDice = [];
   for (var i = 0; i < weapon.damageDice; i++) {
-    damageDice.add(Dice(weapon.damageDiceSides));
+    damageDice.add(Dice.create(weapon.damageDiceSides));
   }
 
   // Check impact from base maneuvre
@@ -529,7 +580,7 @@ int damageRoll(
   // Apply modifiers and multipliers
   result = ((result + tpFlat + tpMod) * tpMult).round() + tpModAfterMultiplier;
 
-  return result;
+  return DamageRollResult(damageDice, result);
 }
 
 RichText damageRollTextGenerator(
@@ -554,8 +605,9 @@ RichText damageRollTextGenerator(
   List<Dice> damageDice = [];
   int diceChange = 0;
   for (var i = 0; i < weapon.damageDice; i++) {
-    damageDice.add(Dice(weapon.damageDiceSides));
+    damageDice.add(Dice.create(weapon.damageDiceSides));
   }
+
 
   // Check impact from base maneuvre
   if (specialAbilityBaseManeuvre != null) {
