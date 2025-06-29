@@ -24,8 +24,18 @@ class _CombatScreenState extends State<CombatScreen> {
   Widget? genericAttack;
 
   // TODO: Prettify this!
-  void rollCombat(CombatActionType action, Weapon weapon, SpecialAbility? specialAbilityBaseManeuvre, SpecialAbility? specialAbilitySpecialManeuvre) {
-    final engine = CombatRoll.fromWeapon(widget.character, weapon, specialAbilityBaseManeuvre, specialAbilitySpecialManeuvre);
+  void rollCombat(
+    CombatActionType action,
+    Weapon weapon,
+    SpecialAbility? specialAbilityBaseManeuvre,
+    SpecialAbility? specialAbilitySpecialManeuvre,
+  ) {
+    final engine = CombatRoll.fromWeapon(
+      widget.character,
+      weapon,
+      specialAbilityBaseManeuvre,
+      specialAbilitySpecialManeuvre,
+    );
     final result = engine.roll(action, modifier);
     String title;
     switch (action) {
@@ -38,9 +48,15 @@ class _CombatScreenState extends State<CombatScreen> {
     }
     String txt;
     if (result.length == 1) {
-      txt = "${result[0].text()} (${result[0].targetValue} → 🎲 ${result[0].roll})";
+      txt =
+          "${result[0].text()} (${result[0].targetValue} → 🎲 ${result[0].roll})";
     } else {
-      txt = result.map((r) => "${r.context}: ${r.text()} (${r.targetValue} → 🎲 ${r.roll})").join("\n");
+      txt = result
+          .map(
+            (r) =>
+                "${r.context}: ${r.text()} (${r.targetValue} → 🎲 ${r.roll})",
+          )
+          .join("\n");
     }
     showDialog(
       context: context,
@@ -57,8 +73,17 @@ class _CombatScreenState extends State<CombatScreen> {
     );
   }
 
-  void rollDamage(Weapon weapon, SpecialAbility? selectedSpecialBaseManeuvre, SpecialAbility? selectedSpecialSpecialManeuvre) {
-    final damage = damageRoll(weapon, widget.character, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre);
+  void rollDamage(
+    Weapon weapon,
+    SpecialAbility? selectedSpecialBaseManeuvre,
+    SpecialAbility? selectedSpecialSpecialManeuvre,
+  ) {
+    final damage = damageRoll(
+      weapon,
+      widget.character,
+      selectedSpecialBaseManeuvre,
+      selectedSpecialSpecialManeuvre,
+    );
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -85,21 +110,22 @@ class _CombatScreenState extends State<CombatScreen> {
             .where((a) => a.value.type == SpecialAbilityType.specialManeuvre)
             .toList();
 
-    List<Widget> tlChildren = [
-      SizedBox(
-        height: 100,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
-              iconSize: 32,
-            ),
-            Expanded(child: CharacterCard()),
-          ],
-        ),
+    final characterCard = SizedBox(
+      height: 100,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+            iconSize: 32,
+          ),
+          Expanded(child: CharacterCard()),
+        ],
       ),
+    );
+
+    List<Widget> tlChildren = [
       Card(
         margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: Padding(
@@ -145,9 +171,23 @@ class _CombatScreenState extends State<CombatScreen> {
           widget.character,
           selectedSpecialBaseManeuvre,
           selectedSpecialSpecialManeuvre,
-          onAttack: () => rollCombat(CombatActionType.attack, weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
-          onParry: () => rollCombat(CombatActionType.parry, weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
-          onDamage: () => rollDamage(weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
+          onAttack: () => rollCombat(
+            CombatActionType.attack,
+            weapon,
+            selectedSpecialBaseManeuvre,
+            selectedSpecialSpecialManeuvre,
+          ),
+          onParry: () => rollCombat(
+            CombatActionType.parry,
+            weapon,
+            selectedSpecialBaseManeuvre,
+            selectedSpecialSpecialManeuvre,
+          ),
+          onDamage: () => rollDamage(
+            weapon,
+            selectedSpecialBaseManeuvre,
+            selectedSpecialSpecialManeuvre,
+          ),
         ),
       );
     }
@@ -173,9 +213,23 @@ class _CombatScreenState extends State<CombatScreen> {
                     widget.character,
                     selectedSpecialBaseManeuvre,
                     selectedSpecialSpecialManeuvre,
-                    onAttack: () => rollCombat(CombatActionType.attack, weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
-                    onParry: () => rollCombat(CombatActionType.parry, weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
-                    onDamage: () => rollDamage(weapon, selectedSpecialBaseManeuvre, selectedSpecialSpecialManeuvre),
+                    onAttack: () => rollCombat(
+                      CombatActionType.attack,
+                      weapon,
+                      selectedSpecialBaseManeuvre,
+                      selectedSpecialSpecialManeuvre,
+                    ),
+                    onParry: () => rollCombat(
+                      CombatActionType.parry,
+                      weapon,
+                      selectedSpecialBaseManeuvre,
+                      selectedSpecialSpecialManeuvre,
+                    ),
+                    onDamage: () => rollDamage(
+                      weapon,
+                      selectedSpecialBaseManeuvre,
+                      selectedSpecialSpecialManeuvre,
+                    ),
                     onDelete: () => setState(() {
                       genericAttack = null;
                     }),
@@ -220,10 +274,7 @@ class _CombatScreenState extends State<CombatScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Text(
-                      "Basismanöver",
-                      style: TextStyle(fontSize: 18),
-                    ),
+                    child: Text("Basismanöver", style: TextStyle(fontSize: 18)),
                   ),
                   Visibility(
                     visible: selectedSpecialBaseManeuvre?.value.rules != null,
@@ -233,8 +284,12 @@ class _CombatScreenState extends State<CombatScreen> {
                               showDialog(
                                 context: context,
                                 builder: (_) => AlertDialog(
-                                  title: Text(selectedSpecialBaseManeuvre.toString()),
-                                  content: Text(selectedSpecialBaseManeuvre!.value.rules),
+                                  title: Text(
+                                    selectedSpecialBaseManeuvre.toString(),
+                                  ),
+                                  content: Text(
+                                    selectedSpecialBaseManeuvre!.value.rules,
+                                  ),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(context),
@@ -276,13 +331,14 @@ class _CombatScreenState extends State<CombatScreen> {
                     ),
                   ),
                 ],
-                onChanged: (val) => setState(() => selectedSpecialBaseManeuvre = val),
+                onChanged: (val) =>
+                    setState(() => selectedSpecialBaseManeuvre = val),
               ),
             ],
           ),
         ),
       ),
-      
+
       Card(
         margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: Padding(
@@ -300,15 +356,20 @@ class _CombatScreenState extends State<CombatScreen> {
                     ),
                   ),
                   Visibility(
-                    visible: selectedSpecialSpecialManeuvre?.value.rules != null,
+                    visible:
+                        selectedSpecialSpecialManeuvre?.value.rules != null,
                     child: GestureDetector(
                       onTap: selectedSpecialSpecialManeuvre?.value.rules != null
                           ? () {
                               showDialog(
                                 context: context,
                                 builder: (_) => AlertDialog(
-                                  title: Text(selectedSpecialSpecialManeuvre.toString()),
-                                  content: Text(selectedSpecialSpecialManeuvre!.value.rules),
+                                  title: Text(
+                                    selectedSpecialSpecialManeuvre.toString(),
+                                  ),
+                                  content: Text(
+                                    selectedSpecialSpecialManeuvre!.value.rules,
+                                  ),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(context),
@@ -350,7 +411,8 @@ class _CombatScreenState extends State<CombatScreen> {
                     ),
                   ),
                 ],
-                onChanged: (val) => setState(() => selectedSpecialSpecialManeuvre = val),
+                onChanged: (val) =>
+                    setState(() => selectedSpecialSpecialManeuvre = val),
               ),
             ],
           ),
@@ -377,7 +439,12 @@ class _CombatScreenState extends State<CombatScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(child: Column(children: tlChildren)),
+        child: Column(
+          children: [
+            characterCard,
+            Expanded(child: ListView(children: tlChildren)),
+          ],
+        ),
       ),
     );
   }
