@@ -3,13 +3,18 @@ import '../widgets/character_card.dart';
 import '../models/character.dart';
 import '../models/rules.dart';
 import '../widgets/widget_helpers.dart';
+import 'dice_rolls.dart';
 import 'skill_result.dart';
 
 class RollScreen<T extends Trial> extends StatefulWidget {
   final T skillOrSpell;
   final Character character;
 
-  const RollScreen({required this.skillOrSpell, required this.character, super.key});
+  const RollScreen({
+    required this.skillOrSpell,
+    required this.character,
+    super.key,
+  });
 
   @override
   RollScreenState createState() => RollScreenState();
@@ -22,16 +27,15 @@ class RollScreenState extends State<RollScreen> {
     SkillRoll engine = SkillRoll.from(widget.character, widget.skillOrSpell);
     SkillRollResult rollResults = engine.roll(modifier);
 
-    Navigator.push(
+    fadeDice(
       context,
-      MaterialPageRoute(
-        builder: (_) => ResultScreen(
-          skillOrSpell: widget.skillOrSpell,
-          stats: engine,
-          rollResults: rollResults,
-          modifier: modifier,
-        ),
+      ResultScreen(
+        skillOrSpell: widget.skillOrSpell,
+        stats: engine,
+        rollResults: rollResults,
+        modifier: modifier,
       ),
+      DiceAnimation.d20,
     );
   }
 

@@ -7,6 +7,7 @@ import '../widgets/character_card.dart';
 import '../widgets/widget_helpers.dart';
 import '../widgets/weapon_card.dart';
 import 'combat_technique_selection.dart';
+import 'dice_rolls.dart';
 
 class CombatScreen extends StatefulWidget {
   final Character character;
@@ -24,12 +25,12 @@ class _CombatScreenState extends State<CombatScreen> {
   Widget? genericAttack;
 
   // TODO: Prettify this!
-  void rollCombat(
+  Future<void> rollCombat(
     CombatActionType action,
     Weapon weapon,
     SpecialAbility? specialAbilityBaseManeuvre,
     SpecialAbility? specialAbilitySpecialManeuvre,
-  ) {
+  ) async {
     final engine = CombatRoll.fromWeapon(
       widget.character,
       weapon,
@@ -58,6 +59,13 @@ class _CombatScreenState extends State<CombatScreen> {
           )
           .join("\n");
     }
+
+    await fadeDice(context, context.widget, DiceAnimation.d20);
+    
+    if (!mounted) {
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -73,17 +81,24 @@ class _CombatScreenState extends State<CombatScreen> {
     );
   }
 
-  void rollDamage(
+  Future<void> rollDamage(
     Weapon weapon,
     SpecialAbility? selectedSpecialBaseManeuvre,
     SpecialAbility? selectedSpecialSpecialManeuvre,
-  ) {
+  ) async {
     final damage = damageRoll(
       weapon,
       widget.character,
       selectedSpecialBaseManeuvre,
       selectedSpecialSpecialManeuvre,
     );
+    
+    await fadeDice(context, context.widget, DiceAnimation.d6);
+    
+    if (!mounted) {
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
