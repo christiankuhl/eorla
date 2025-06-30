@@ -17,7 +17,7 @@ void main() async {
 
 class Eorla extends StatelessWidget {
   const Eorla({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,4 +26,14 @@ class Eorla extends StatelessWidget {
       home: MainScreen(),
     );
   }
+}
+
+// Extend the dark and light themes with my own colors which I will use for my dice widget
+extension DiceThemeColors on ThemeData {
+  Color get diceBorder => brightness == Brightness.dark
+      ? const Color.fromARGB(255, 126, 118, 139)
+      : const Color.fromARGB(255, 29, 27, 32);
+  Color get diceBackground => brightness == Brightness.dark
+      ? const Color.fromARGB(255, 29, 27, 32)
+      : const Color.fromARGB(255, 126, 118, 139);
 }

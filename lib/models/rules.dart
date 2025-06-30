@@ -20,13 +20,13 @@ class GenerericRollResult {
     this.title,
   );
 
-  Widget titleAsWidget() {
+  Widget titleAsWidget(BuildContext context) {
     return Text(title);
   }
 
   // All RollResults should have a function displaying its output
   // Subclasses may override this to return any Flutter Widget for display, if they also handle the dice List being empty.
-  Widget contentAsWidget() {
+  Widget contentAsWidget(BuildContext context) {
     if (dice.isEmpty) {
       return Text("No dice rolled.");
     }
@@ -34,11 +34,11 @@ class GenerericRollResult {
     if (dice.any((d) => d.result == -999999)) {
       return Text("Error: Some dice have not been rolled.");
     }
-    return resultsWidget();
+    return resultsWidget(context);
   }
 
   // Subclasses may override this to return any Flutter Widget for display.
-  Widget resultsWidget() {
+  Widget resultsWidget(BuildContext context) {
     final rolls = dice.map((d) => d.result).join(", ");
     return Text("Rolls: [$rolls], Combined Result: $combinedResult");
   }
@@ -49,7 +49,7 @@ class DamageRollResult extends GenerericRollResult {
       : super(dice, combinedResult, "Schaden");
   
   @override
-  Widget resultsWidget() {
+  Widget resultsWidget(BuildContext context) {
     return IntrinsicHeight(
       child: Column(
       mainAxisSize: MainAxisSize.min,
@@ -60,7 +60,7 @@ class DamageRollResult extends GenerericRollResult {
             children: dice
                 .map((d) => Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: d.displayWidget(DiceDisplayMode.fancy),
+                      child: d.displayWidget(context, DiceDisplayMode.fancy),
                     ))
                 .toList(),
           ),

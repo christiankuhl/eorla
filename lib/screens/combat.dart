@@ -62,8 +62,8 @@ class _CombatScreenState extends State<CombatScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: damage.titleAsWidget(),
-        content: damage.contentAsWidget(),
+        title: damage.titleAsWidget(context),
+        content: damage.contentAsWidget(context),
         //content: Text('Dein Angriff verursacht $damage Trefferpunkt(e).'),
         actions: [
           TextButton(

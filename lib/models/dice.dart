@@ -1,3 +1,4 @@
+import 'package:eorla/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -6,8 +7,10 @@ enum DiceDisplayMode { text, colored, fancy }
 class Dice {
   final int sides;
   int result = -999999; // Default nonsensical, non-null value
-  Color fancyFill;
-  Color fancyBorder;
+  Color? fancyFill;
+  Color? fancyBorder;
+  final Color fallbackFancyFill = const Color.fromARGB(255, 29, 27, 32);
+  final Color fallbackFancyBorder = const Color.fromARGB(255, 126, 118, 139);
 
   factory Dice.create(int sides, {Color? fill, Color? border}) {
     switch (sides) {
@@ -22,9 +25,7 @@ class Dice {
     }
   }
 
-  Dice(this.sides, {Color? fill, Color? border})
-    : fancyFill = fill ?? const Color.fromARGB(255, 29, 27, 32),
-      fancyBorder = border ?? const Color.fromARGB(255, 126, 118, 139);
+  Dice(this.sides, {Color? fill, Color? border});
 
   int roll([Random? rng]) {
     rng ??= Random();
@@ -32,15 +33,15 @@ class Dice {
     return result;
   }
 
-  Widget fancyDisplay() {
-    return coloredDisplay();
+  Widget fancyDisplay(BuildContext context) {
+    return coloredDisplay(context);
   }
 
-  Widget coloredDisplay() {
-    return textDisplay();
+  Widget coloredDisplay(BuildContext context) {
+    return textDisplay(context);
   }
 
-  Widget textDisplay() {
+  Widget textDisplay(BuildContext context) {
     if (result == -999999) {
       return Text("[X]");
     } else {
@@ -48,14 +49,14 @@ class Dice {
     }
   }
 
-  Widget displayWidget([DiceDisplayMode displayMode = DiceDisplayMode.text]) {
+  Widget displayWidget(BuildContext context, [DiceDisplayMode displayMode = DiceDisplayMode.text]) {
     switch (displayMode) {
       case DiceDisplayMode.fancy:
-        return fancyDisplay();
+        return fancyDisplay(context);
       case DiceDisplayMode.colored:
-        return coloredDisplay();
+        return coloredDisplay(context);
       case DiceDisplayMode.text:
-        return textDisplay();
+        return textDisplay(context);
     }
   }
 }
@@ -64,14 +65,20 @@ class D20Dice extends Dice {
   D20Dice({Color? fill, Color? border}) : super(20, fill: fill, border: border);
 
   @override
-  Widget fancyDisplay() {
+  Widget fancyDisplay(BuildContext context) {
+    fancyFill ??= Theme.of(context).diceBackground;
+    fancyFill ??= fallbackFancyFill;
+
+    fancyBorder ??= Theme.of(context).diceBorder;
+    fancyBorder ??= fallbackFancyBorder;
+
     return Container(
       width: 40,
       height: 40,
       child: CustomPaint(
         painter: _HexagonPainter(
-          fillColor: fancyFill,
-          borderColor: fancyBorder,
+          fillColor: fancyFill!,
+          borderColor: fancyBorder!,
         ),
         child: Center(
           child: Text(
@@ -88,13 +95,19 @@ class D6Dice extends Dice {
   D6Dice({Color? fill, Color? border}) : super(6, fill: fill, border: border);
 
   @override
-  Widget fancyDisplay() {
+  Widget fancyDisplay(BuildContext context) {
+    fancyFill ??= Theme.of(context).diceBackground;
+    fancyFill ??= fallbackFancyFill;
+
+    fancyBorder ??= Theme.of(context).diceBorder;
+    fancyBorder ??= fallbackFancyBorder;
+
     return Container(
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        border: Border.all(color: fancyBorder, width: 2),
-        color: fancyFill,
+        border: Border.all(color: fancyBorder!, width: 2),
+        color: fancyFill!,
       ),
       child: Center(
         child: Text(
@@ -110,14 +123,20 @@ class D3Dice extends Dice {
   D3Dice({Color? fill, Color? border}) : super(3, fill: fill, border: border);
 
   @override
-  Widget fancyDisplay() {
+  Widget fancyDisplay(BuildContext context) {
+    fancyFill ??= Theme.of(context).diceBackground;
+    fancyFill ??= fallbackFancyFill;
+
+    fancyBorder ??= Theme.of(context).diceBorder;
+    fancyBorder ??= fallbackFancyBorder;
+    
     return Container(
       width: 40,
       height: 40,
       child: CustomPaint(
         painter: _TrianglePainter(
-          fillColor: fancyFill,
-          borderColor: fancyBorder,
+          fillColor: fancyFill!,
+          borderColor: fancyBorder!,
         ),
         child: Center(
           child: Text(
