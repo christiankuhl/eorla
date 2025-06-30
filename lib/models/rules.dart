@@ -14,11 +14,7 @@ class GenerericRollResult {
   final int combinedResult;
   final String title;
 
-  GenerericRollResult(
-    this.dice,
-    this.combinedResult,
-    this.title,
-  );
+  GenerericRollResult(this.dice, this.combinedResult, this.title);
 
   Widget titleAsWidget(BuildContext context) {
     return Text(title);
@@ -46,27 +42,43 @@ class GenerericRollResult {
 
 class DamageRollResult extends GenerericRollResult {
   DamageRollResult(List<Dice> dice, int combinedResult)
-      : super(dice, combinedResult, "Schaden");
-  
+    : super(dice, combinedResult, "Schaden");
+
   @override
   Widget resultsWidget(BuildContext context) {
     return IntrinsicHeight(
       child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: dice
-                .map((d) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: d.displayWidget(context, DiceDisplayMode.fancy),
-                    ))
+                .map(
+                  (d) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: d.displayWidget(context, DiceDisplayMode.fancy),
+                  ),
+                )
                 .toList(),
           ),
-        const SizedBox(height: 8),
-        Text("Dein Angriff verursacht $combinedResult Trefferpunkt(e)."),
-      ],
+          const SizedBox(height: 8),
+          RichText(
+            text: TextSpan(
+              style: Theme.of(context).textTheme.bodyMedium,
+              children: [
+                const TextSpan(text: "Dein Angriff verursacht "),
+                TextSpan(
+                  text: "$combinedResult",
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const TextSpan(text: " Trefferpunkt(e)."),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -453,7 +465,11 @@ AttributeRollResult attributeRoll(
   random ??= Random();
   int roll = random.nextInt(20) + 1;
   if (attrValue + modifier - characterState.value() < 1) {
-    return AttributeRollResult(null, RollEvent.failure, attrValue + modifier - characterState.value());
+    return AttributeRollResult(
+      null,
+      RollEvent.failure,
+      attrValue + modifier - characterState.value(),
+    );
   }
   int fw = attrValue + modifier - characterState.value() - roll;
   if (roll == 1) {
@@ -486,13 +502,25 @@ AttributeRollResult attributeRoll(
         );
       }
     } else {
-      return AttributeRollResult(roll, RollEvent.botch, attrValue + modifier - characterState.value());
+      return AttributeRollResult(
+        roll,
+        RollEvent.botch,
+        attrValue + modifier - characterState.value(),
+      );
     }
   } else {
     if (fw >= 0) {
-      return AttributeRollResult(roll, RollEvent.success, attrValue + modifier - characterState.value());
+      return AttributeRollResult(
+        roll,
+        RollEvent.success,
+        attrValue + modifier - characterState.value(),
+      );
     } else {
-      return AttributeRollResult(roll, RollEvent.failure, attrValue + modifier - characterState.value());
+      return AttributeRollResult(
+        roll,
+        RollEvent.failure,
+        attrValue + modifier - characterState.value(),
+      );
     }
   }
 }
@@ -588,8 +616,7 @@ RichText damageRollTextGenerator(
   Character character,
   SpecialAbility? specialAbilityBaseManeuvre,
   SpecialAbility? specialAbilitySpecialManeuvre,
-  TextStyle? styleNormal,
-   {
+  TextStyle? styleNormal, {
   TextStyle? styleGood,
   TextStyle? styleBad,
 }) {
@@ -607,7 +634,6 @@ RichText damageRollTextGenerator(
   for (var i = 0; i < weapon.damageDice; i++) {
     damageDice.add(Dice.create(weapon.damageDiceSides));
   }
-
 
   // Check impact from base maneuvre
   if (specialAbilityBaseManeuvre != null) {
@@ -630,7 +656,9 @@ RichText damageRollTextGenerator(
       diceChange = -5;
     } else {
       damageDice.addAll(impact.additionalDice);
-      if (impact.additionalDice.isNotEmpty) {diceChange += 1;}
+      if (impact.additionalDice.isNotEmpty) {
+        diceChange += 1;
+      }
     }
   }
   // Check impact from special maneuvre
@@ -654,48 +682,85 @@ RichText damageRollTextGenerator(
       diceChange = -5;
     } else {
       damageDice.addAll(impact.additionalDice);
-      if (impact.additionalDice.isNotEmpty) {diceChange += 1;}
+      if (impact.additionalDice.isNotEmpty) {
+        diceChange += 1;
+      }
     }
   }
 
   List<TextSpan> result = [];
   if (tpMult == 1) {
-    result.add(TextSpan(text: diceCountString(damageDice), style: diceChange == 0 ? null : (diceChange <= 0 ? styleBad : styleGood)));
+    result.add(
+      TextSpan(
+        text: diceCountString(damageDice),
+        style: diceChange == 0
+            ? null
+            : (diceChange <= 0 ? styleBad : styleGood),
+      ),
+    );
     if (tpFlat + tpMod + tpModAfterMultiplier != 0) {
       if (result.isNotEmpty && tpFlat + tpMod + tpModAfterMultiplier > 0) {
         result.add(const TextSpan(text: "+"));
       }
-      result.add(TextSpan(text: "${tpFlat + tpMod + tpModAfterMultiplier}", style: tpMod + tpModAfterMultiplier == 0 ? null : (tpMod + tpModAfterMultiplier <= 0 ? styleBad : styleGood)));
+      result.add(
+        TextSpan(
+          text: "${tpFlat + tpMod + tpModAfterMultiplier}",
+          style: tpMod + tpModAfterMultiplier == 0
+              ? null
+              : (tpMod + tpModAfterMultiplier <= 0 ? styleBad : styleGood),
+        ),
+      );
     }
   } else {
     String diceText = diceCountString(damageDice);
     if (diceText != "") {
       result.add(const TextSpan(text: "("));
-      result.add(TextSpan(text: diceText, style: diceChange == 0 ? null : (diceChange <= 0 ? styleBad : styleGood)));
+      result.add(
+        TextSpan(
+          text: diceText,
+          style: diceChange == 0
+              ? null
+              : (diceChange <= 0 ? styleBad : styleGood),
+        ),
+      );
     }
     if (tpFlat + tpMod != 0) {
       if (result.isNotEmpty && tpFlat + tpMod > 0) {
         result.add(const TextSpan(text: "+"));
-        result.add(TextSpan(text: "${tpFlat + tpMod}", style: tpMod == 0 ? null : (tpMod <= 0 ? styleBad : styleGood)));
+        result.add(
+          TextSpan(
+            text: "${tpFlat + tpMod}",
+            style: tpMod == 0 ? null : (tpMod <= 0 ? styleBad : styleGood),
+          ),
+        );
         result.add(const TextSpan(text: ")*"));
       }
     }
     if (result.isNotEmpty) {
-      result.add(TextSpan(text: tpMult.toStringAsFixed(tpMult.truncateToDouble() == tpMult ? 0 : 1), style: tpMult <= 1 ? styleBad : styleGood));
+      result.add(
+        TextSpan(
+          text: tpMult.toStringAsFixed(
+            tpMult.truncateToDouble() == tpMult ? 0 : 1,
+          ),
+          style: tpMult <= 1 ? styleBad : styleGood,
+        ),
+      );
     }
     if (result.isNotEmpty && tpModAfterMultiplier != 0) {
       result.add(const TextSpan(text: "+"));
     }
-    if (result.isEmpty || tpModAfterMultiplier!= 0) {
-      result.add(TextSpan(text: tpModAfterMultiplier.toString(), style: tpModAfterMultiplier <= 0 ? styleBad : styleGood));
+    if (result.isEmpty || tpModAfterMultiplier != 0) {
+      result.add(
+        TextSpan(
+          text: tpModAfterMultiplier.toString(),
+          style: tpModAfterMultiplier <= 0 ? styleBad : styleGood,
+        ),
+      );
     }
   }
 
   return RichText(
-    text: TextSpan(
-      style: styleNormal,
-      children: result,
-    ),
+    text: TextSpan(style: styleNormal, children: result),
   );
 }
 

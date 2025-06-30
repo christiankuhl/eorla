@@ -49,7 +49,10 @@ class Dice {
     }
   }
 
-  Widget displayWidget(BuildContext context, [DiceDisplayMode displayMode = DiceDisplayMode.text]) {
+  Widget displayWidget(
+    BuildContext context, [
+    DiceDisplayMode displayMode = DiceDisplayMode.text,
+  ]) {
     switch (displayMode) {
       case DiceDisplayMode.fancy:
         return fancyDisplay(context);
@@ -65,7 +68,7 @@ class D20Dice extends Dice {
   D20Dice({Color? fill, Color? border}) : super(20, fill: fill, border: border);
 
   @override
-  Widget fancyDisplay(BuildContext context) {
+  Widget fancyDisplay(BuildContext context, {Gradient? gradient}) {
     fancyFill ??= Theme.of(context).diceBackground;
     fancyFill ??= fallbackFancyFill;
 
@@ -76,9 +79,12 @@ class D20Dice extends Dice {
       width: 40,
       height: 40,
       child: CustomPaint(
-        painter: _HexagonPainter(
+        painter: PolygonPainter(
+          sides: 6,
           fillColor: fancyFill!,
           borderColor: fancyBorder!,
+          rotation: -pi / 6,
+          borderGradient: gradient,
         ),
         child: Center(
           child: Text(
@@ -87,6 +93,25 @@ class D20Dice extends Dice {
           ),
         ),
       ),
+    );
+  }
+}
+
+class D20DiceCritical extends D20Dice {
+  @override
+  Widget fancyDisplay(BuildContext context, {Gradient? gradient}) {
+    return super.fancyDisplay(
+      context,
+      gradient: Theme.of(context).diceCriticalCheckGradient,
+    );
+  }
+}
+class D20DiceBotch extends D20Dice {
+  @override
+  Widget fancyDisplay(BuildContext context, {Gradient? gradient}) {
+    return super.fancyDisplay(
+      context,
+      gradient: Theme.of(context).diceBotchCheckGradient,
     );
   }
 }
@@ -105,14 +130,18 @@ class D6Dice extends Dice {
     return Container(
       width: 40,
       height: 40,
-      decoration: BoxDecoration(
-        border: Border.all(color: fancyBorder!, width: 2),
-        color: fancyFill!,
-      ),
-      child: Center(
-        child: Text(
-          result == -999999 ? "?" : "$result",
-          style: TextStyle(fontWeight: FontWeight.bold),
+      child: CustomPaint(
+        painter: PolygonPainter(
+          sides: 4,
+          fillColor: fancyFill!,
+          borderColor: fancyBorder!,
+          rotation: pi / 4,
+        ),
+        child: Center(
+          child: Text(
+            result == -999999 ? "?" : "$result",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
@@ -129,14 +158,16 @@ class D3Dice extends Dice {
 
     fancyBorder ??= Theme.of(context).diceBorder;
     fancyBorder ??= fallbackFancyBorder;
-    
+
     return Container(
       width: 40,
       height: 40,
       child: CustomPaint(
-        painter: _TrianglePainter(
+        painter: PolygonPainter(
+          sides: 3,
           fillColor: fancyFill!,
           borderColor: fancyBorder!,
+          rotation: 0,
         ),
         child: Center(
           child: Text(
@@ -149,15 +180,20 @@ class D3Dice extends Dice {
   }
 }
 
-
-class _HexagonPainter extends CustomPainter {
+class PolygonPainter extends CustomPainter {
+  final int sides;
   final Color fillColor;
   final Color borderColor;
+  final double rotation; // in radians
+  final Gradient? borderGradient;
 
-  _HexagonPainter({
-    this.fillColor = Colors.white70,
-    this.borderColor = Colors.black87,
-  });
+  PolygonPainter({
+    required this.sides,
+    required this.fillColor,
+    required this.borderColor,
+    this.rotation = 0,
+    this.borderGradient,
+  }) : assert(sides >= 3);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -165,22 +201,29 @@ class _HexagonPainter extends CustomPainter {
       ..color = fillColor
       ..style = PaintingStyle.fill;
 
-    final borderPaint = Paint()
-      ..color = borderColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+    final double centerX = size.width / 2;
+    final double centerY = size.height / 2;
 
-    final double w = size.width;
-    final double h = size.height;
-    final double r = w / 2;
-    final double centerX = w / 2;
-    final double centerY = h / 2;
+    // 1. Find the min/max y-coordinates for the polygon at unit radius
+    double minY = double.infinity;
+    double maxY = double.negativeInfinity;
+    for (int i = 0; i < sides; i++) {
+      final angle = (2 * pi / sides) * i + rotation - pi / 2;
+      final y = sin(angle);
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }
+    final double polyHeight = maxY - minY;
 
+    // 2. Scale so that the polygon's height matches the container's height
+    final double radius = size.height / polyHeight;
+
+    // 3. Build the path
     final path = Path();
-    for (int i = 0; i < 6; i++) {
-      final angle = (pi / 3) * i - pi / 6;
-      final x = centerX + r * cos(angle);
-      final y = centerY + r * sin(angle);
+    for (int i = 0; i < sides; i++) {
+      final angle = (2 * pi / sides) * i + rotation - pi / 2;
+      final x = centerX + radius * cos(angle);
+      final y = centerY + radius * sin(angle);
       if (i == 0) {
         path.moveTo(x, y);
       } else {
@@ -189,44 +232,25 @@ class _HexagonPainter extends CustomPainter {
     }
     path.close();
 
+    // Draw fill
     canvas.drawPath(path, paint);
-    canvas.drawPath(path, borderPaint);
-  }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
+    // Draw border with gradient if provided
+    Paint borderPaint;
+    if (borderGradient != null) {
+      borderPaint = Paint()
+        ..shader = borderGradient!.createShader(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+        )
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2;
+    } else {
+      borderPaint = Paint()
+        ..color = borderColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2;
+    }
 
-class _TrianglePainter extends CustomPainter {
-  final Color fillColor;
-  final Color borderColor;
-
-  _TrianglePainter({
-    this.fillColor = Colors.white70,
-    this.borderColor = Colors.black87,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = fillColor
-      ..style = PaintingStyle.fill;
-
-    final borderPaint = Paint()
-      ..color = borderColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    final double w = size.width;
-    final double h = size.height;
-
-    final path = Path();
-    path.moveTo(w / 2, h * 0.15); // Top vertex
-    path.lineTo(w * 0.1, h * 0.85); // Bottom left
-    path.lineTo(w * 0.9, h * 0.85); // Bottom right
-    path.close();
-
-    canvas.drawPath(path, paint);
     canvas.drawPath(path, borderPaint);
   }
 
