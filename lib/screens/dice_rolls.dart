@@ -78,20 +78,20 @@ Future<void> fadeDice(
 ) async {
   Navigator.of(context).push(
     PageRouteBuilder(
-      pageBuilder: (_, __, ___) => DiceRollTransition(
+      pageBuilder: (_, _, _) => DiceRollTransition(
         animation: animation,
         onVideoEnd: () {
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
-              pageBuilder: (_, __, ___) => tgtScreen,
-              transitionsBuilder: (_, animation, __, child) =>
+              pageBuilder: (_, _, _) => tgtScreen,
+              transitionsBuilder: (_, animation, _, child) =>
                   FadeTransition(opacity: animation, child: child),
               transitionDuration: const Duration(milliseconds: 200),
             ),
           );
         },
       ),
-      transitionsBuilder: (_, animation, __, child) =>
+      transitionsBuilder: (_, animation, _, child) =>
           FadeTransition(opacity: animation, child: child),
       transitionDuration: const Duration(milliseconds: 200),
     ),

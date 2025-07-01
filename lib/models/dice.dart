@@ -75,7 +75,7 @@ class D20Dice extends Dice {
     fancyBorder ??= Theme.of(context).diceBorder;
     fancyBorder ??= fallbackFancyBorder;
 
-    return Container(
+    return SizedBox(
       width: 40,
       height: 40,
       child: CustomPaint(
@@ -127,7 +127,7 @@ class D6Dice extends Dice {
     fancyBorder ??= Theme.of(context).diceBorder;
     fancyBorder ??= fallbackFancyBorder;
 
-    return Container(
+    return SizedBox(
       width: 40,
       height: 40,
       child: CustomPaint(
@@ -159,7 +159,7 @@ class D3Dice extends Dice {
     fancyBorder ??= Theme.of(context).diceBorder;
     fancyBorder ??= fallbackFancyBorder;
 
-    return Container(
+    return SizedBox(
       width: 40,
       height: 40,
       child: CustomPaint(

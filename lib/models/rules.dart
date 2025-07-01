@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'character.dart';
 import 'skill.dart';
 import 'weapons.dart';
