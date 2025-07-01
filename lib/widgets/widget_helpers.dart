@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../models/rules.dart';
 import '../models/attributes.dart';
 import '../models/character.dart';
+import '../models/audit.dart';
+
+final styleGood = TextStyle(color: const Color.fromARGB(255, 109, 195, 101));
+final styleBad = TextStyle(color: const Color.fromARGB(255, 218, 100, 100));
 
 Widget modifierRow(
   String label,
@@ -232,4 +236,20 @@ Widget actionButton(IconData icon, VoidCallback onPressed) {
     ),
     child: Icon(icon),
   );
+}
+
+Text colouredValue(ExplainedValue value) {
+  int totalMod = value.explanation
+      .where((comp) => comp.isMod)
+      .map((comp) => comp.value)
+      .fold(0, (x, y) => x + y);
+
+  TextStyle? style;
+  if (totalMod > 0) {
+    style = styleGood;
+  } else if (totalMod < 0) {
+    style = styleBad;
+  }
+
+  return Text(value.value.toString(), style: style);
 }

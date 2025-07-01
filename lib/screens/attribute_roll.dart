@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../widgets/character_card.dart';
+import '../widgets/widget_helpers.dart';
 import '../models/attributes.dart';
 import '../models/character.dart';
 import '../models/rules.dart';
-import '../widgets/widget_helpers.dart';
+import '../models/audit.dart';
 
 class AttributeRollScreen extends StatefulWidget {
   final Attribute attribute;
@@ -23,14 +24,10 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
   int modifier = 0;
 
   void performRoll(int modifier) {
-    int atValue = widget.character.getAttribute(widget.attribute);
-    AttributeRollResult result = attributeRoll(
-      atValue,
-      modifier,
-      widget.character.state,
-    );
+    ExplainedValue attrValue = attributeTargetValue(widget.character, widget.attribute, modifier);
+    AttributeRollResult result = attributeRoll(attrValue);
     String txt =
-        "${result.text()} (${atValue + modifier - widget.character.state.value()} → 🎲 ${result.roll ?? '-/-'})";
+        "${result.text()} (${attrValue.value} → 🎲 ${result.roll ?? '-/-'})";
     showDialog(
       context: context,
       builder: (_) => AlertDialog(

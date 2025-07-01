@@ -51,13 +51,13 @@ Widget weaponInfoCard(
   List<Widget> weaponStats = [
     statColumn(
       "AT",
-      stats.targetValueCard(CombatActionType.attack, styleGood: styleGood, styleBad: styleBad),
+      colouredValue(stats.targetValue(CombatActionType.attack)),
       button: actionButton(Symbols.swords, onAttack),
     ),
     if (!weapon.ct.hasNoParry)
       statColumn(
         "PA",
-        stats.targetValueCard(CombatActionType.parry, styleGood: styleGood, styleBad: styleBad),
+        colouredValue(stats.targetValue(CombatActionType.parry)),
         button: actionButton(Icons.security, onParry),
       ),
     statColumn(
@@ -124,7 +124,6 @@ Widget weaponInfoCard(
     ),
   );
 }
-
 
 Widget statColumn(String label, Widget value, {Widget? button}) {
   List<Widget> col = [

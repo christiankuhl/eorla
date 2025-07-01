@@ -1,9 +1,9 @@
-//import 'dart:math';
 import '../models/rules.dart';
 import '../models/special_abilities.dart';
 import '../models/weapons.dart';
 import '../models/skill.dart';
 import '../models/character.dart';
+import '../models/audit.dart';
 import 'dice.dart';
 
 sealed class ApplicableCombatTechniques {
@@ -295,54 +295,15 @@ class SpecialAbilityImpact {
     );
   }
 
-
-  /// Returns the modifier that should be applied for the given [CombatRoll] and [CombatActionType].
-  ///
-  /// If [callback] is not set, this returns the static modifier for the action type:
-  /// - [CombatActionType.attack]: returns [atMod]
-  /// - [CombatActionType.parry]: returns [paMod]
-  /// - All other action types: returns 0
-  ///
-  /// If [callback] is set, this method currently ignores it and still returns the static modifier.
-  /// Returns 0 if no modifier is applicable.
-  int getApplicableMod(CombatRoll roll, CombatActionType action) {
+  int getApplicableMod(CombatActionType action) {
     switch (action) {
       case CombatActionType.attack:
         return atMod;
       case CombatActionType.parry:
         return paMod;
-      default:
+      case CombatActionType.dodge:
+        return awMod;
     }
-    return 0;
-  }
-
-  // TODO: remove me!
-  @Deprecated('Use getApplicableMod to get an integer modifier instead.')
-  List<AttributeRollResult> apply(CombatRoll roll, CombatActionType action) {
-    if (callback == null) {
-      int tgt = roll.targetValue(action);
-      switch (action) {
-        case CombatActionType.attack:
-          tgt += atMod;
-          break;
-        case CombatActionType.parry:
-          tgt += paMod;
-          break;
-        default:
-      }
-      return [attributeRoll(tgt, modifier, roll.character.state)];
-    } else {
-      return callback!(roll, action);
-    }
-  }
-
-  //TODO: remove me.
-  @Deprecated("Damage calculation will be handled by rules.")
-  int applyDamage(Weapon weapon, Character character) {
-    if (tpcallback == null) {
-      return tpMod;
-    }
-    return tpcallback!(character);
   }
 }
 
@@ -387,12 +348,12 @@ List<AttributeRollResult> Function(CombatRoll, CombatActionType) multiAttack(
 }) {
   return (CombatRoll roll, CombatActionType action) {
     if (action != CombatActionType.attack) {
-      return defaultDefense(roll, action, paMod, awMod, modifier);
+      return [attributeRoll(roll.targetValue(action))];
     }
     List<AttributeRollResult> results = [];
     for (var (mod, context) in atModsWithContext) {
-      int tgt = roll.targetValue(action) + mod;
-      var res = attributeRoll(tgt, modifier, roll.character.state);
+      ExplainedValue tgt = roll.targetValue(action).add(mod, context, true);
+      var res = attributeRoll(tgt);
       res.context = context;
       results.add(res);
     }
@@ -408,16 +369,16 @@ List<AttributeRollResult> Function(CombatRoll, CombatActionType) probe(
 }) {
   return (CombatRoll roll, CombatActionType action) {
     if (action != CombatActionType.attack) {
-      return defaultDefense(roll, action, paMod, awMod, modifier);
+      return [attributeRoll(roll.targetValue(action))];
     }
-    final engine = SkillRoll.from(roll.character, SkillWrapper(skill));
-    final probeResult = engine.roll(modifier);
+    final engine = SkillRoll.from(roll.character, SkillWrapper(skill), modifier);
+    final probeResult = engine.roll();
     List<AttributeRollResult> result = [];
     result.add(
       AttributeRollResult(
         probeResult.roll1,
         probeResult.quality.type,
-        probeResult.tgtValue1 ?? -1,
+        probeResult.tgtValue1,
         context: engine.attr1.short,
       ),
     );
@@ -425,7 +386,7 @@ List<AttributeRollResult> Function(CombatRoll, CombatActionType) probe(
       AttributeRollResult(
         probeResult.roll2,
         probeResult.quality.type,
-        probeResult.tgtValue2 ?? -1,
+        probeResult.tgtValue2,
         context: engine.attr2.short,
       ),
     );
@@ -433,7 +394,7 @@ List<AttributeRollResult> Function(CombatRoll, CombatActionType) probe(
       AttributeRollResult(
         probeResult.roll3,
         probeResult.quality.type,
-        probeResult.tgtValue3 ?? -1,
+        probeResult.tgtValue3,
         context: engine.attr3.short,
       ),
     );
@@ -450,29 +411,15 @@ alternateCombatTechnique(
 }) {
   return (CombatRoll roll, CombatActionType action) {
     if (action != CombatActionType.attack) {
-      return defaultDefense(roll, action, paMod, awMod, modifier);
+      return [attributeRoll(roll.targetValue(action))];
     }
-    final engine = CombatRoll.fromTechnique(roll.character, ct, null, null);
-    return engine.roll(action, modifier);
+    final engine = CombatRoll.fromTechnique(
+      roll.character,
+      ct,
+      null,
+      null,
+      modifier,
+    );
+    return engine.roll(action);
   };
-}
-
-List<AttributeRollResult> defaultDefense(
-  CombatRoll roll,
-  CombatActionType action,
-  int paMod,
-  int awMod,
-  int modifier,
-) {
-  int tgt = roll.targetValue(action);
-  switch (action) {
-    case CombatActionType.parry:
-      tgt += paMod;
-      break;
-    case CombatActionType.dodge:
-      tgt += awMod;
-    default:
-      break;
-  }
-  return [attributeRoll(tgt, modifier, roll.character.state)];
 }

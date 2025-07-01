@@ -9,6 +9,7 @@ import 'spells.dart';
 import 'special_abilities.dart';
 import 'avatar.dart';
 import 'races.dart';
+import 'audit.dart';
 
 class Character {
   final String name;
@@ -308,6 +309,32 @@ class CharacterState {
     }
     if (verwirrung > 0) {
       states.add("Verwirrung Stufe ${roman(verwirrung)}");
+    }
+    return states;
+  }
+
+  List<ComponentWithExplanation> explain() {
+    List<ComponentWithExplanation> states = [];
+    if (belastung > 0) {
+      states.add(ComponentWithExplanation(-belastung, "Belastung Stufe ${roman(belastung)}", true));
+    }
+    if (betaeubung > 0) {
+      states.add(ComponentWithExplanation(-betaeubung, "Betäubung Stufe ${roman(betaeubung)}", true));
+    }
+    if (entrueckung > 0) {
+      states.add(ComponentWithExplanation(-entrueckung, "Entrückung Stufe ${roman(entrueckung)}", true));
+    }
+    if (furcht > 0) {
+      states.add(ComponentWithExplanation(-furcht, "Furcht Stufe ${roman(furcht)}", true));
+    }
+    if (paralyse > 0) {
+      states.add(ComponentWithExplanation(-paralyse, "Paralyse Stufe ${roman(paralyse)}", true));
+    }
+    if (schmerz > 0) {
+      states.add(ComponentWithExplanation(-schmerz, "Schmerz Stufe ${roman(schmerz)}", true));
+    }
+    if (verwirrung > 0) {
+      states.add(ComponentWithExplanation(-verwirrung, "Verwirrung Stufe ${roman(verwirrung)}", true));
     }
     return states;
   }

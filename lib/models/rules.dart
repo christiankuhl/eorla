@@ -7,6 +7,7 @@ import 'special_abilities.dart';
 import 'special_abilities_impl.dart';
 import 'dart:math';
 import 'dice.dart';
+import 'audit.dart';
 
 class GenerericRollResult {
   final List<Dice> dice;
@@ -131,27 +132,64 @@ class SkillRoll<T extends Trial> {
       attrValue3,
       talentValue,
       character.state,
+      modifier,
     );
   }
 
-  SkillRollResult roll(int modifier, {Random? random}) {
-    for (var attrValue in [attrValue1, attrValue2, attrValue3]) {
-      if (attrValue + modifier - characterState.value() < 1) {
-        return SkillRollResult(null, null, null, Quality(RollEvent.failure, 0));
+  SkillRollResult roll({Random? random}) {
+    List<ExplainedValue> expls = [];
+    bool illegal = false;
+    for (var (attr, attrValue) in [
+      (attr1, attrValue1),
+      (attr2, attrValue2),
+      (attr3, attrValue3),
+    ]) {
+      ExplainedValue? expl;
+      var effFW = attrValue + modifier - characterState.value();
+      if (effFW < 1) {
+        expl = ExplainedValue.base(
+          effFW,
+          "Ein Wurf mit einem effektiven FW < 1 darf nicht versucht werden",
+        );
+        illegal = true;
+      } else {
+        expl = ExplainedValue.base(effFW, attr.name);
       }
+      expls.add(expl);
+    }
+    if (illegal) {
+      return SkillRollResult(
+        null,
+        null,
+        null,
+        Quality(RollEvent.failure, 0),
+        expls[0],
+        expls[1],
+        expls[2],
+      );
     }
     random ??= Random();
     int roll1 = random.nextInt(20) + 1;
     int roll2 = random.nextInt(20) + 1;
     int roll3 = random.nextInt(20) + 1;
-    int tgtValue1 = attrValue1 + modifier - characterState.value();
-    int tgtValue2 = attrValue2 + modifier - characterState.value();
-    int tgtValue3 = attrValue3 + modifier - characterState.value();
+    List<ComponentWithExplanation> characterStates = characterState.explain();
+    ExplainedValue tgtValue1 = ExplainedValue.base(
+      attrValue1,
+      attr1.name,
+    ).add(modifier, "Modifikator", true).andThen(characterStates);
+    ExplainedValue tgtValue2 = ExplainedValue.base(
+      attrValue2,
+      attr2.name,
+    ).add(modifier, "Modifikator", true).andThen(characterStates);
+    ExplainedValue tgtValue3 = ExplainedValue.base(
+      attrValue3,
+      attr3.name,
+    ).add(modifier, "Modifikator", true).andThen(characterStates);
     int fw =
         talentValue +
-        min(tgtValue1 - roll1, 0).toInt() +
-        min(tgtValue2 - roll2, 0).toInt() +
-        min(tgtValue3 - roll3, 0).toInt();
+        min(tgtValue1.value - roll1, 0).toInt() +
+        min(tgtValue2.value - roll2, 0).toInt() +
+        min(tgtValue3.value - roll3, 0).toInt();
     List<int> rolls = [roll1, roll2, roll3];
     bool botch = rolls.where((n) => n == 20).length >= 2;
     bool critical = rolls.where((n) => n == 1).length >= 2;
@@ -174,9 +212,9 @@ class SkillRoll<T extends Trial> {
       roll2,
       roll3,
       Quality(event, qs),
-      tgtValue1: tgtValue1,
-      tgtValue2: tgtValue2,
-      tgtValue3: tgtValue3,
+      tgtValue1,
+      tgtValue2,
+      tgtValue3,
     );
   }
 }
@@ -195,19 +233,19 @@ class SkillRollResult {
   final int? roll2;
   final int? roll3;
   final Quality quality;
-  int? tgtValue1;
-  int? tgtValue2;
-  int? tgtValue3;
+  final ExplainedValue tgtValue1;
+  final ExplainedValue tgtValue2;
+  final ExplainedValue tgtValue3;
 
   SkillRollResult(
     this.roll1,
     this.roll2,
     this.roll3,
-    this.quality, {
-    tgtValue1,
-    tgtValue2,
-    tgtValue3,
-  });
+    this.quality,
+    this.tgtValue1,
+    this.tgtValue2,
+    this.tgtValue3,
+  );
 
   String text() {
     switch (quality.type) {
@@ -243,7 +281,7 @@ class SkillRollResult {
 class AttributeRollResult {
   final int? roll;
   final RollEvent event;
-  final int targetValue;
+  final ExplainedValue targetValue;
   String? context;
 
   AttributeRollResult(this.roll, this.event, this.targetValue, {context});
@@ -331,203 +369,148 @@ class CombatRoll {
     );
   }
 
-  Text targetValueCard(
-    CombatActionType action, {
-    TextStyle? styleNormal,
-    TextStyle? styleGood,
-    TextStyle? styleBad,
-  }) {
-    SpecialAbilityImpact impact1 = SpecialAbilityImpact.fromActive(
-      specialAbilityBaseManeuvre,
-      weapon?.ct,
-      weapon,
-      0,
-    );
-    SpecialAbilityImpact impact2 = SpecialAbilityImpact.fromActive(
-      specialAbilitySpecialManeuvre,
-      weapon?.ct,
-      weapon,
-      0,
-    );
+  ExplainedValue targetValue(CombatActionType action) {
+    ExplainedValue? tgt;
     switch (action) {
       case CombatActionType.attack:
         int at = ctValue + (max(attackPrimary - 8, 0) / 3).toInt();
+        tgt = ExplainedValue.base(at, "AT Basis");
         if (weapon != null) {
-          at += weapon!.at;
+          tgt = tgt.add(weapon!.at, "AT Mod ${weapon!.name}", false);
         }
-        int impactMod = impact1.atMod + impact2.atMod;
-        if (impactMod < 0) {
-          return Text((at + impactMod).toString(), style: styleBad);
-        }
-        if (impactMod > 0) {
-          return Text((at + impactMod).toString(), style: styleGood);
-        }
-        return Text((at + impactMod).toString(), style: styleNormal);
+        break;
       case CombatActionType.parry:
         int pa = (ctValue / 2).ceil() + (max(parryPrimary - 8, 0) / 3).toInt();
+        tgt = ExplainedValue.base(pa, "PA Basis");
         if (weapon != null) {
-          pa += weapon!.pa;
+          tgt = tgt.add(weapon!.pa, "PA Mod ${weapon!.name}", false);
         }
-        int impactMod = impact1.paMod + impact2.paMod;
-        if (impactMod < 0) {
-          return Text((pa + impactMod).toString(), style: styleBad);
-        }
-        if (impactMod > 0) {
-          return Text((pa + impactMod).toString(), style: styleGood);
-        }
-        return Text((pa + impactMod).toString(), style: styleNormal);
+        break;
       case CombatActionType.dodge:
-        int impactMod = impact1.awMod + impact2.awMod;
-        if (impactMod < 0) {
-          return Text((dodge + impactMod).toString(), style: styleBad);
-        }
-        if (impactMod > 0) {
-          return Text((dodge + impactMod).toString(), style: styleGood);
-        }
-        return Text((dodge + impactMod).toString(), style: styleNormal);
+        tgt = ExplainedValue.base(dodge, "AW Basis");
+        break;
     }
-  }
-
-  int targetValue(CombatActionType action) {
-    switch (action) {
-      case CombatActionType.attack:
-        int at = ctValue + (max(attackPrimary - 8, 0) / 3).toInt();
-        if (weapon != null) {
-          at += weapon!.at;
-        }
-        return at;
-      case CombatActionType.parry:
-        int pa = (ctValue / 2).ceil() + (max(parryPrimary - 8, 0) / 3).toInt();
-        if (weapon != null) {
-          pa += weapon!.pa;
-        }
-        return pa;
-      case CombatActionType.dodge:
-        return dodge;
-    }
-  }
-
-  /// Rolls for an attribute check based on the given [action] and [modifier].
-  ///
-  /// This method calculates the target value for the roll, applies any modifiers
-  /// from special abilities (both base and special maneuvers), and returns a list
-  /// of [AttributeRollResult] objects representing the outcome(s) of the roll.
-  ///
-  /// If a special ability impact provides a callback, that callback is used to
-  /// determine the roll results. Otherwise, applicable modifiers from special
-  /// abilities are added to the [modifier] parameter.
-  ///
-  /// - [action]: The type of combat action being performed.
-  /// - [modifier]: The base modifier to apply to the roll.
-  ///
-  /// Returns a list of [AttributeRollResult] representing the roll outcomes.
-  List<AttributeRollResult> roll(CombatActionType action, int modifier) {
-    int target = targetValue(action);
-    int modifierBaseManeuvre = 0;
-    int modifierSpecialManeuvre = 0;
     if (specialAbilityBaseManeuvre != null) {
-      SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+      SpecialAbilityImpact impact = SpecialAbilityImpact.derive(
         specialAbilityBaseManeuvre!,
         ct,
         weapon,
-        modifier, //FIXME: should not be neccessairy
+        0,
       );
-      if (impact.callback != null) {
-        // the impact define all rolls
-        return impact.callback!(this, action);
+      int modifierBaseManeuvre = impact.getApplicableMod(action);
+      if (modifierBaseManeuvre != 0) {
+        tgt = tgt.add(
+          modifierBaseManeuvre,
+          specialAbilityBaseManeuvre!.toString(),
+          true,
+        );
       }
-      modifierBaseManeuvre = impact.getApplicableMod(this, action);
     }
     if (specialAbilitySpecialManeuvre != null) {
-      SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+      SpecialAbilityImpact impact = SpecialAbilityImpact.derive(
         specialAbilitySpecialManeuvre!,
         ct,
         weapon,
-        modifier, //FIXME: should not be neccessairy
+        0,
+      );
+      int modifierSpecialManeuvre = impact.getApplicableMod(action);
+      if (modifierSpecialManeuvre != 0) {
+        tgt = tgt.add(
+          modifierSpecialManeuvre,
+          specialAbilitySpecialManeuvre!.toString(),
+          true,
+        );
+      }
+    }
+    if (modifier != 0) {
+      tgt = tgt.add(modifier, "Modifikator", true);
+    }
+    return tgt;
+  }
+
+  /// Rolls for an attribute check based on the given [CombatActionType] [action].
+  /// Returns a list of [AttributeRollResult] representing the roll outcomes.
+  List<AttributeRollResult> roll(CombatActionType action) {
+    ExplainedValue target = targetValue(action);
+
+    if (specialAbilityBaseManeuvre != null) {
+      SpecialAbilityImpact impact = SpecialAbilityImpact.derive(
+        specialAbilityBaseManeuvre!,
+        ct,
+        weapon,
+        modifier,
       );
       if (impact.callback != null) {
-        // the impact define all rolls
         return impact.callback!(this, action);
       }
-      modifierSpecialManeuvre = impact.getApplicableMod(this, action);
+    }
+    if (specialAbilitySpecialManeuvre != null) {
+      SpecialAbilityImpact impact = SpecialAbilityImpact.derive(
+        specialAbilitySpecialManeuvre!,
+        ct,
+        weapon,
+        modifier,
+      );
+      if (impact.callback != null) {
+        return impact.callback!(this, action);
+      }
     }
 
-    return [
-      attributeRoll(
-        target,
-        modifier + modifierBaseManeuvre + modifierSpecialManeuvre,
-        character.state,
-      ),
-    ];
+    return [attributeRoll(target)];
   }
 }
 
-//TODO: prettify this
-AttributeRollResult attributeRoll(
-  int attrValue,
+ExplainedValue attributeTargetValue(
+  Character character,
+  Attribute attribute,
   int modifier,
-  CharacterState characterState, {
-  Random? random,
-}) {
+) {
+  return ExplainedValue.base(
+    character.getAttribute(attribute),
+    "${attribute.name} Basis",
+  ).add(modifier, "Modifikator", true).andThen(character.state.explain());
+}
+
+AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
   random ??= Random();
   int roll = random.nextInt(20) + 1;
-  if (attrValue + modifier - characterState.value() < 1) {
+  if (target.value < 1) {
     return AttributeRollResult(
       null,
       RollEvent.failure,
-      attrValue + modifier - characterState.value(),
+      target.add(
+        0,
+        "Ein Wurf mit einem effektiven FW < 1 darf nicht versucht werden",
+        true,
+      ),
     );
   }
-  int fw = attrValue + modifier - characterState.value() - roll;
+  int fw = target.value - roll;
   if (roll == 1) {
     int roll2 = random.nextInt(20) + 1;
-    int fw2 = attrValue + modifier - characterState.value() - roll2;
+    int fw2 = target.value - roll2;
     if (fw2 >= 0) {
-      return AttributeRollResult(
-        roll,
-        RollEvent.critical,
-        attrValue + modifier - characterState.value(),
-      );
+      return AttributeRollResult(roll, RollEvent.critical, target);
     } else {
-      return AttributeRollResult(roll, RollEvent.success, attrValue + modifier);
+      return AttributeRollResult(roll, RollEvent.success, target);
     }
   } else if (roll == 20) {
     int roll2 = random.nextInt(20) + 1;
-    int fw2 = attrValue + modifier - characterState.value() - roll2;
+    int fw2 = target.value - roll2;
     if (fw2 >= 0 && roll2 != 20) {
       if (fw >= 0) {
-        return AttributeRollResult(
-          roll,
-          RollEvent.success,
-          attrValue + modifier - characterState.value(),
-        );
+        return AttributeRollResult(roll, RollEvent.success, target);
       } else {
-        return AttributeRollResult(
-          roll,
-          RollEvent.failure,
-          attrValue + modifier - characterState.value(),
-        );
+        return AttributeRollResult(roll, RollEvent.failure, target);
       }
     } else {
-      return AttributeRollResult(
-        roll,
-        RollEvent.botch,
-        attrValue + modifier - characterState.value(),
-      );
+      return AttributeRollResult(roll, RollEvent.botch, target);
     }
   } else {
     if (fw >= 0) {
-      return AttributeRollResult(
-        roll,
-        RollEvent.success,
-        attrValue + modifier - characterState.value(),
-      );
+      return AttributeRollResult(roll, RollEvent.success, target);
     } else {
-      return AttributeRollResult(
-        roll,
-        RollEvent.failure,
-        attrValue + modifier - characterState.value(),
-      );
+      return AttributeRollResult(roll, RollEvent.failure, target);
     }
   }
 }

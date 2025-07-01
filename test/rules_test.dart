@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:eorla/models/avatar.dart';
 import 'package:eorla/models/character.dart';
 import 'package:eorla/models/optolith.dart';
+import 'package:eorla/models/audit.dart';
 import 'package:test/test.dart';
 import 'package:eorla/models/rules.dart';
 import 'package:eorla/models/skill.dart';
@@ -24,64 +25,68 @@ void main() {
       expect(engine.characterState.verwirrung, equals(4));
     });
     test("detects two 1s as critical", () {
-      final result = engine.roll(0, random: Deterministic([1, 1, 20]));
+      final result = engine.roll(random: Deterministic([1, 1, 20]));
       expect(result.quality.type, equals(RollEvent.critical));
     });
     test("detects two 20s as botch, regardless of remaining FW", () {
-      final result = engine.roll(0, random: Deterministic([20, 1, 20]));
+      final result = engine.roll(random: Deterministic([20, 1, 20]));
       expect(result.quality.type, equals(RollEvent.botch));
-      final botchDespiteSuccess = engine.roll(20, random: Deterministic([20, 1, 20]));
+      engine.modifier = 20;
+      final botchDespiteSuccess = engine.roll(random: Deterministic([20, 1, 20]));
       expect(botchDespiteSuccess.quality.type, equals(RollEvent.botch));
+      engine.modifier = 0;
     });
     test("detects EFW < 1 as fail", () {
       // Modifier of -4 must lead to auto-fail of the CH trial, w/o looking at dice.
-      final result = engine.roll(-4, random: Deterministic([1, 1, 1]));
+      engine.modifier = -4;
+      final result = engine.roll(random: Deterministic([1, 1, 1]));
       expect(result.quality.type, equals(RollEvent.failure));
-      final critical = engine.roll(-3, random: Deterministic([1, 1, 1]));
+      engine.modifier = -3;
+      final critical = engine.roll(random: Deterministic([1, 1, 1]));
       expect(critical.quality.type, equals(RollEvent.critical));
+      engine.modifier = 0;
     });
     test("computes QS correctly", () {
       var dd = durchschnittsdoedel();
-      final streetsmarts = SkillRoll.from(dd, SkillWrapper(Skill.gassenwissen));
+      final streetsmarts = SkillRoll.from(dd, SkillWrapper(Skill.gassenwissen), 0);
       // Dödel stats: KL 9 / IN 10 / CH 8 / Verwirrung 4 / Gassenwissen 6
       // roll 5, 6, 4 => QS = 2
-      final qs2 = streetsmarts.roll(0, random: Deterministic([5, 6, 4]));
+      final qs2 = streetsmarts.roll(random: Deterministic([5, 6, 4]));
       expect(qs2.quality.type, equals(RollEvent.success));
       expect(qs2.quality.qs, equals(2));
       // roll 8, 6, 4 => QS = 1
-      final qs1 = streetsmarts.roll(0, random: Deterministic([8, 6, 4]));
+      final qs1 = streetsmarts.roll(random: Deterministic([8, 6, 4]));
       expect(qs1.quality.type, equals(RollEvent.success));
       expect(qs1.quality.qs, equals(1));
       // roll 8, 6, 4 / modifier = -1 => FWeff = 0 => QS = 1
-      final qs0 = streetsmarts.roll(-1, random: Deterministic([8, 6, 4]));
+      engine.modifier = -1;
+      final qs0 = streetsmarts.roll(random: Deterministic([8, 6, 4]));
       expect(qs0.quality.type, equals(RollEvent.success));
       expect(qs0.quality.qs, equals(1));
     });
   });
 
   group('attributeRoll', () {
-    late CharacterState emptyState;
-    setUp(() {
-      emptyState = CharacterState(0, 0, 0, 0, 0, 0, 0);
-    });
     test("detects a 1 and a pass as critical, and success otherwise", () {
-      final crit = attributeRoll(10, 0, emptyState, random: Deterministic([1, 5]));
+      final crit = attributeRoll(attributeWithModifier(10), random: Deterministic([1, 5]));
       expect(crit.event, equals(RollEvent.critical));
-      final success = attributeRoll(10, 0, emptyState, random: Deterministic([1, 11]));
+      final success = attributeRoll(attributeWithModifier(10), random: Deterministic([1, 11]));
       expect(success.event, equals(RollEvent.success));
     });
     test("detects a 20 and a fail as botch, regardless of remaining FW", () {
-      final regularBotch = attributeRoll(10, 0, emptyState, random: Deterministic([20, 15]));
+      final regularBotch = attributeRoll(attributeWithModifier(10), random: Deterministic([20, 15]));
       expect(regularBotch.event, equals(RollEvent.botch));
-      final exceptionalBotch = attributeRoll(10, 10, emptyState, random: Deterministic([20, 20]));
+      final exceptionalBotch = attributeRoll(attributeWithModifier(10, modifier: 10), random: Deterministic([20, 20]));
       expect(exceptionalBotch.event, equals(RollEvent.botch));
-      final regularFail = attributeRoll(10, 0, emptyState, random: Deterministic([20, 5]));
+      final regularFail = attributeRoll(attributeWithModifier(10), random: Deterministic([20, 5]));
       expect(regularFail.event, equals(RollEvent.failure));
     });
     test("detects EFW < 1 as fail", () {
-      final result = attributeRoll(5, -5, emptyState, random: Deterministic([1, 1, 1]));
+      final result = attributeRoll(attributeWithModifier(5, modifier: -5), random: Deterministic([1, 1, 1]));
+      expect(result.targetValue.value, lessThan(1));
+      expect(result.targetValue.explanation.last.explanation, equals("Ein Wurf mit einem effektiven FW < 1 darf nicht versucht werden"));
       expect(result.event, equals(RollEvent.failure));
-      final critical = attributeRoll(5, -4, emptyState, random: Deterministic([1, 1, 1]));
+      final critical = attributeRoll(attributeWithModifier(5, modifier: -4), random: Deterministic([1, 1, 1]));
       expect(critical.event, equals(RollEvent.critical));
     });
   });
@@ -125,4 +130,12 @@ class Deterministic implements Random {
   double nextDouble() {
     throw UnimplementedError();
   }
+}
+
+ExplainedValue attributeWithModifier(int attrValue, {int modifier = 0}) {
+  ExplainedValue value = ExplainedValue.base(attrValue, "base");
+  if (modifier != 0) {
+    value = value.add(modifier, "modifier", true);
+  }
+  return value;
 }
