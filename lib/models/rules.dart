@@ -548,7 +548,7 @@ DamageRollResult damageRoll(
 
   // Check impact from base maneuvre
   if (specialAbilityBaseManeuvre != null) {
-    SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+    SpecialAbilityImpact impact = SpecialAbilityImpact.derive(
       specialAbilityBaseManeuvre,
       weapon.ct,
       weapon,
@@ -570,7 +570,7 @@ DamageRollResult damageRoll(
   }
   // Check impact from special maneuvre
   if (specialAbilitySpecialManeuvre != null) {
-    SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+    SpecialAbilityImpact impact = SpecialAbilityImpact.derive(
       specialAbilitySpecialManeuvre,
       weapon.ct,
       weapon,
@@ -627,7 +627,7 @@ RichText damageRollTextGenerator(
 
   // Check impact from base maneuvre
   if (specialAbilityBaseManeuvre != null) {
-    SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+    SpecialAbilityImpact impact = SpecialAbilityImpact.derive(
       specialAbilityBaseManeuvre,
       weapon.ct,
       weapon,
@@ -653,7 +653,7 @@ RichText damageRollTextGenerator(
   }
   // Check impact from special maneuvre
   if (specialAbilitySpecialManeuvre != null) {
-    SpecialAbilityImpact impact = SpecialAbilityImpact.fromActive(
+    SpecialAbilityImpact impact = SpecialAbilityImpact.derive(
       specialAbilitySpecialManeuvre,
       weapon.ct,
       weapon,

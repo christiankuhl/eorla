@@ -94,7 +94,7 @@ class SpecialAbilityImpact {
     );
   }
 
-  factory SpecialAbilityImpact.fromActive(
+  factory SpecialAbilityImpact.derive(
     SpecialAbility? spec,
     CombatTechnique? ct,
     Weapon? weapon,
