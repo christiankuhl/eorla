@@ -32,16 +32,21 @@ Widget weaponInfoCard(
   BuildContext context,
   Weapon weapon,
   Character character,
-  SpecialAbility? specialAbilityBaseManeuvre, 
-  SpecialAbility? specialAbilitySpecialManeuvre, {
+  SpecialAbility? specialAbilityBaseManeuvre,
+  SpecialAbility? specialAbilitySpecialManeuvre,
+  int modifier, {
   required VoidCallback onAttack,
   required VoidCallback onParry,
   required VoidCallback onDamage,
   VoidCallback? onDelete,
 }) {
-  final stats = CombatRoll.fromWeapon(character, weapon, specialAbilityBaseManeuvre, specialAbilitySpecialManeuvre);
-  final styleGood = TextStyle(color: const Color.fromARGB(255, 109, 195, 101));
-  final styleBad  = TextStyle(color: const Color.fromARGB(255, 218, 100, 100));
+  final stats = CombatRoll.fromWeapon(
+    character,
+    weapon,
+    specialAbilityBaseManeuvre,
+    specialAbilitySpecialManeuvre,
+    modifier,
+  );
 
   List<Widget> weaponStats = [
     statColumn(
@@ -57,7 +62,15 @@ Widget weaponInfoCard(
       ),
     statColumn(
       "TP",
-      damageRollTextGenerator(weapon, character, specialAbilityBaseManeuvre, specialAbilitySpecialManeuvre, Theme.of(context).textTheme.bodyMedium, styleGood: styleGood, styleBad: styleBad),
+      damageRollTextGenerator(
+        weapon,
+        character,
+        specialAbilityBaseManeuvre,
+        specialAbilitySpecialManeuvre,
+        Theme.of(context).textTheme.bodyMedium,
+        styleGood: styleGood,
+        styleBad: styleBad,
+      ),
       button: actionButton(Icons.whatshot, onDamage),
     ),
   ];
@@ -80,7 +93,11 @@ Widget weaponInfoCard(
                   ),
                   Text(
                     " (${weapon.ct.name})",
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.normal,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ],
               ),

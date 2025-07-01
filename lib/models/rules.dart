@@ -99,6 +99,7 @@ class SkillRoll<T extends Trial> {
   final int attrValue3;
   final int talentValue;
   final CharacterState characterState;
+  int modifier;
 
   SkillRoll(
     this.attr1,
@@ -109,9 +110,10 @@ class SkillRoll<T extends Trial> {
     this.attrValue3,
     this.talentValue,
     this.characterState,
+    this.modifier,
   );
 
-  factory SkillRoll.from(Character character, T skillOrSpell) {
+  factory SkillRoll.from(Character character, T skillOrSpell, int modifier) {
     Attribute attr1 = skillOrSpell.attr1;
     Attribute attr2 = skillOrSpell.attr2;
     Attribute attr3 = skillOrSpell.attr3;
@@ -267,6 +269,7 @@ class CombatRoll {
   final int parryPrimary;
   final int attackPrimary;
   final int dodge;
+  final int modifier;
   final Character character;
   final SpecialAbility? specialAbilityBaseManeuvre;
   final SpecialAbility? specialAbilitySpecialManeuvre;
@@ -277,6 +280,7 @@ class CombatRoll {
     this.attackPrimary,
     this.parryPrimary,
     this.dodge,
+    this.modifier,
     this.character,
     this.weapon,
     this.specialAbilityBaseManeuvre,
@@ -287,12 +291,14 @@ class CombatRoll {
     Weapon weapon,
     SpecialAbility? specialAbilityBaseManeuvre,
     SpecialAbility? specialAbilitySpecialManeuvre,
+    int modifier,
   ) {
     return CombatRoll.fromTechnique(
       character,
       weapon.ct,
       specialAbilityBaseManeuvre,
       specialAbilitySpecialManeuvre,
+      modifier,
       weapon: weapon,
     );
   }
@@ -301,7 +307,8 @@ class CombatRoll {
     Character character,
     CombatTechnique ct,
     SpecialAbility? specialAbilityBaseManeuvre,
-    SpecialAbility? specialAbilitySpecialManeuvre, {
+    SpecialAbility? specialAbilitySpecialManeuvre,
+    int modifier, {
     Weapon? weapon,
   }) {
     final attackPrimary = character.getAttribute(
@@ -316,6 +323,7 @@ class CombatRoll {
       attackPrimary,
       parryPrimary,
       (character.ge / 2).round(),
+      modifier,
       character,
       weapon,
       specialAbilityBaseManeuvre,

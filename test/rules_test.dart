@@ -12,7 +12,7 @@ void main() {
     late SkillRoll engine;
     setUp(() {
       var dd = durchschnittsdoedel();
-      engine = SkillRoll.from(dd, SkillWrapper(Skill.betoeren));
+      engine = SkillRoll.from(dd, SkillWrapper(Skill.betoeren), 0);
     });
     test('constructs correctly from Character', () {
       expect(engine.attrValue1, equals(11));

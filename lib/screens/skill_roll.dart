@@ -24,8 +24,8 @@ class RollScreenState extends State<RollScreen> {
   int modifier = 0;
 
   void performRoll(int modifier) {
-    SkillRoll engine = SkillRoll.from(widget.character, widget.skillOrSpell);
-    SkillRollResult rollResults = engine.roll(modifier);
+    SkillRoll engine = SkillRoll.from(widget.character, widget.skillOrSpell, modifier);
+    SkillRollResult rollResults = engine.roll();
 
     fadeDice(
       context,
@@ -41,7 +41,7 @@ class RollScreenState extends State<RollScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SkillRoll stats = SkillRoll.from(widget.character, widget.skillOrSpell);
+    SkillRoll stats = SkillRoll.from(widget.character, widget.skillOrSpell, modifier);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

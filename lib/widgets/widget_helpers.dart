@@ -66,10 +66,7 @@ Card attributeInfoCard(Attribute attr, int attrValue) {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          Text(
-            '${attr.short}: $attrValue',
-            style: TextStyle(fontSize: 18),
-          ),
+          Text('${attr.short}: $attrValue', style: TextStyle(fontSize: 18)),
         ],
       ),
     ),
@@ -83,9 +80,15 @@ Column attributesCard(SkillRoll stats, {SkillRollResult? rollResults}) {
     txt2 = Text(stats.attrValue2.toString());
     txt3 = Text(stats.attrValue3.toString());
   } else {
-    txt1 = Text("${stats.attrValue1.toString()} → 🎲 ${rollResults.roll1 ?? '-/-'}");
-    txt2 = Text("${stats.attrValue2.toString()} → 🎲 ${rollResults.roll2 ?? '-/-'}");
-    txt3 = Text("${stats.attrValue3.toString()} → 🎲 ${rollResults.roll3 ?? '-/-'}");
+    txt1 = Text(
+      "${stats.attrValue1.toString()} → 🎲 ${rollResults.roll1 ?? '-/-'}",
+    );
+    txt2 = Text(
+      "${stats.attrValue2.toString()} → 🎲 ${rollResults.roll2 ?? '-/-'}",
+    );
+    txt3 = Text(
+      "${stats.attrValue3.toString()} → 🎲 ${rollResults.roll3 ?? '-/-'}",
+    );
   }
   var card = Card(
     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),

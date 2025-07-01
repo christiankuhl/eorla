@@ -36,8 +36,9 @@ class _CombatScreenState extends State<CombatScreen> {
       weapon,
       specialAbilityBaseManeuvre,
       specialAbilitySpecialManeuvre,
+      modifier
     );
-    final result = engine.roll(action, modifier);
+    final result = engine.roll(action);
     String title;
     switch (action) {
       case CombatActionType.attack:
@@ -104,7 +105,6 @@ class _CombatScreenState extends State<CombatScreen> {
       builder: (_) => AlertDialog(
         title: damage.titleAsWidget(context),
         content: damage.contentAsWidget(context),
-        //content: Text('Dein Angriff verursacht $damage Trefferpunkt(e).'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -187,6 +187,7 @@ class _CombatScreenState extends State<CombatScreen> {
           widget.character,
           selectedSpecialBaseManeuvre,
           selectedSpecialSpecialManeuvre,
+          modifier,
           onAttack: () => rollCombat(
             CombatActionType.attack,
             weapon,
@@ -229,6 +230,7 @@ class _CombatScreenState extends State<CombatScreen> {
                     widget.character,
                     selectedSpecialBaseManeuvre,
                     selectedSpecialSpecialManeuvre,
+                    modifier,
                     onAttack: () => rollCombat(
                       CombatActionType.attack,
                       weapon,
