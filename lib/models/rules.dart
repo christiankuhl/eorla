@@ -176,15 +176,15 @@ class SkillRoll<T extends Trial> {
     ExplainedValue tgtValue1 = ExplainedValue.base(
       attrValue1,
       attr1.name,
-    ).add(modifier, "Modifikator", true).andThen(characterStates);
+    ).addNontrivial(modifier, "Modifikator", true).andThen(characterStates);
     ExplainedValue tgtValue2 = ExplainedValue.base(
       attrValue2,
       attr2.name,
-    ).add(modifier, "Modifikator", true).andThen(characterStates);
+    ).addNontrivial(modifier, "Modifikator", true).andThen(characterStates);
     ExplainedValue tgtValue3 = ExplainedValue.base(
       attrValue3,
       attr3.name,
-    ).add(modifier, "Modifikator", true).andThen(characterStates);
+    ).addNontrivial(modifier, "Modifikator", true).andThen(characterStates);
     int fw =
         talentValue +
         min(tgtValue1.value - roll1, 0).toInt() +

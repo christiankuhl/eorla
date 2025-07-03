@@ -91,18 +91,44 @@ Card attributeInfoCard(Attribute attr, ExplainedValue targetValue) {
 Column attributesCard(SkillRoll stats, {SkillRollResult? rollResults}) {
   Text txt1, txt2, txt3;
   if (rollResults == null) {
-    txt1 = Text(stats.attrValue1.toString());
-    txt2 = Text(stats.attrValue2.toString());
-    txt3 = Text(stats.attrValue3.toString());
+    SkillRollResult res = stats
+        .roll(); // TODO: this is a bit hackish, ideally SkillRoll would have getters for the target values
+    txt1 = colouredValue(res.tgtValue1);
+    txt2 = colouredValue(res.tgtValue2);
+    txt3 = colouredValue(res.tgtValue3);
   } else {
-    txt1 = Text(
-      "${stats.attrValue1.toString()} → 🎲 ${rollResults.roll1 ?? '-/-'}",
+    txt1 = Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: "${rollResults.tgtValue1.value}",
+            style: tgtValueColour(rollResults.tgtValue1),
+          ),
+          TextSpan(text: " → 🎲 ${rollResults.roll1 ?? '-/-'}"),
+        ],
+      ),
     );
-    txt2 = Text(
-      "${stats.attrValue2.toString()} → 🎲 ${rollResults.roll2 ?? '-/-'}",
+    txt2 = Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: "${rollResults.tgtValue2.value}",
+            style: tgtValueColour(rollResults.tgtValue2),
+          ),
+          TextSpan(text: " → 🎲 ${rollResults.roll2 ?? '-/-'}"),
+        ],
+      ),
     );
-    txt3 = Text(
-      "${stats.attrValue3.toString()} → 🎲 ${rollResults.roll3 ?? '-/-'}",
+    txt3 = Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: "${rollResults.tgtValue3.value}",
+            style: tgtValueColour(rollResults.tgtValue3),
+          ),
+          TextSpan(text: " → 🎲 ${rollResults.roll3 ?? '-/-'}"),
+        ],
+      ),
     );
   }
   var card = Card(
