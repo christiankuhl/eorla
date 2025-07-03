@@ -1,4 +1,4 @@
-name: Run Tests for develop branches
+name: Unit Tests
 on:
   push:
     branches: ["**"]
