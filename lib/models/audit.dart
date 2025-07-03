@@ -15,6 +15,14 @@ class ExplainedValue {
     return ExplainedValue(newValue, newExplain);
   }
 
+  ExplainedValue addNontrivial(int mod, String expl, bool isMod) {
+    if (mod != 0) {
+      return add(mod, expl, isMod);
+    } else {
+      return this;
+    }
+  }
+
   ExplainedValue andThen(List<ComponentWithExplanation> components) {
     int newValue = value;
     List<ComponentWithExplanation> newExplain = explanation;

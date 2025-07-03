@@ -36,7 +36,7 @@ class _CombatScreenState extends State<CombatScreen> {
       weapon,
       specialAbilityBaseManeuvre,
       specialAbilitySpecialManeuvre,
-      modifier
+      modifier,
     );
     final result = engine.roll(action);
     String title;
@@ -48,10 +48,13 @@ class _CombatScreenState extends State<CombatScreen> {
       case CombatActionType.dodge:
         title = "Ausweichen";
     }
-    String txt;
+    String txt, detail;
     if (result.length == 1) {
       txt =
           "${result[0].text()} (${result[0].targetValue.value} → 🎲 ${result[0].roll})";
+      detail = result[0].targetValue.explanation
+          .map((c) => "${c.value}\t\t${c.explanation}")
+          .join("\n");
     } else {
       txt = result
           .map(
@@ -59,6 +62,15 @@ class _CombatScreenState extends State<CombatScreen> {
                 "${r.context}: ${r.text()} (${r.targetValue.value} → 🎲 ${r.roll})",
           )
           .join("\n");
+      detail = result
+          .map(
+            (r) =>
+                "${r.context}:\n" +
+                r.targetValue.explanation
+                    .map((c) => "${c.value}\t\t${c.explanation}")
+                    .join("\n"),
+          )
+          .join("\n\n");
     }
 
     await fadeDice(context, null, DiceAnimation.d20);
@@ -67,19 +79,11 @@ class _CombatScreenState extends State<CombatScreen> {
       return;
     }
 
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(title),
-        content: Text(txt),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
+    if (result[0].targetValue.explanation.length > 1) {
+      showDetailDialog(title, txt, detail, context);
+    } else {
+      showSimpleDialog(title, txt, context);
+    }
   }
 
   Future<void> rollDamage(
@@ -93,7 +97,7 @@ class _CombatScreenState extends State<CombatScreen> {
       selectedSpecialBaseManeuvre,
       selectedSpecialSpecialManeuvre,
     );
-    
+
     await fadeDice(context, null, DiceAnimation.d6);
 
     if (!mounted) {

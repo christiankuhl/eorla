@@ -375,16 +375,20 @@ class CombatRoll {
       case CombatActionType.attack:
         int at = ctValue + (max(attackPrimary - 8, 0) / 3).toInt();
         tgt = ExplainedValue.base(at, "AT Basis");
-        if (weapon != null) {
-          tgt = tgt.add(weapon!.at, "AT Mod ${weapon!.name}", false);
-        }
+        tgt = tgt.addNontrivial(
+          weapon?.at ?? 0,
+          "AT Mod ${weapon!.name}",
+          false,
+        );
         break;
       case CombatActionType.parry:
         int pa = (ctValue / 2).ceil() + (max(parryPrimary - 8, 0) / 3).toInt();
         tgt = ExplainedValue.base(pa, "PA Basis");
-        if (weapon != null) {
-          tgt = tgt.add(weapon!.pa, "PA Mod ${weapon!.name}", false);
-        }
+        tgt = tgt.addNontrivial(
+          weapon?.pa ?? 0,
+          "PA Mod ${weapon!.name}",
+          false,
+        );
         break;
       case CombatActionType.dodge:
         tgt = ExplainedValue.base(dodge, "AW Basis");
@@ -398,13 +402,11 @@ class CombatRoll {
         0,
       );
       int modifierBaseManeuvre = impact.getApplicableMod(action);
-      if (modifierBaseManeuvre != 0) {
-        tgt = tgt.add(
-          modifierBaseManeuvre,
-          specialAbilityBaseManeuvre!.toString(),
-          true,
-        );
-      }
+      tgt = tgt.addNontrivial(
+        modifierBaseManeuvre,
+        specialAbilityBaseManeuvre!.toString(),
+        true,
+      );
     }
     if (specialAbilitySpecialManeuvre != null) {
       SpecialAbilityImpact impact = SpecialAbilityImpact.derive(
@@ -414,17 +416,13 @@ class CombatRoll {
         0,
       );
       int modifierSpecialManeuvre = impact.getApplicableMod(action);
-      if (modifierSpecialManeuvre != 0) {
-        tgt = tgt.add(
-          modifierSpecialManeuvre,
-          specialAbilitySpecialManeuvre!.toString(),
-          true,
-        );
-      }
+      tgt = tgt.addNontrivial(
+        modifierSpecialManeuvre,
+        specialAbilitySpecialManeuvre!.toString(),
+        true,
+      );
     }
-    if (modifier != 0) {
-      tgt = tgt.add(modifier, "Modifikator", true);
-    }
+    tgt = tgt.addNontrivial(modifier, "Modifikator", true);
     return tgt;
   }
 
@@ -468,7 +466,7 @@ ExplainedValue attributeTargetValue(
   return ExplainedValue.base(
     character.getAttribute(attribute),
     "${attribute.name} Basis",
-  ).add(modifier, "Modifikator", true).andThen(character.state.explain());
+  ).addNontrivial(modifier, "Modifikator", true).andThen(character.state.explain());
 }
 
 AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {

@@ -25,10 +25,18 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
   int modifier = 0;
 
   Future<void> performRoll(int modifier) async {
-    ExplainedValue attrValue = attributeTargetValue(widget.character, widget.attribute, modifier);
+    ExplainedValue attrValue = attributeTargetValue(
+      widget.character,
+      widget.attribute,
+      modifier,
+    );
     AttributeRollResult result = attributeRoll(attrValue);
     String txt =
         "${result.text()} (${attrValue.value} → 🎲 ${result.roll ?? '-/-'})";
+
+    String detail = attrValue.explanation
+        .map((c) => "${c.value}\t\t${c.explanation}")
+        .join("\n");
 
     await fadeDice(context, null, DiceAnimation.d20);
 
@@ -36,19 +44,11 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
       return;
     }
 
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(widget.attribute.name),
-        content: Text(txt),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
+    if (attrValue.explanation.length > 1) {
+      showDetailDialog(widget.attribute.name, txt, detail, context);
+    } else {
+      showSimpleDialog(widget.attribute.name, txt, context);
+    }
   }
 
   @override

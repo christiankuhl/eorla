@@ -253,3 +253,66 @@ Text colouredValue(ExplainedValue value) {
 
   return Text(value.value.toString(), style: style);
 }
+
+void showDetailDialog(
+  String title,
+  String txt,
+  String detail,
+  BuildContext context,
+) {
+  showDialog(
+    context: context,
+    builder: (_) {
+      bool expanded = false;
+
+      return StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(title),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(child: Text(txt)),
+                  IconButton(
+                    icon: Icon(
+                      expanded ? Icons.expand_less : Icons.expand_more,
+                    ),
+                    onPressed: () => setState(() => expanded = !expanded),
+                  ),
+                ],
+              ),
+              if (expanded)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: Text(
+                    detail,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+void showSimpleDialog(String title, String txt, BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: Text(title),
+      content: Text(txt),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
+      ],
+    ),
+  );
+}
