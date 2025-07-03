@@ -375,20 +375,12 @@ class CombatRoll {
       case CombatActionType.attack:
         int at = ctValue + (max(attackPrimary - 8, 0) / 3).toInt();
         tgt = ExplainedValue.base(at, "AT ${ct.name}");
-        tgt = tgt.add(
-          weapon?.at ?? 0,
-          "AT Mod ${weapon!.name}",
-          false,
-        );
+        tgt = tgt.add(weapon?.at ?? 0, "AT Mod ${weapon?.name}", false);
         break;
       case CombatActionType.parry:
         int pa = (ctValue / 2).ceil() + (max(parryPrimary - 8, 0) / 3).toInt();
         tgt = ExplainedValue.base(pa, "PA Basis");
-        tgt = tgt.add(
-          weapon?.pa ?? 0,
-          "PA Mod ${weapon!.name}",
-          false,
-        );
+        tgt = tgt.add(weapon?.pa ?? 0, "PA Mod ${weapon?.name}", false);
         break;
       case CombatActionType.dodge:
         tgt = ExplainedValue.base(dodge, "AW Basis");
@@ -422,7 +414,9 @@ class CombatRoll {
         true,
       );
     }
-    tgt = tgt.add(modifier, "Modifikator", true);
+    tgt = tgt
+        .andThen(character.state.explain())
+        .add(modifier, "Modifikator", true);
     return tgt;
   }
 

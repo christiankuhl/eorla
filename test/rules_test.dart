@@ -3,6 +3,7 @@ import 'package:eorla/models/avatar.dart';
 import 'package:eorla/models/character.dart';
 import 'package:eorla/models/optolith.dart';
 import 'package:eorla/models/audit.dart';
+import 'package:eorla/models/weapons.dart';
 import 'package:test/test.dart';
 import 'package:eorla/models/rules.dart';
 import 'package:eorla/models/skill.dart';
@@ -90,7 +91,20 @@ void main() {
       expect(critical.event, equals(RollEvent.critical));
     });
   });
+
+group('CombatRoll', () {
+  late CombatRoll engine;
+  setUp(() {
+      var dd = durchschnittsdoedel();
+      engine = CombatRoll.fromTechnique(dd, CombatTechnique.raufen, null, null, 0);
+    });
+  test("targetValue uses character state", () {
+    // AT Raufen Basis 7, -4 (Verwirrung)
+    expect(engine.targetValue(CombatActionType.attack).value, equals(3));
+  });
+});
 }
+
 
 Character durchschnittsdoedel() {
   return Character(
