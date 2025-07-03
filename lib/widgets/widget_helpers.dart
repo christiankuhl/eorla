@@ -56,7 +56,7 @@ Card skillInfoCard<T extends Trial>(T skillOrSpell, SkillRoll stats) {
   );
 }
 
-Card attributeInfoCard(Attribute attr, int attrValue) {
+Card attributeInfoCard(Attribute attr, ExplainedValue targetValue) {
   return Card(
     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     child: Container(
@@ -70,7 +70,18 @@ Card attributeInfoCard(Attribute attr, int attrValue) {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          Text('${attr.short}: $attrValue', style: TextStyle(fontSize: 18)),
+          Text.rich(
+            TextSpan(
+              text: '${attr.short}: ',
+              style: TextStyle(fontSize: 18),
+              children: [
+                TextSpan(
+                  text: "${targetValue.value}",
+                  style: tgtValueColour(targetValue),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     ),
@@ -238,7 +249,7 @@ Widget actionButton(IconData icon, VoidCallback onPressed) {
   );
 }
 
-Text colouredValue(ExplainedValue value) {
+TextStyle? tgtValueColour(ExplainedValue value) {
   int totalMod = value.explanation
       .where((comp) => comp.isMod)
       .map((comp) => comp.value)
@@ -250,8 +261,11 @@ Text colouredValue(ExplainedValue value) {
   } else if (totalMod < 0) {
     style = styleBad;
   }
+  return style;
+}
 
-  return Text(value.value.toString(), style: style);
+Text colouredValue(ExplainedValue value) {
+  return Text(value.value.toString(), style: tgtValueColour(value));
 }
 
 void showDetailDialog(
