@@ -79,7 +79,7 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
                       widget.character.getAttribute(widget.attribute),
                       "${widget.attribute.short} Basis",
                     )
-                    .addNontrivial(modifier, "Modifikator", true)
+                    .add(modifier, "Modifikator", true)
                     .andThen(widget.character.state.explain()),
               ),
               if (widget.character.state.value() > 0)

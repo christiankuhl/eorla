@@ -176,15 +176,15 @@ class SkillRoll<T extends Trial> {
     ExplainedValue tgtValue1 = ExplainedValue.base(
       attrValue1,
       attr1.name,
-    ).addNontrivial(modifier, "Modifikator", true).andThen(characterStates);
+    ).add(modifier, "Modifikator", true).andThen(characterStates);
     ExplainedValue tgtValue2 = ExplainedValue.base(
       attrValue2,
       attr2.name,
-    ).addNontrivial(modifier, "Modifikator", true).andThen(characterStates);
+    ).add(modifier, "Modifikator", true).andThen(characterStates);
     ExplainedValue tgtValue3 = ExplainedValue.base(
       attrValue3,
       attr3.name,
-    ).addNontrivial(modifier, "Modifikator", true).andThen(characterStates);
+    ).add(modifier, "Modifikator", true).andThen(characterStates);
     int fw =
         talentValue +
         min(tgtValue1.value - roll1, 0).toInt() +
@@ -375,7 +375,7 @@ class CombatRoll {
       case CombatActionType.attack:
         int at = ctValue + (max(attackPrimary - 8, 0) / 3).toInt();
         tgt = ExplainedValue.base(at, "AT Basis");
-        tgt = tgt.addNontrivial(
+        tgt = tgt.add(
           weapon?.at ?? 0,
           "AT Mod ${weapon!.name}",
           false,
@@ -384,7 +384,7 @@ class CombatRoll {
       case CombatActionType.parry:
         int pa = (ctValue / 2).ceil() + (max(parryPrimary - 8, 0) / 3).toInt();
         tgt = ExplainedValue.base(pa, "PA Basis");
-        tgt = tgt.addNontrivial(
+        tgt = tgt.add(
           weapon?.pa ?? 0,
           "PA Mod ${weapon!.name}",
           false,
@@ -402,7 +402,7 @@ class CombatRoll {
         0,
       );
       int modifierBaseManeuvre = impact.getApplicableMod(action);
-      tgt = tgt.addNontrivial(
+      tgt = tgt.add(
         modifierBaseManeuvre,
         specialAbilityBaseManeuvre!.toString(),
         true,
@@ -416,13 +416,13 @@ class CombatRoll {
         0,
       );
       int modifierSpecialManeuvre = impact.getApplicableMod(action);
-      tgt = tgt.addNontrivial(
+      tgt = tgt.add(
         modifierSpecialManeuvre,
         specialAbilitySpecialManeuvre!.toString(),
         true,
       );
     }
-    tgt = tgt.addNontrivial(modifier, "Modifikator", true);
+    tgt = tgt.add(modifier, "Modifikator", true);
     return tgt;
   }
 
@@ -466,7 +466,7 @@ ExplainedValue attributeTargetValue(
   return ExplainedValue.base(
     character.getAttribute(attribute),
     "${attribute.name} Basis",
-  ).addNontrivial(modifier, "Modifikator", true).andThen(character.state.explain());
+  ).add(modifier, "Modifikator", true).andThen(character.state.explain());
 }
 
 AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
@@ -476,7 +476,7 @@ AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
     return AttributeRollResult(
       null,
       RollEvent.failure,
-      target.add(
+      target.addUnconditional(
         0,
         "Ein Wurf mit einem effektiven FW < 1 darf nicht versucht werden",
         true,

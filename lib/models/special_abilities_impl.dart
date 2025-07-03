@@ -352,7 +352,7 @@ List<AttributeRollResult> Function(CombatRoll, CombatActionType) multiAttack(
     }
     List<AttributeRollResult> results = [];
     for (var (mod, context) in atModsWithContext) {
-      ExplainedValue tgt = roll.targetValue(action).add(mod, context, true);
+      ExplainedValue tgt = roll.targetValue(action).addUnconditional(mod, context, true);
       var res = attributeRoll(tgt);
       res.context = context;
       results.add(res);

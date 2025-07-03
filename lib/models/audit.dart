@@ -8,16 +8,16 @@ class ExplainedValue {
     return ExplainedValue(value, [ComponentWithExplanation(value, explanation, false)]);
   }
 
-  ExplainedValue add(int mod, String expl, bool isMod) {
+  ExplainedValue addUnconditional(int mod, String expl, bool isMod) {
     int newValue = value + mod;
     List<ComponentWithExplanation> newExplain = explanation;
     newExplain.add(ComponentWithExplanation(mod, expl, isMod));
     return ExplainedValue(newValue, newExplain);
   }
 
-  ExplainedValue addNontrivial(int mod, String expl, bool isMod) {
+  ExplainedValue add(int mod, String expl, bool isMod) {
     if (mod != 0) {
-      return add(mod, expl, isMod);
+      return addUnconditional(mod, expl, isMod);
     } else {
       return this;
     }

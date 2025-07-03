@@ -135,7 +135,7 @@ class Deterministic implements Random {
 ExplainedValue attributeWithModifier(int attrValue, {int modifier = 0}) {
   ExplainedValue value = ExplainedValue.base(attrValue, "base");
   if (modifier != 0) {
-    value = value.add(modifier, "modifier", true);
+    value = value.addUnconditional(modifier, "modifier", true);
   }
   return value;
 }
