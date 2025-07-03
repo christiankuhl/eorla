@@ -46,7 +46,6 @@ class CharacterSelectionScreen extends StatelessWidget {
                       listen: false,
                     );
                     manager.deleteCharacter(character);
-                    await CharacterStorage.deleteCharacter(character.name);
                   }
                 },
               ),

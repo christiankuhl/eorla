@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/character.dart';
+import 'character_storage.dart';
 
 class CharacterManager extends ChangeNotifier {
   List<Character> characters = [];
@@ -16,13 +17,13 @@ class CharacterManager extends ChangeNotifier {
     characters.add(character);
   }
 
-  void deleteCharacter(Character character) {
+  void deleteCharacter(Character character) async {
     characters.remove(character);
 
     if (_activeCharacter == character) {
       _activeCharacter = characters.isNotEmpty ? characters.first : null;
     }
-
+    await CharacterStorage.saveCharacters(characters);
     notifyListeners();
   }
 

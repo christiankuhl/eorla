@@ -27,17 +27,6 @@ class CharacterStorage {
     await prefs.setString(_charactersKey, jsonEncode(jsonList));
   }
 
-  static Future<void> deleteCharacter(String characterName) async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString(_charactersKey);
-
-    if (data != null) {
-      final List<dynamic> list = jsonDecode(data);
-      final updated = list.where((e) => e['name'] != characterName).toList();
-      await prefs.setString(_charactersKey, jsonEncode(updated));
-    }
-  }
-
   static Future<List<Character>> loadCharacters() async {
     final prefs = await SharedPreferences.getInstance();
     final data = prefs.getString(_charactersKey);

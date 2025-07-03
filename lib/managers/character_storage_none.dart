@@ -8,10 +8,6 @@ class CharacterStorage {
   static Future<List<Character>> loadCharacters() async {
     throw UnsupportedError("Unsupported platform");
   }
-
-  static Future<List<Character>> deleteCharacter(String name) async {
-    throw UnsupportedError("Unsupported platform");
-  }
 }
 
 Future<Map<String, dynamic>> getOptolithCharacterData() async {

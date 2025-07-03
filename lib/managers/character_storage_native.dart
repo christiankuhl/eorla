@@ -4,6 +4,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import '../models/character.dart';
 
+const String eorlaSaveFileName = "eorlaCharacters.json";
+
 Future<Map<String, dynamic>> getOptolithCharacterData() async {
   FilePickerResult? result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
@@ -21,37 +23,36 @@ Future<Map<String, dynamic>> getOptolithCharacterData() async {
 class CharacterStorage {
   static Future<void> saveCharacters(List<Character> characters) async {
     final dir = await getApplicationDocumentsDirectory();
-    String path = dir.path;
-    for (var character in characters) {
-      String name = character.name;
-      String fileName = "$path/$name.json";
-      var file = File(fileName);
-      await file.writeAsString(jsonEncode(character.toJson()));
-    }
-  }
-
-  static Future<void> deleteCharacter(String characterName) async {
-    final dir = await getApplicationDocumentsDirectory();
-    String path = dir.path;
-    String fileName = "$path/$characterName.json";
+    String fileName = "${dir.path}/$eorlaSaveFileName";
     var file = File(fileName);
-    await file.delete();
+    await file.writeAsString(
+      jsonEncode([for (var character in characters) character.toJson()]),
+    );
   }
 
   static Future<List<Character>> loadCharacters() async {
-    final dir = await getApplicationDocumentsDirectory();
     List<Character> characters = [];
-    dir.listSync().forEach((file) {
-      if (file.path.endsWith(".json")) {
+    final dir = await getApplicationDocumentsDirectory();
+    String fileName = "${dir.path}/$eorlaSaveFileName";
+    var file = File(fileName);
+    if (!file.existsSync()) {
+      await file.create();
+      return characters;
+    }
+    String contents = await file.readAsString();
+    try {
+      dynamic charactersRaw = jsonDecode(contents);
+      for (var char in charactersRaw) {
         try {
-          String contents = (file as File).readAsStringSync();
-          final character = Character.fromJson(jsonDecode(contents));
+          final character = Character.fromJson(char);
           characters.add(character);
         } catch (e) {
-          // TODO: Figure out a better way to do this - i.e. avoid stray corrupted json files in the application directory
+          // Propagate the error somehow
         }
       }
-    });
+    } catch (e) {
+      return characters;
+    }
     return characters;
   }
 }
