@@ -1,6 +1,9 @@
-![Flutter Test](https://github.com/christiankuhl/eorla/actions/workflows/testing.yaml/badge.svg)
-
 # Eorla
+<p align="right">
+  <a href="https://github.com/christiankuhl/eorla/actions/workflows/testing.yml">
+    <img src="https://github.com/christiankuhl/eorla/actions/workflows/testing.yml/badge.svg" alt="Unit Tests" />
+  </a>
+</p>
 
 This is an app to simulate dice rolls for the German table top role playing game "Das Schwarze Auge" (The Dark Eye) version 5.
 
