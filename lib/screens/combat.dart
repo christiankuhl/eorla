@@ -63,13 +63,12 @@ class _CombatScreenState extends State<CombatScreen> {
           )
           .join("\n");
       detail = result
-          .map(
-            (r) =>
-                "${r.context}:\n" +
-                r.targetValue.explanation
-                    .map((c) => "${c.value}\t\t${c.explanation}")
-                    .join("\n"),
-          )
+          .map((r) {
+            String expl = r.targetValue.explanation
+                .map((c) => "${c.value}\t\t${c.explanation}")
+                .join("\n");
+            return "${r.context}:\n$expl";
+          })
           .join("\n\n");
     }
 
@@ -163,7 +162,16 @@ class _CombatScreenState extends State<CombatScreen> {
                     children: [
                       Text("AW", style: TextStyle(fontWeight: FontWeight.bold)),
                       SizedBox(height: 4),
-                      Text((widget.character.ge / 2).round().toString()),
+                      // TODO: This is again hackish...
+                      colouredValue(
+                        CombatRoll.fromTechnique(
+                          widget.character,
+                          CombatTechnique.raufen,
+                          selectedSpecialBaseManeuvre,
+                          selectedSpecialSpecialManeuvre,
+                          modifier,
+                        ).targetValue(CombatActionType.dodge),
+                      ),
                     ],
                   ),
                   actionButton(
