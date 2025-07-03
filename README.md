@@ -1,24 +1,23 @@
-# eorla
+![Flutter Test](https://github.com/christiankuhl/eorla/actions/workflows/testing.yaml/badge.svg)
 
-A new Flutter project.
+# Eorla
 
-## Getting Started
+This is an app to simulate dice rolls for the German table top role playing game "Das Schwarze Auge" (The Dark Eye) version 5.
 
-This project is a starting point for a Flutter application.
+Its character format is compatible with the json format used by the excellent DSA character creator [Optolith](https://optolith.app/de).
 
-A few resources to get you started if this is your first Flutter project:
+It currently targets Android and the web as deployment platforms. You can test out the web version [here](https://christiankuhl.github.io/eorla/).
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| ![](https://github.com/christiankuhl/eorla/.github/home_screen.png) | ![](https://github.com/christiankuhl/eorla/.github/skill_roll.png) | ![](https://github.com/christiankuhl/eorla/.github/combat.png) | ![](https://github.com/christiankuhl/eorla/.github/characters.png) |
+|-----------------|-----------------|-----------------|-----------------|
+| Home Screen     | Skill roll      | Combat menu     | Character import|
 
 
-## Building project
+## Building the project / Contributing
 
-To (re-)generate the enum variants (located in
-lib/models/generated), one has to run the build script like so:
+The project is a bog standard flutter repository and should require almost no special treatment. There are some proprietary texts stored in the private repository referenced by `/database/`, but the project should build and run just fine without them.
 
-dart run build_runner build
+If you do want to contribute, just do the usual: fork the repo and send us a pull request.
+
+If you want to contribute to the database, please [get in touch](mailto:christian.kuhl84@gmail.com). In that case, one needs to run the build script `dart run build_runner build` for any changes to take effect.
+
