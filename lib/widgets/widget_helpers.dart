@@ -293,8 +293,8 @@ TextStyle? tgtValueColour(ExplainedValue value) {
   return style;
 }
 
-Text colouredValue(ExplainedValue value) {
-  return Text(value.value.toString(), style: tgtValueColour(value));
+Text colouredValue(ExplainedValue v) {
+  return Text((v.value < 1) ? "0" : v.value.toString(), style: tgtValueColour(v));
 }
 
 void showDetailDialog(
