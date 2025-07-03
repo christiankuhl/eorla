@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class DiceRollTransition extends StatefulWidget {
-  final VoidCallback onVideoEnd;
+  final Widget? tgtScreen;
   final DiceAnimation animation;
+
   const DiceRollTransition({
-    required this.onVideoEnd,
     required this.animation,
+    this.tgtScreen,
     super.key,
   });
 
@@ -17,28 +18,50 @@ class DiceRollTransition extends StatefulWidget {
 class _DiceRollTransitionState extends State<DiceRollTransition>
     with TickerProviderStateMixin {
   late VideoPlayerController _controller;
-  late String _asset = 'assets/dice.mp4';
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
+
+  bool _hasNavigated = false;
 
   @override
   void initState() {
     super.initState();
-    _asset = super.widget.animation.asset;
-    _controller = VideoPlayerController.asset(_asset)
+
+    _controller = VideoPlayerController.asset(widget.animation.asset)
       ..initialize().then((_) {
         setState(() {});
         _controller.play();
+        Future.delayed(Duration(seconds: 1), () async {
+          await _fadeController.forward();
+          if (!_hasNavigated && mounted) {
+            _hasNavigated = true;
+            if (widget.tgtScreen != null) {
+              Navigator.of(context).pushReplacement(
+                PageRouteBuilder(
+                  pageBuilder: (_, _, _) => widget.tgtScreen!,
+                  transitionsBuilder: (_, animation, _, child) =>
+                      FadeTransition(opacity: animation, child: child),
+                  transitionDuration: Duration(milliseconds: 200),
+                ),
+              );
+            } else {
+              Navigator.of(context).pop();
+            }
+          }
+        });
       });
-    _controller.addListener(() {
-      if (_controller.value.position >=
-          _controller.value.duration - Duration(milliseconds: 200)) {
-        widget.onVideoEnd();
-      }
-    });
+
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 200),
+    );
+    _fadeAnimation = Tween(begin: 1.0, end: 0.0).animate(_fadeController);
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _fadeController.dispose();
     super.dispose();
   }
 
@@ -50,19 +73,22 @@ class _DiceRollTransitionState extends State<DiceRollTransition>
     return Scaffold(
       backgroundColor: Colors.black,
       body: _controller.value.isInitialized
-          ? SizedBox(
-              width: screenSize.width,
-              height: screenSize.height,
-              child: FittedBox(
-                fit: BoxFit.cover,
-                child: SizedBox(
-                  width: isPortrait
-                      ? screenSize.width
-                      : screenSize.height * _controller.value.aspectRatio,
-                  height: isPortrait
-                      ? screenSize.width / _controller.value.aspectRatio
-                      : screenSize.height,
-                  child: VideoPlayer(_controller),
+          ? FadeTransition(
+              opacity: _fadeAnimation,
+              child: SizedBox(
+                width: screenSize.width,
+                height: screenSize.height,
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: SizedBox(
+                    width: isPortrait
+                        ? screenSize.width
+                        : screenSize.height * _controller.value.aspectRatio,
+                    height: isPortrait
+                        ? screenSize.width / _controller.value.aspectRatio
+                        : screenSize.height,
+                    child: VideoPlayer(_controller),
+                  ),
                 ),
               ),
             )
@@ -73,30 +99,20 @@ class _DiceRollTransitionState extends State<DiceRollTransition>
 
 Future<void> fadeDice(
   BuildContext context,
-  Widget tgtScreen,
+  Widget? tgtScreen,
   DiceAnimation animation,
 ) async {
-  Navigator.of(context).push(
+  await Navigator.of(context).push(
     PageRouteBuilder(
       pageBuilder: (_, _, _) => DiceRollTransition(
         animation: animation,
-        onVideoEnd: () {
-          Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (_, _, _) => tgtScreen,
-              transitionsBuilder: (_, animation, _, child) =>
-                  FadeTransition(opacity: animation, child: child),
-              transitionDuration: const Duration(milliseconds: 200),
-            ),
-          );
-        },
+        tgtScreen: tgtScreen,
       ),
       transitionsBuilder: (_, animation, _, child) =>
           FadeTransition(opacity: animation, child: child),
-      transitionDuration: const Duration(milliseconds: 200),
+      transitionDuration: Duration(milliseconds: 200),
     ),
   );
-  await Future.delayed(Duration(milliseconds: 2200));
 }
 
 enum DiceAnimation {

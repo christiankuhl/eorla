@@ -61,8 +61,8 @@ class _CombatScreenState extends State<CombatScreen> {
           .join("\n");
     }
 
-    await fadeDice(context, context.widget, DiceAnimation.d20);
-    
+    await fadeDice(context, null, DiceAnimation.d20);
+
     if (!mounted) {
       return;
     }
@@ -94,8 +94,8 @@ class _CombatScreenState extends State<CombatScreen> {
       selectedSpecialSpecialManeuvre,
     );
     
-    await fadeDice(context, context.widget, DiceAnimation.d6);
-    
+    await fadeDice(context, null, DiceAnimation.d6);
+
     if (!mounted) {
       return;
     }
