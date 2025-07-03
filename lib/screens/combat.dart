@@ -51,12 +51,12 @@ class _CombatScreenState extends State<CombatScreen> {
     String txt;
     if (result.length == 1) {
       txt =
-          "${result[0].text()} (${result[0].targetValue} → 🎲 ${result[0].roll})";
+          "${result[0].text()} (${result[0].targetValue.value} → 🎲 ${result[0].roll})";
     } else {
       txt = result
           .map(
             (r) =>
-                "${r.context}: ${r.text()} (${r.targetValue} → 🎲 ${r.roll})",
+                "${r.context}: ${r.text()} (${r.targetValue.value} → 🎲 ${r.roll})",
           )
           .join("\n");
     }
