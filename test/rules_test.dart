@@ -33,7 +33,9 @@ void main() {
       final result = engine.roll(random: Deterministic([20, 1, 20]));
       expect(result.quality.type, equals(RollEvent.botch));
       engine.modifier = 20;
-      final botchDespiteSuccess = engine.roll(random: Deterministic([20, 1, 20]));
+      final botchDespiteSuccess = engine.roll(
+        random: Deterministic([20, 1, 20]),
+      );
       expect(botchDespiteSuccess.quality.type, equals(RollEvent.botch));
       engine.modifier = 0;
     });
@@ -49,7 +51,11 @@ void main() {
     });
     test("computes QS correctly", () {
       var dd = durchschnittsdoedel();
-      final streetsmarts = SkillRoll.from(dd, SkillWrapper(Skill.gassenwissen), 0);
+      final streetsmarts = SkillRoll.from(
+        dd,
+        SkillWrapper(Skill.gassenwissen),
+        0,
+      );
       // Dödel stats: KL 9 / IN 10 / CH 8 / Verwirrung 4 / Gassenwissen 6
       // roll 5, 6, 4 => QS = 2
       final qs2 = streetsmarts.roll(random: Deterministic([5, 6, 4]));
@@ -69,42 +75,86 @@ void main() {
 
   group('attributeRoll', () {
     test("detects a 1 and a pass as critical, and success otherwise", () {
-      final crit = attributeRoll(attributeWithModifier(10), random: Deterministic([1, 5]));
+      final crit = attributeRoll(
+        attributeWithModifier(10),
+        random: Deterministic([1, 5]),
+      );
       expect(crit.event, equals(RollEvent.critical));
-      final success = attributeRoll(attributeWithModifier(10), random: Deterministic([1, 11]));
+      final success = attributeRoll(
+        attributeWithModifier(10),
+        random: Deterministic([1, 11]),
+      );
       expect(success.event, equals(RollEvent.success));
     });
     test("detects a 20 and a fail as botch, regardless of remaining FW", () {
-      final regularBotch = attributeRoll(attributeWithModifier(10), random: Deterministic([20, 15]));
+      final regularBotch = attributeRoll(
+        attributeWithModifier(10),
+        random: Deterministic([20, 15]),
+      );
       expect(regularBotch.event, equals(RollEvent.botch));
-      final exceptionalBotch = attributeRoll(attributeWithModifier(10, modifier: 10), random: Deterministic([20, 20]));
+      final exceptionalBotch = attributeRoll(
+        attributeWithModifier(10, modifier: 10),
+        random: Deterministic([20, 20]),
+      );
       expect(exceptionalBotch.event, equals(RollEvent.botch));
-      final regularFail = attributeRoll(attributeWithModifier(10), random: Deterministic([20, 5]));
+      final regularFail = attributeRoll(
+        attributeWithModifier(10),
+        random: Deterministic([20, 5]),
+      );
       expect(regularFail.event, equals(RollEvent.failure));
     });
     test("detects EFW < 1 as fail", () {
-      final result = attributeRoll(attributeWithModifier(5, modifier: -5), random: Deterministic([1, 1, 1]));
+      final result = attributeRoll(
+        attributeWithModifier(5, modifier: -5),
+        random: Deterministic([1, 1, 1]),
+      );
       expect(result.targetValue.value, lessThan(1));
-      expect(result.targetValue.explanation.last.explanation, equals("Ein Wurf mit einem effektiven FW < 1 darf nicht versucht werden"));
+      expect(
+        result.targetValue.explanation.last.explanation,
+        equals(
+          "Ein Wurf mit einem effektiven FW < 1 darf nicht versucht werden",
+        ),
+      );
       expect(result.event, equals(RollEvent.failure));
-      final critical = attributeRoll(attributeWithModifier(5, modifier: -4), random: Deterministic([1, 1, 1]));
+      final critical = attributeRoll(
+        attributeWithModifier(5, modifier: -4),
+        random: Deterministic([1, 1, 1]),
+      );
       expect(critical.event, equals(RollEvent.critical));
     });
   });
 
-group('CombatRoll', () {
-  late CombatRoll engine;
-  setUp(() {
+  group('CombatRoll', () {
+    late CombatRoll engine;
+    setUp(() {
       var dd = durchschnittsdoedel();
-      engine = CombatRoll.fromTechnique(dd, CombatTechnique.raufen, null, null, 0);
+      engine = CombatRoll.fromTechnique(
+        dd,
+        CombatTechnique.raufen,
+        null,
+        null,
+        0,
+      );
     });
-  test("targetValue uses character state", () {
-    // AT Raufen Basis 7, -4 (Verwirrung)
-    expect(engine.targetValue(CombatActionType.attack).value, equals(3));
+    test("targetValue uses character state", () {
+      // AT Raufen Basis 7, -4 (Verwirrung)
+      expect(engine.targetValue(CombatActionType.attack).value, equals(3));
+    });
+    test("targetValue uses modifier", () {
+      Character dd = durchschnittsdoedel();
+      CombatRoll newEngine = CombatRoll.fromTechnique(
+        dd,
+        CombatTechnique.raufen,
+        null,
+        null,
+        4,
+      );
+      expect(newEngine.targetValue(CombatActionType.attack).value, equals(7));
+      expect(newEngine.targetValue(CombatActionType.parry).value, equals(3));
+      expect(newEngine.targetValue(CombatActionType.dodge).value, equals(5));
+    });
   });
-});
 }
-
 
 Character durchschnittsdoedel() {
   return Character(
