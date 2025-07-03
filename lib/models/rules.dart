@@ -374,7 +374,7 @@ class CombatRoll {
     switch (action) {
       case CombatActionType.attack:
         int at = ctValue + (max(attackPrimary - 8, 0) / 3).toInt();
-        tgt = ExplainedValue.base(at, "AT Basis");
+        tgt = ExplainedValue.base(at, "AT ${ct.name}");
         tgt = tgt.add(
           weapon?.at ?? 0,
           "AT Mod ${weapon!.name}",
