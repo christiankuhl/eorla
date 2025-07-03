@@ -8,7 +8,7 @@ Its character format is compatible with the json format used by the excellent DS
 
 It currently targets Android and the web as deployment platforms. You can test out the web version [here](https://christiankuhl.github.io/eorla/).
 
-| ![](https://github.com/christiankuhl/eorla/.github/home_screen.png) | ![](https://github.com/christiankuhl/eorla/.github/skill_roll.png) | ![](https://github.com/christiankuhl/eorla/.github/combat.png) | ![](https://github.com/christiankuhl/eorla/.github/characters.png) |
+| ![](https://github.com/christiankuhl/eorla/blob/master/.github/home_screen.png) | ![](https://github.com/christiankuhl/eorla/blob/master/.github/skill_roll.png) | ![](https://github.com/christiankuhl/eorla/blob/master/.github/combat.png) | ![](https://github.com/christiankuhl/eorla/blob/master/.github/characters.png) |
 |-----------------|-----------------|-----------------|-----------------|
 | Home Screen     | Skill roll      | Combat menu     | Character import|
 
