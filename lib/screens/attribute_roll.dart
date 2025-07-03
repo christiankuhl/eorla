@@ -5,6 +5,7 @@ import '../models/attributes.dart';
 import '../models/character.dart';
 import '../models/rules.dart';
 import '../models/audit.dart';
+import 'dice_rolls.dart';
 
 class AttributeRollScreen extends StatefulWidget {
   final Attribute attribute;
@@ -23,11 +24,18 @@ class AttributeRollScreen extends StatefulWidget {
 class AttributeRollScreenState extends State<AttributeRollScreen> {
   int modifier = 0;
 
-  void performRoll(int modifier) {
+  Future<void> performRoll(int modifier) async {
     ExplainedValue attrValue = attributeTargetValue(widget.character, widget.attribute, modifier);
     AttributeRollResult result = attributeRoll(attrValue);
     String txt =
         "${result.text()} (${attrValue.value} → 🎲 ${result.roll ?? '-/-'})";
+
+    await fadeDice(context, null, DiceAnimation.d20);
+
+    if (!mounted) {
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
