@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/character.dart';
 import '../models/weapons.dart';
 import '../models/special_abilities.dart';
+import '../models/audit.dart';
 import '../widgets/character_card.dart';
 import '../widgets/widget_helpers.dart';
 import '../widgets/weapon_card.dart';
@@ -144,49 +145,28 @@ class _CombatScreenState extends State<CombatScreen> {
       ),
     );
 
+    ExplainedValue aw = CombatRoll.fromTechnique(
+      widget.character,
+      CombatTechnique.raufen,
+      selectedSpecialBaseManeuvre,
+      selectedSpecialSpecialManeuvre,
+      modifier,
+    ).targetValue(CombatActionType.dodge);
+
     List<Widget> tlChildren = [
       Card(
         margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Ausweichen",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Text("AW", style: TextStyle(fontWeight: FontWeight.bold)),
-                      SizedBox(height: 4),
-                      // TODO: This is again hackish...
-                      colouredValue(
-                        CombatRoll.fromTechnique(
-                          widget.character,
-                          CombatTechnique.raufen,
-                          selectedSpecialBaseManeuvre,
-                          selectedSpecialSpecialManeuvre,
-                          modifier,
-                        ).targetValue(CombatActionType.dodge),
-                      ),
-                    ],
-                  ),
-                  actionButton(
-                    Icons.directions_run,
-                    // Note: The default weapon does not actually matter here.
-                    () => rollCombat(
-                      CombatActionType.dodge,
-                      genericWeapons[CombatTechnique.raufen]!,
-                      selectedSpecialBaseManeuvre,
-                      selectedSpecialSpecialManeuvre,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+          child: dodgeCard(
+            aw,
+            // Note: The default weapon does not actually matter here.
+            () => rollCombat(
+              CombatActionType.dodge,
+              genericWeapons[CombatTechnique.raufen]!,
+              selectedSpecialBaseManeuvre,
+              selectedSpecialSpecialManeuvre,
+            ),
           ),
         ),
       ),

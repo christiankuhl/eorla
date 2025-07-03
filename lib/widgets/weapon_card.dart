@@ -1,10 +1,11 @@
-import 'package:eorla/models/special_abilities.dart';
-import 'package:eorla/widgets/widget_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import '../models/audit.dart';
+import '../models/special_abilities.dart';
 import '../models/rules.dart';
 import '../models/weapons.dart';
 import '../models/character.dart';
+import 'widget_helpers.dart';
 
 class WeaponCard extends StatelessWidget {
   final String weaponName;
@@ -48,17 +49,19 @@ Widget weaponInfoCard(
     modifier,
   );
 
+  ExplainedValue at = stats.targetValue(CombatActionType.attack);
+  ExplainedValue pa = stats.targetValue(CombatActionType.parry);
   List<Widget> weaponStats = [
     statColumn(
       "AT",
-      colouredValue(stats.targetValue(CombatActionType.attack)),
-      button: actionButton(Symbols.swords, onAttack),
+      colouredValue(at),
+      button: actionButton(Symbols.swords, onAttack, at.value > 0),
     ),
     if (!weapon.ct.hasNoParry)
       statColumn(
         "PA",
-        colouredValue(stats.targetValue(CombatActionType.parry)),
-        button: actionButton(Icons.security, onParry),
+        colouredValue(pa),
+        button: actionButton(Icons.security, onParry, pa.value > 0),
       ),
     statColumn(
       "TP",
@@ -71,7 +74,7 @@ Widget weaponInfoCard(
         styleGood: styleGood,
         styleBad: styleBad,
       ),
-      button: actionButton(Icons.whatshot, onDamage),
+      button: actionButton(Icons.whatshot, onDamage, true),
     ),
   ];
 
@@ -152,5 +155,29 @@ class CombatResult {
     this.isSuccess,
     this.action,
     this.successText,
+  );
+}
+
+Widget dodgeCard(ExplainedValue aw, VoidCallback onPressed) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        "Ausweichen",
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+      Row(
+        children: [
+          Column(
+            children: [
+              Text("AW", style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 4),
+              colouredValue(aw),
+            ],
+          ),
+          actionButton(Icons.directions_run, onPressed, aw.value > 0),
+        ],
+      ),
+    ],
   );
 }

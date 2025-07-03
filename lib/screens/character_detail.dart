@@ -34,7 +34,7 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
               context,
               MaterialPageRoute(builder: (_) => CharacterSelectionScreen()),
             );
-          }),
+          }, true),
         ],
       ),
       body: SingleChildScrollView(
