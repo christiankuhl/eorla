@@ -122,10 +122,10 @@ Column attributesCard(SkillRoll stats, {SkillRollResult? rollResults}) {
       TextSpan(
         children: [
           TextSpan(
-            text: "${rollResults.tgtValue1.value}",
-            style: tgtValueColour(rollResults.tgtValue1),
+            text: "${rollResults.roll1.targetValue.value}",
+            style: tgtValueColour(rollResults.roll2.targetValue),
           ),
-          TextSpan(text: " → 🎲 ${rollResults.roll1 ?? '-/-'}"),
+          TextSpan(text: " → 🎲 ${rollResults.roll1.roll ?? '-/-'}"),
         ],
       ),
     );
@@ -133,10 +133,10 @@ Column attributesCard(SkillRoll stats, {SkillRollResult? rollResults}) {
       TextSpan(
         children: [
           TextSpan(
-            text: "${rollResults.tgtValue2.value}",
-            style: tgtValueColour(rollResults.tgtValue2),
+            text: "${rollResults.roll2.targetValue.value}",
+            style: tgtValueColour(rollResults.roll2.targetValue),
           ),
-          TextSpan(text: " → 🎲 ${rollResults.roll2 ?? '-/-'}"),
+          TextSpan(text: " → 🎲 ${rollResults.roll2.roll ?? '-/-'}"),
         ],
       ),
     );
@@ -144,10 +144,10 @@ Column attributesCard(SkillRoll stats, {SkillRollResult? rollResults}) {
       TextSpan(
         children: [
           TextSpan(
-            text: "${rollResults.tgtValue3.value}",
-            style: tgtValueColour(rollResults.tgtValue3),
+            text: "${rollResults.roll3.targetValue.value}",
+            style: tgtValueColour(rollResults.roll3.targetValue),
           ),
-          TextSpan(text: " → 🎲 ${rollResults.roll3 ?? '-/-'}"),
+          TextSpan(text: " → 🎲 ${rollResults.roll3.roll ?? '-/-'}"),
         ],
       ),
     );

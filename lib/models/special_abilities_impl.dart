@@ -374,30 +374,9 @@ List<AttributeRollResult> Function(CombatRoll, CombatActionType) probe(
     );
     final probeResult = engine.roll();
     List<AttributeRollResult> result = [];
-    result.add(
-      AttributeRollResult(
-        probeResult.roll1,
-        probeResult.quality.type,
-        probeResult.tgtValue1,
-        context: engine.attr1.short,
-      ),
-    );
-    result.add(
-      AttributeRollResult(
-        probeResult.roll2,
-        probeResult.quality.type,
-        probeResult.tgtValue2,
-        context: engine.attr2.short,
-      ),
-    );
-    result.add(
-      AttributeRollResult(
-        probeResult.roll3,
-        probeResult.quality.type,
-        probeResult.tgtValue3,
-        context: engine.attr3.short,
-      ),
-    );
+    result.add(probeResult.roll1);
+    result.add(probeResult.roll2);
+    result.add(probeResult.roll3);
     return result;
   };
 }

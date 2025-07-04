@@ -103,21 +103,21 @@ class SkillRoll<T extends Trial> {
   ExplainedValue get tgtValue1 {
     return ExplainedValue.base(
       attrValue1,
-      attr1.name,
+      "${attr1.short} Basis",
     ).add(modifier, "Modifikator", true).andThen(characterState.explain());
   }
 
   ExplainedValue get tgtValue2 {
     return ExplainedValue.base(
       attrValue2,
-      attr2.name,
+      "${attr2.short} Basis",
     ).add(modifier, "Modifikator", true).andThen(characterState.explain());
   }
 
   ExplainedValue get tgtValue3 {
     return ExplainedValue.base(
       attrValue3,
-      attr3.name,
+      "${attr3.short} Basis",
     ).add(modifier, "Modifikator", true).andThen(characterState.explain());
   }
 
@@ -176,13 +176,10 @@ class SkillRoll<T extends Trial> {
     }
     if (illegal) {
       return SkillRollResult(
-        null,
-        null,
-        null,
+        AttributeRollResult(null, RollEvent.failure, expls[0], context: attr1.name),
+        AttributeRollResult(null, RollEvent.failure, expls[1], context: attr2.name),
+        AttributeRollResult(null, RollEvent.failure, expls[2], context: attr3.name),
         Quality(RollEvent.failure, 0),
-        expls[0],
-        expls[1],
-        expls[2],
       );
     }
     random ??= Random();
@@ -212,13 +209,10 @@ class SkillRoll<T extends Trial> {
       qs = 1;
     }
     return SkillRollResult(
-      roll1,
-      roll2,
-      roll3,
+      AttributeRollResult(roll1, event, tgtValue1, context: attr1.name),
+      AttributeRollResult(roll2, event, tgtValue2, context: attr2.name),
+      AttributeRollResult(roll3, event, tgtValue3, context: attr3.name),
       Quality(event, qs),
-      tgtValue1,
-      tgtValue2,
-      tgtValue3,
     );
   }
 }
@@ -233,22 +227,16 @@ class Quality {
 }
 
 class SkillRollResult {
-  final int? roll1;
-  final int? roll2;
-  final int? roll3;
+  final AttributeRollResult roll1;
+  final AttributeRollResult roll2;
+  final AttributeRollResult roll3;
   final Quality quality;
-  final ExplainedValue tgtValue1;
-  final ExplainedValue tgtValue2;
-  final ExplainedValue tgtValue3;
 
   SkillRollResult(
     this.roll1,
     this.roll2,
     this.roll3,
     this.quality,
-    this.tgtValue1,
-    this.tgtValue2,
-    this.tgtValue3,
   );
 
   String text() {
@@ -288,7 +276,7 @@ class AttributeRollResult {
   final ExplainedValue targetValue;
   String? context;
 
-  AttributeRollResult(this.roll, this.event, this.targetValue, {context});
+  AttributeRollResult(this.roll, this.event, this.targetValue, {this.context});
 
   String text() {
     switch (event) {

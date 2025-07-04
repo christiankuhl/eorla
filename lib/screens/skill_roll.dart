@@ -6,7 +6,6 @@ import '../models/rules.dart';
 import '../widgets/widget_helpers.dart';
 import '../managers/settings.dart';
 import 'dice_rolls.dart';
-import 'skill_result.dart';
 
 class RollScreen<T extends Trial> extends StatefulWidget {
   final T skillOrSpell;
@@ -25,20 +24,40 @@ class RollScreen<T extends Trial> extends StatefulWidget {
 class RollScreenState extends State<RollScreen> {
   int modifier = 0;
 
-  void performRoll(int modifier) {
+  void performRoll(int modifier) async {
     SkillRoll engine = SkillRoll.from(widget.character, widget.skillOrSpell, modifier);
     SkillRollResult rollResults = engine.roll();
 
-    fadeDice(
+    List<AttributeRollResult> results = [rollResults.roll1, rollResults.roll2, rollResults.roll3];
+    String txt = results
+          .map(
+            (r) =>
+                "${r.context}: ${r.targetValue.value} → 🎲 ${r.roll}",
+          )
+          .join("\n");
+    String detail = results
+          .map((r) {
+            String expl = r.targetValue.explanation
+                .map((c) => "${c.value}\t\t${c.explanation}")
+                .join("\n");
+            return "${r.context}:\n$expl";
+          })
+          .join("\n\n");
+    if (rollResults.addText(widget.skillOrSpell).isNotEmpty) {
+      txt += "\n\n${rollResults.addText(widget.skillOrSpell)}";
+    };
+
+    await fadeDice(
       context,
-      ResultScreen(
-        skillOrSpell: widget.skillOrSpell,
-        stats: engine,
-        rollResults: rollResults,
-        modifier: modifier,
-      ),
+      null,
       DiceAnimation.d20,
     );
+
+    if (!mounted) {
+      return;
+    }
+
+    showDetailDialog(rollResults.text(), txt, detail, context);
   }
 
   @override
