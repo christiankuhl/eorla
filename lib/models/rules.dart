@@ -100,9 +100,27 @@ class SkillRoll<T extends Trial> {
   final int attrValue3;
   final int talentValue;
   final CharacterState characterState;
-  late ExplainedValue tgtValue1;
-  late ExplainedValue tgtValue2;
-  late ExplainedValue tgtValue3;
+  ExplainedValue get tgtValue1 {
+    return ExplainedValue.base(
+      attrValue1,
+      attr1.name,
+    ).add(modifier, "Modifikator", true).andThen(characterState.explain());
+  }
+
+  ExplainedValue get tgtValue2 {
+    return ExplainedValue.base(
+      attrValue2,
+      attr2.name,
+    ).add(modifier, "Modifikator", true).andThen(characterState.explain());
+  }
+
+  ExplainedValue get tgtValue3 {
+    return ExplainedValue.base(
+      attrValue3,
+      attr3.name,
+    ).add(modifier, "Modifikator", true).andThen(characterState.explain());
+  }
+
   int modifier;
 
   SkillRoll(
@@ -115,21 +133,7 @@ class SkillRoll<T extends Trial> {
     this.talentValue,
     this.characterState,
     this.modifier,
-  ) {
-    List<ComponentWithExplanation> characterStates = characterState.explain();
-    tgtValue1 = ExplainedValue.base(
-      attrValue1,
-      attr1.name,
-    ).add(modifier, "Modifikator", true).andThen(characterStates);
-    tgtValue2 = ExplainedValue.base(
-      attrValue2,
-      attr2.name,
-    ).add(modifier, "Modifikator", true).andThen(characterStates);
-    tgtValue3 = ExplainedValue.base(
-      attrValue3,
-      attr3.name,
-    ).add(modifier, "Modifikator", true).andThen(characterStates);
-  }
+  );
 
   factory SkillRoll.from(Character character, T skillOrSpell, int modifier) {
     Attribute attr1 = skillOrSpell.attr1;
