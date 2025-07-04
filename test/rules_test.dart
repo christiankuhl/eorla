@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:eorla/models/avatar.dart';
 import 'package:eorla/models/character.dart';
 import 'package:eorla/models/optolith.dart';
@@ -8,6 +7,7 @@ import 'package:test/test.dart';
 import 'package:eorla/models/rules.dart';
 import 'package:eorla/models/skill.dart';
 import 'package:eorla/models/attributes.dart';
+import 'package:eorla/models/probabilities.dart';
 
 void main() {
   group('SkillRoll', () {
@@ -172,28 +172,6 @@ Character durchschnittsdoedel() {
     talents: {Skill.gassenwissen: 6},
     optolith: Optolith({}),
   );
-}
-
-class Deterministic implements Random {
-  List<int> future;
-  Deterministic(this.future) {
-    future = future.reversed.map((n) => n - 1).toList();
-  }
-
-  @override
-  int nextInt(int max) {
-    return future.removeLast();
-  }
-
-  @override
-  bool nextBool() {
-    throw UnimplementedError();
-  }
-
-  @override
-  double nextDouble() {
-    throw UnimplementedError();
-  }
 }
 
 ExplainedValue attributeWithModifier(int attrValue, {int modifier = 0}) {

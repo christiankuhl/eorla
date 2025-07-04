@@ -153,7 +153,7 @@ class SkillRoll<T extends Trial> {
     );
   }
 
-  SkillRollResult roll({Random? random}) {
+  SkillRollResult roll({Random? random, bool ignoreBotch = false}) {
     List<ExplainedValue> expls = [];
     bool illegal = false;
     for (var effFW in [tgtValue1, tgtValue2, tgtValue3]) {
@@ -194,7 +194,7 @@ class SkillRoll<T extends Trial> {
     bool botch = rolls.where((n) => n == 20).length >= 2;
     bool critical = rolls.where((n) => n == 1).length >= 2;
     RollEvent event;
-    if (botch) {
+    if (botch && !ignoreBotch) {
       event = RollEvent.botch;
     } else if (critical) {
       event = RollEvent.critical;
