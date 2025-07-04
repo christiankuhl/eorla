@@ -116,8 +116,7 @@ class SpecialAbilityImpact {
     List<Dice> additionalDice = [];
     bool additionalDiceReplaceOriginal = false;
     List<AttributeRollResult> Function(CombatRoll, CombatActionType)? callback;
-    int Function(Character)?
-    tpcallback; //TODO: check if first int argument is necessairy
+    int Function(Character)? tpcallback;
 
     switch (spec.value) {
       case SpecialAbilityBase.eisenhagel:
@@ -225,15 +224,10 @@ class SpecialAbilityImpact {
         atMod = -(spec.tier ?? 0);
         tpMod = spec.tier ?? 0;
         break;
-      case SpecialAbilityBase.graetsche: //FIXME: Probe is already raufen
+      case SpecialAbilityBase.graetsche:
         paMod = -2;
         awMod = -2;
-        callback = alternateCombatTechnique(
-          CombatTechnique.raufen,
-          modifier - 2,
-          paMod: paMod,
-          awMod: awMod,
-        );
+        atMod = -2;
         break;
       case SpecialAbilityBase.kraftvollerSpeerwurf:
         tpMod = 2;
@@ -352,7 +346,9 @@ List<AttributeRollResult> Function(CombatRoll, CombatActionType) multiAttack(
     }
     List<AttributeRollResult> results = [];
     for (var (mod, context) in atModsWithContext) {
-      ExplainedValue tgt = roll.targetValue(action).addUnconditional(mod, context, true);
+      ExplainedValue tgt = roll
+          .targetValue(action)
+          .addUnconditional(mod, context, true);
       var res = attributeRoll(tgt);
       res.context = context;
       results.add(res);
@@ -371,7 +367,11 @@ List<AttributeRollResult> Function(CombatRoll, CombatActionType) probe(
     if (action != CombatActionType.attack) {
       return [attributeRoll(roll.targetValue(action))];
     }
-    final engine = SkillRoll.from(roll.character, SkillWrapper(skill), modifier);
+    final engine = SkillRoll.from(
+      roll.character,
+      SkillWrapper(skill),
+      modifier,
+    );
     final probeResult = engine.roll();
     List<AttributeRollResult> result = [];
     result.add(
