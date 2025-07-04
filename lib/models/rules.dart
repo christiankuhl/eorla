@@ -209,9 +209,9 @@ class SkillRoll<T extends Trial> {
       qs = 1;
     }
     return SkillRollResult(
-      AttributeRollResult(roll1, event, tgtValue1, context: attr1.name),
-      AttributeRollResult(roll2, event, tgtValue2, context: attr2.name),
-      AttributeRollResult(roll3, event, tgtValue3, context: attr3.name),
+      AttributeRollResult(DiceValue(roll1), event, tgtValue1, context: attr1.name),
+      AttributeRollResult(DiceValue(roll2), event, tgtValue2, context: attr2.name),
+      AttributeRollResult(DiceValue(roll3), event, tgtValue3, context: attr3.name),
       Quality(event, qs),
     );
   }
@@ -271,7 +271,7 @@ class SkillRollResult {
 }
 
 class AttributeRollResult {
-  final int? roll;
+  final DiceValue? roll;
   final RollEvent event;
   final ExplainedValue targetValue;
   String? context;
@@ -474,27 +474,27 @@ AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
     int roll2 = random.nextInt(20) + 1;
     int fw2 = target.value - roll2;
     if (fw2 >= 0) {
-      return AttributeRollResult(roll, RollEvent.critical, target);
+      return AttributeRollResult(DiceValue(roll, confirmationThrow: roll2), RollEvent.critical, target);
     } else {
-      return AttributeRollResult(roll, RollEvent.success, target);
+      return AttributeRollResult(DiceValue(roll, confirmationThrow: roll2), RollEvent.success, target);
     }
   } else if (roll == 20) {
     int roll2 = random.nextInt(20) + 1;
     int fw2 = target.value - roll2;
     if (fw2 >= 0 && roll2 != 20) {
       if (fw >= 0) {
-        return AttributeRollResult(roll, RollEvent.success, target);
+        return AttributeRollResult(DiceValue(roll, confirmationThrow: roll2), RollEvent.success, target);
       } else {
-        return AttributeRollResult(roll, RollEvent.failure, target);
+        return AttributeRollResult(DiceValue(roll, confirmationThrow: roll2), RollEvent.failure, target);
       }
     } else {
-      return AttributeRollResult(roll, RollEvent.botch, target);
+      return AttributeRollResult(DiceValue(roll, confirmationThrow: roll2), RollEvent.botch, target);
     }
   } else {
     if (fw >= 0) {
-      return AttributeRollResult(roll, RollEvent.success, target);
+      return AttributeRollResult(DiceValue(roll), RollEvent.success, target);
     } else {
-      return AttributeRollResult(roll, RollEvent.failure, target);
+      return AttributeRollResult(DiceValue(roll), RollEvent.failure, target);
     }
   }
 }

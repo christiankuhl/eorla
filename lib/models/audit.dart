@@ -52,3 +52,43 @@ class ComponentWithExplanation {
     return "$sign$value\t$explanation";
   }
 }
+
+class DiceValue {
+  final int value;
+  final int? confirmationThrow;
+
+  const DiceValue(this.value, {this.confirmationThrow});
+
+  DiceValue operator +(Object other) {
+    final int otherVal = _unwrap(other);
+    return DiceValue(value + otherVal, confirmationThrow: null);
+  }
+
+  DiceValue operator -(Object other) {
+    final int otherVal = _unwrap(other);
+    return DiceValue(value - otherVal, confirmationThrow: null);
+  }
+
+  DiceValue operator *(Object other) {
+    final int otherVal = _unwrap(other);
+    return DiceValue(value * otherVal, confirmationThrow: null);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is DiceValue && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
+
+  int toInt() => value;
+
+  @override
+  String toString() => confirmationThrow != null ? '$value ($confirmationThrow)' : value.toString();
+
+  int _unwrap(Object other) {
+    if (other is int) return other;
+    if (other is DiceValue) return other.value;
+    throw ArgumentError('Unsupported operand: $other');
+  }
+}
