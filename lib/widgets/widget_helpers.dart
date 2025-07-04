@@ -390,7 +390,7 @@ Widget statsBox(SkillRoll stats) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
-        "P(E) = ${(100 * p.success()).toStringAsFixed(1)}",
+        "P(E) = ${(100 * p.success()).toStringAsFixed(1)}%",
         style: TextStyle(
           fontSize: 10,
           color: Color.fromARGB(128, 255, 255, 255),
@@ -409,7 +409,7 @@ Widget statsBox(SkillRoll stats) {
 
 Widget statsBoxAttribute(int targetValue) {
   return Text(
-    "P(E) = ${(100 * attributeRollSuccess(targetValue)).toStringAsFixed(1)}",
+    "P(E) = ${(100 * attributeRollSuccess(targetValue)).toStringAsFixed(1)}%",
     style: TextStyle(fontSize: 10, color: Color.fromARGB(128, 255, 255, 255)),
   );
 }
