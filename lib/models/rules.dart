@@ -176,9 +176,24 @@ class SkillRoll<T extends Trial> {
     }
     if (illegal) {
       return SkillRollResult(
-        AttributeRollResult(null, RollEvent.failure, expls[0], context: attr1.name),
-        AttributeRollResult(null, RollEvent.failure, expls[1], context: attr2.name),
-        AttributeRollResult(null, RollEvent.failure, expls[2], context: attr3.name),
+        AttributeRollResult(
+          null,
+          RollEvent.failure,
+          expls[0],
+          context: attr1.name,
+        ),
+        AttributeRollResult(
+          null,
+          RollEvent.failure,
+          expls[1],
+          context: attr2.name,
+        ),
+        AttributeRollResult(
+          null,
+          RollEvent.failure,
+          expls[2],
+          context: attr3.name,
+        ),
         Quality(RollEvent.failure, 0),
       );
     }
@@ -209,9 +224,24 @@ class SkillRoll<T extends Trial> {
       qs = 1;
     }
     return SkillRollResult(
-      AttributeRollResult(DiceValue(roll1), event, tgtValue1, context: attr1.name),
-      AttributeRollResult(DiceValue(roll2), event, tgtValue2, context: attr2.name),
-      AttributeRollResult(DiceValue(roll3), event, tgtValue3, context: attr3.name),
+      AttributeRollResult(
+        DiceValue(roll1),
+        event,
+        tgtValue1,
+        context: attr1.name,
+      ),
+      AttributeRollResult(
+        DiceValue(roll2),
+        event,
+        tgtValue2,
+        context: attr2.name,
+      ),
+      AttributeRollResult(
+        DiceValue(roll3),
+        event,
+        tgtValue3,
+        context: attr3.name,
+      ),
       Quality(event, qs),
     );
   }
@@ -232,12 +262,7 @@ class SkillRollResult {
   final AttributeRollResult roll3;
   final Quality quality;
 
-  SkillRollResult(
-    this.roll1,
-    this.roll2,
-    this.roll3,
-    this.quality,
-  );
+  SkillRollResult(this.roll1, this.roll2, this.roll3, this.quality);
 
   String text() {
     switch (quality.type) {
@@ -474,21 +499,41 @@ AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
     int roll2 = random.nextInt(20) + 1;
     int fw2 = target.value - roll2;
     if (fw2 >= 0) {
-      return AttributeRollResult(DiceValue(roll, confirmationThrow: roll2), RollEvent.critical, target);
+      return AttributeRollResult(
+        DiceValue(roll, confirmationThrow: roll2),
+        RollEvent.critical,
+        target,
+      );
     } else {
-      return AttributeRollResult(DiceValue(roll, confirmationThrow: roll2), RollEvent.success, target);
+      return AttributeRollResult(
+        DiceValue(roll, confirmationThrow: roll2),
+        RollEvent.success,
+        target,
+      );
     }
   } else if (roll == 20) {
     int roll2 = random.nextInt(20) + 1;
     int fw2 = target.value - roll2;
     if (fw2 >= 0 && roll2 != 20) {
       if (fw >= 0) {
-        return AttributeRollResult(DiceValue(roll, confirmationThrow: roll2), RollEvent.success, target);
+        return AttributeRollResult(
+          DiceValue(roll, confirmationThrow: roll2),
+          RollEvent.success,
+          target,
+        );
       } else {
-        return AttributeRollResult(DiceValue(roll, confirmationThrow: roll2), RollEvent.failure, target);
+        return AttributeRollResult(
+          DiceValue(roll, confirmationThrow: roll2),
+          RollEvent.failure,
+          target,
+        );
       }
     } else {
-      return AttributeRollResult(DiceValue(roll, confirmationThrow: roll2), RollEvent.botch, target);
+      return AttributeRollResult(
+        DiceValue(roll, confirmationThrow: roll2),
+        RollEvent.botch,
+        target,
+      );
     }
   } else {
     if (fw >= 0) {

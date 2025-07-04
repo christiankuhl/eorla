@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class DiceRollTransition extends StatefulWidget {
-  final Widget? tgtScreen;
   final DiceAnimation animation;
 
-  const DiceRollTransition({
-    required this.animation,
-    this.tgtScreen,
-    super.key,
-  });
+  const DiceRollTransition({required this.animation, super.key});
 
   @override
   State<DiceRollTransition> createState() => _DiceRollTransitionState();

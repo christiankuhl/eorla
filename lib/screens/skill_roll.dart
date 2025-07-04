@@ -25,33 +25,34 @@ class RollScreenState extends State<RollScreen> {
   int modifier = 0;
 
   void performRoll(int modifier) async {
-    SkillRoll engine = SkillRoll.from(widget.character, widget.skillOrSpell, modifier);
+    SkillRoll engine = SkillRoll.from(
+      widget.character,
+      widget.skillOrSpell,
+      modifier,
+    );
     SkillRollResult rollResults = engine.roll();
 
-    List<AttributeRollResult> results = [rollResults.roll1, rollResults.roll2, rollResults.roll3];
+    List<AttributeRollResult> results = [
+      rollResults.roll1,
+      rollResults.roll2,
+      rollResults.roll3,
+    ];
     String txt = results
-          .map(
-            (r) =>
-                "${r.context}: ${r.targetValue.value} → 🎲 ${r.roll}",
-          )
-          .join("\n");
+        .map((r) => "${r.context}: ${r.targetValue.value} → 🎲 ${r.roll}")
+        .join("\n");
     String detail = results
-          .map((r) {
-            String expl = r.targetValue.explanation
-                .map((c) => "${c.value}\t\t${c.explanation}")
-                .join("\n");
-            return "${r.context}:\n$expl";
-          })
-          .join("\n\n");
+        .map((r) {
+          String expl = r.targetValue.explanation
+              .map((c) => "${c.value}\t\t${c.explanation}")
+              .join("\n");
+          return "${r.context}:\n$expl";
+        })
+        .join("\n\n");
     if (rollResults.addText(widget.skillOrSpell).isNotEmpty) {
       txt += "\n\n${rollResults.addText(widget.skillOrSpell)}";
-    };
+    }
 
-    await fadeDice(
-      context,
-      null,
-      DiceAnimation.d20,
-    );
+    await fadeDice(context, null, DiceAnimation.d20);
 
     if (!mounted) {
       return;
@@ -62,7 +63,11 @@ class RollScreenState extends State<RollScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SkillRoll stats = SkillRoll.from(widget.character, widget.skillOrSpell, modifier);
+    SkillRoll stats = SkillRoll.from(
+      widget.character,
+      widget.skillOrSpell,
+      modifier,
+    );
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -83,7 +88,11 @@ class RollScreenState extends State<RollScreen> {
                 ),
               ),
 
-              skillInfoCard(widget.skillOrSpell, stats, Provider.of<AppSettings>(context).nerdMode),
+              skillInfoCard(
+                widget.skillOrSpell,
+                stats,
+                Provider.of<AppSettings>(context).nerdMode,
+              ),
               attributesCard(stats),
 
               Card(
