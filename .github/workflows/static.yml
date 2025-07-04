@@ -43,7 +43,7 @@ jobs:
         run: flutter test -r github
 
       - name: Build web
-        run: flutter build web --base-href /eorla/
+        run: flutter build web --release --base-href /eorla/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
