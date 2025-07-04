@@ -91,11 +91,9 @@ Card attributeInfoCard(Attribute attr, ExplainedValue targetValue) {
 Column attributesCard(SkillRoll stats, {SkillRollResult? rollResults}) {
   Text txt1, txt2, txt3;
   if (rollResults == null) {
-    SkillRollResult res = stats
-        .roll(); // TODO: this is a bit hackish, ideally SkillRoll would have getters for the target values
-    txt1 = colouredValue(res.tgtValue1);
-    txt2 = colouredValue(res.tgtValue2);
-    txt3 = colouredValue(res.tgtValue3);
+    txt1 = colouredValue(stats.tgtValue1);
+    txt2 = colouredValue(stats.tgtValue2);
+    txt3 = colouredValue(stats.tgtValue3);
   } else {
     txt1 = Text.rich(
       TextSpan(

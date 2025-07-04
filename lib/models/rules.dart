@@ -100,6 +100,9 @@ class SkillRoll<T extends Trial> {
   final int attrValue3;
   final int talentValue;
   final CharacterState characterState;
+  late ExplainedValue tgtValue1;
+  late ExplainedValue tgtValue2;
+  late ExplainedValue tgtValue3;
   int modifier;
 
   SkillRoll(
@@ -112,7 +115,21 @@ class SkillRoll<T extends Trial> {
     this.talentValue,
     this.characterState,
     this.modifier,
-  );
+  ) {
+    List<ComponentWithExplanation> characterStates = characterState.explain();
+    tgtValue1 = ExplainedValue.base(
+      attrValue1,
+      attr1.name,
+    ).add(modifier, "Modifikator", true).andThen(characterStates);
+    tgtValue2 = ExplainedValue.base(
+      attrValue2,
+      attr2.name,
+    ).add(modifier, "Modifikator", true).andThen(characterStates);
+    tgtValue3 = ExplainedValue.base(
+      attrValue3,
+      attr3.name,
+    ).add(modifier, "Modifikator", true).andThen(characterStates);
+  }
 
   factory SkillRoll.from(Character character, T skillOrSpell, int modifier) {
     Attribute attr1 = skillOrSpell.attr1;
@@ -139,21 +156,17 @@ class SkillRoll<T extends Trial> {
   SkillRollResult roll({Random? random}) {
     List<ExplainedValue> expls = [];
     bool illegal = false;
-    for (var (attr, attrValue) in [
-      (attr1, attrValue1),
-      (attr2, attrValue2),
-      (attr3, attrValue3),
-    ]) {
+    for (var effFW in [tgtValue1, tgtValue2, tgtValue3]) {
       ExplainedValue? expl;
-      var effFW = attrValue + modifier - characterState.value();
-      if (effFW < 1) {
-        expl = ExplainedValue.base(
-          effFW,
+      if (effFW.value < 1) {
+        expl = effFW.addUnconditional(
+          0,
           "Ein Wurf mit einem effektiven FW < 1 darf nicht versucht werden",
+          false,
         );
         illegal = true;
       } else {
-        expl = ExplainedValue.base(effFW, attr.name);
+        expl = effFW;
       }
       expls.add(expl);
     }
@@ -172,19 +185,6 @@ class SkillRoll<T extends Trial> {
     int roll1 = random.nextInt(20) + 1;
     int roll2 = random.nextInt(20) + 1;
     int roll3 = random.nextInt(20) + 1;
-    List<ComponentWithExplanation> characterStates = characterState.explain();
-    ExplainedValue tgtValue1 = ExplainedValue.base(
-      attrValue1,
-      attr1.name,
-    ).add(modifier, "Modifikator", true).andThen(characterStates);
-    ExplainedValue tgtValue2 = ExplainedValue.base(
-      attrValue2,
-      attr2.name,
-    ).add(modifier, "Modifikator", true).andThen(characterStates);
-    ExplainedValue tgtValue3 = ExplainedValue.base(
-      attrValue3,
-      attr3.name,
-    ).add(modifier, "Modifikator", true).andThen(characterStates);
     int fw =
         talentValue +
         min(tgtValue1.value - roll1, 0).toInt() +
