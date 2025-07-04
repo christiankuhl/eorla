@@ -58,7 +58,12 @@ class RollScreenState extends State<RollScreen> {
       return;
     }
 
-    showDetailDialog(rollResults.text(), txt, detail, context);
+    if (results.any((r) => r.targetValue.explanation.length > 1)) {
+      showDetailDialog(rollResults.text(), txt, detail, context);
+    } else {
+      showSimpleDialog(rollResults.text(), txt, context);
+    }
+
   }
 
   @override
