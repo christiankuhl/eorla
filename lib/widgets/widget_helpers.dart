@@ -3,6 +3,7 @@ import '../models/rules.dart';
 import '../models/attributes.dart';
 import '../models/character.dart';
 import '../models/audit.dart';
+import '../models/probabilities.dart';
 
 final styleGood = TextStyle(color: const Color.fromARGB(255, 109, 195, 101));
 final styleBad = TextStyle(color: const Color.fromARGB(255, 218, 100, 100));
@@ -32,7 +33,11 @@ Widget modifierRow(
   );
 }
 
-Card skillInfoCard<T extends Trial>(T skillOrSpell, SkillRoll stats) {
+Card skillInfoCard<T extends Trial>(
+  T skillOrSpell,
+  SkillRoll stats,
+  bool nerdMode,
+) {
   return Card(
     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     child: Container(
@@ -41,9 +46,16 @@ Card skillInfoCard<T extends Trial>(T skillOrSpell, SkillRoll stats) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            skillOrSpell.name,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  skillOrSpell.name,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ),
+              if (nerdMode) statsBox(stats),
+            ],
           ),
           SizedBox(height: 8),
           Text(
@@ -56,7 +68,11 @@ Card skillInfoCard<T extends Trial>(T skillOrSpell, SkillRoll stats) {
   );
 }
 
-Card attributeInfoCard(Attribute attr, ExplainedValue targetValue) {
+Card attributeInfoCard(
+  Attribute attr,
+  ExplainedValue targetValue,
+  bool nerdMode,
+) {
   return Card(
     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     child: Container(
@@ -65,9 +81,16 @@ Card attributeInfoCard(Attribute attr, ExplainedValue targetValue) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            attr.name,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  attr.name,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ),
+              if (nerdMode) statsBoxAttribute(targetValue.value),
+            ],
           ),
           SizedBox(height: 8),
           Text.rich(
@@ -292,7 +315,10 @@ TextStyle? tgtValueColour(ExplainedValue value) {
 }
 
 Text colouredValue(ExplainedValue v) {
-  return Text((v.value < 1) ? "0" : v.value.toString(), style: tgtValueColour(v));
+  return Text(
+    (v.value < 1) ? "0" : v.value.toString(),
+    style: tgtValueColour(v),
+  );
 }
 
 void showDetailDialog(
@@ -355,5 +381,35 @@ void showSimpleDialog(String title, String txt, BuildContext context) {
         TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
       ],
     ),
+  );
+}
+
+Widget statsBox(SkillRoll stats) {
+  final p = SkillRollProbability(stats);
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        "P(E) = ${(100 * p.success()).toStringAsFixed(1)}",
+        style: TextStyle(
+          fontSize: 10,
+          color: Color.fromARGB(128, 255, 255, 255),
+        ),
+      ),
+      Text(
+        "E(QS) = ${(p.expectedQS()).toStringAsFixed(2)}",
+        style: TextStyle(
+          fontSize: 10,
+          color: Color.fromARGB(128, 255, 255, 255),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget statsBoxAttribute(int targetValue) {
+  return Text(
+    "P(E) = ${(100 * attributeRollSuccess(targetValue)).toStringAsFixed(1)}",
+    style: TextStyle(fontSize: 10, color: Color.fromARGB(128, 255, 255, 255)),
   );
 }

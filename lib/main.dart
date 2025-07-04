@@ -3,13 +3,19 @@ import 'package:provider/provider.dart';
 import 'screens/main_screen.dart';
 import 'managers/character_manager.dart';
 import 'managers/character_storage.dart';
+import 'managers/settings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final characters = await CharacterStorage.loadCharacters();
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => CharacterManager(characters: characters),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => CharacterManager(characters: characters),
+        ),
+        ChangeNotifierProvider(create: (_) => AppSettings()),
+      ],
       child: Eorla(),
     ),
   );

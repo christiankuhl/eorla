@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/character.dart';
 import '../widgets/widget_helpers.dart';
 import 'character_selection.dart';
+import 'settings.dart';
 
 class CharacterDetailScreen extends StatefulWidget {
   final Character character;
@@ -33,6 +34,12 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => CharacterSelectionScreen()),
+            );
+          }, true),
+          actionButton(Icons.settings, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => SettingsScreen()),
             );
           }, true),
         ],

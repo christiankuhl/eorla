@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/character_card.dart';
 import '../widgets/widget_helpers.dart';
+import '../managers/settings.dart';
 import '../models/attributes.dart';
 import '../models/character.dart';
 import '../models/rules.dart';
@@ -81,6 +83,7 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
                     )
                     .add(modifier, "Modifikator", true)
                     .andThen(widget.character.state.explain()),
+                Provider.of<AppSettings>(context).nerdMode,
               ),
               if (widget.character.state.value() > 0)
                 statesCard(widget.character.state),

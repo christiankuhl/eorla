@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/widget_helpers.dart';
 import '../widgets/character_card.dart';
 import '../models/rules.dart';
+import '../managers/settings.dart';
 
 class ResultScreen<T extends Trial> extends StatelessWidget {
   final T skillOrSpell;
@@ -40,7 +42,7 @@ class ResultScreen<T extends Trial> extends StatelessWidget {
                 ],
                 ),
               ), 
-              skillInfoCard(skillOrSpell, stats),
+              skillInfoCard(skillOrSpell, stats, Provider.of<AppSettings>(context).nerdMode),
               attributesCard(stats, rollResults: rollResults),
 
               Card(

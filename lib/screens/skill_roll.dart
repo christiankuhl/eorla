@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/character_card.dart';
 import '../models/character.dart';
 import '../models/rules.dart';
 import '../widgets/widget_helpers.dart';
+import '../managers/settings.dart';
 import 'dice_rolls.dart';
 import 'skill_result.dart';
 
@@ -62,7 +64,7 @@ class RollScreenState extends State<RollScreen> {
                 ),
               ),
 
-              skillInfoCard(widget.skillOrSpell, stats),
+              skillInfoCard(widget.skillOrSpell, stats, Provider.of<AppSettings>(context).nerdMode),
               attributesCard(stats),
 
               Card(
