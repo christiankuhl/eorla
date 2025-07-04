@@ -40,7 +40,7 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
         .map((c) => "${c.value}\t\t${c.explanation}")
         .join("\n");
 
-    await fadeDice(context, null, DiceAnimation.d20);
+    await fadeDice(context, DiceAnimation.d20);
 
     if (!mounted) {
       return;

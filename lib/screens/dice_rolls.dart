@@ -30,18 +30,7 @@ class _DiceRollTransitionState extends State<DiceRollTransition>
           await _fadeController.forward();
           if (!_hasNavigated && mounted) {
             _hasNavigated = true;
-            if (widget.tgtScreen != null) {
-              Navigator.of(context).pushReplacement(
-                PageRouteBuilder(
-                  pageBuilder: (_, _, _) => widget.tgtScreen!,
-                  transitionsBuilder: (_, animation, _, child) =>
-                      FadeTransition(opacity: animation, child: child),
-                  transitionDuration: Duration(milliseconds: 200),
-                ),
-              );
-            } else {
-              Navigator.of(context).pop();
-            }
+            Navigator.of(context).pop();
           }
         });
       });
@@ -92,17 +81,10 @@ class _DiceRollTransitionState extends State<DiceRollTransition>
   }
 }
 
-Future<void> fadeDice(
-  BuildContext context,
-  Widget? tgtScreen,
-  DiceAnimation animation,
-) async {
+Future<void> fadeDice(BuildContext context, DiceAnimation animation) async {
   await Navigator.of(context).push(
     PageRouteBuilder(
-      pageBuilder: (_, _, _) => DiceRollTransition(
-        animation: animation,
-        tgtScreen: tgtScreen,
-      ),
+      pageBuilder: (_, _, _) => DiceRollTransition(animation: animation),
       transitionsBuilder: (_, animation, _, child) =>
           FadeTransition(opacity: animation, child: child),
       transitionDuration: Duration(milliseconds: 200),

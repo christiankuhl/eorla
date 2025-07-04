@@ -52,7 +52,7 @@ class RollScreenState extends State<RollScreen> {
       txt += "\n\n${rollResults.addText(widget.skillOrSpell)}";
     }
 
-    await fadeDice(context, null, DiceAnimation.d20);
+    await fadeDice(context, DiceAnimation.d20);
 
     if (!mounted) {
       return;
