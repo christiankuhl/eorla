@@ -228,21 +228,24 @@ class SkillRollResult extends GenerericRollResult {
             children: [
               TextSpan(
                 text: "Erfolg! (",
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400, fontSize: 18),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 18,
+                ),
               ),
               TextSpan(
                 text: "QS: ${quality.qs}",
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 18),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 18,
+                ),
               ),
               TextSpan(
                 text: ")",
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400, fontSize: 18),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 18,
+                ),
               ),
             ],
           ),
@@ -256,9 +259,10 @@ class SkillRollResult extends GenerericRollResult {
             children: [
               TextSpan(
                 text: text(),
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600, fontSize: 18),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                ),
               ),
             ],
           ),
@@ -285,6 +289,19 @@ class SkillRollResult extends GenerericRollResult {
 
   @override
   Widget resultsWidget(BuildContext context) {
+    for (AttributeRollResult roll in rolls) {
+      if (roll.dice[0] is D20Dice) {
+        switch (roll.dice[0].result) {
+          case 1:
+            roll.dice[0] = D20DiceCritical.fromD20(roll.dice[0] as D20Dice);
+            break;
+          case 20:
+            roll.dice[0] = D20DiceBotch.fromD20(roll.dice[0] as D20Dice);
+            break;
+        }
+      }
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
