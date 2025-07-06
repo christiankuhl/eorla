@@ -1,8 +1,7 @@
 import 'package:eorla/main.dart';
+import 'package:eorla/models/rules.dart' show DisplayMode;
 import 'package:flutter/material.dart';
 import 'dart:math';
-
-enum DiceDisplayMode { text, colored, fancy }
 
 class Dice {
   final int sides;
@@ -11,21 +10,22 @@ class Dice {
   Color? fancyBorder;
   final Color fallbackFancyFill = const Color.fromARGB(255, 29, 27, 32);
   final Color fallbackFancyBorder = const Color.fromARGB(255, 126, 118, 139);
+  final double size;
 
-  factory Dice.create(int sides, {Color? fill, Color? border}) {
+  factory Dice.create(int sides, {Color? fill, Color? border, double size = 40}) {
     switch (sides) {
       case 20:
-        return D20Dice(fill: fill, border: border);
+        return D20Dice(fill: fill, border: border, size: size);
       case 6:
-        return D6Dice(fill: fill, border: border);
+        return D6Dice(fill: fill, border: border, size: size);
       case 3:
-        return D3Dice(fill: fill, border: border);
+        return D3Dice(fill: fill, border: border, size: size);
       default:
-        return Dice(sides, fill: fill, border: border);
+        return Dice(sides, fill: fill, border: border, size: size);
     }
   }
 
-  Dice(this.sides, {Color? fill, Color? border});
+  Dice(this.sides, {Color? fill, Color? border, this.size = 40});
 
   int roll([Random? rng]) {
     rng ??= Random();
@@ -51,33 +51,35 @@ class Dice {
 
   Widget displayWidget(
     BuildContext context, [
-    DiceDisplayMode displayMode = DiceDisplayMode.text,
+    DisplayMode displayMode = DisplayMode.text,
   ]) {
     switch (displayMode) {
-      case DiceDisplayMode.fancy:
+      case DisplayMode.fancy:
         return fancyDisplay(context);
-      case DiceDisplayMode.colored:
+      case DisplayMode.colored:
         return coloredDisplay(context);
-      case DiceDisplayMode.text:
+      case DisplayMode.text:
         return textDisplay(context);
     }
   }
 }
 
 class D20Dice extends Dice {
-  D20Dice({Color? fill, Color? border}) : super(20, fill: fill, border: border);
+  D20Dice({Color? fill, Color? border, double size = 40}) : super(20, fill: fill, border: border, size: size);
 
   @override
-  Widget fancyDisplay(BuildContext context, {Gradient? gradient}) {
+  Widget fancyDisplay(BuildContext context, {Gradient? gradient, double? drawSize}) {
     fancyFill ??= Theme.of(context).diceBackground;
     fancyFill ??= fallbackFancyFill;
 
     fancyBorder ??= Theme.of(context).diceBorder;
     fancyBorder ??= fallbackFancyBorder;
 
+    final double effectiveSize = drawSize ?? size;
+
     return SizedBox(
-      width: 40,
-      height: 40,
+      width: effectiveSize,
+      height: effectiveSize,
       child: CustomPaint(
         painter: PolygonPainter(
           sides: 6,
@@ -99,37 +101,42 @@ class D20Dice extends Dice {
 
 class D20DiceCritical extends D20Dice {
   @override
-  Widget fancyDisplay(BuildContext context, {Gradient? gradient}) {
+  Widget fancyDisplay(BuildContext context, {Gradient? gradient, double? drawSize}) {
     return super.fancyDisplay(
       context,
       gradient: Theme.of(context).diceCriticalCheckGradient,
+      drawSize: drawSize,
     );
   }
 }
+
 class D20DiceBotch extends D20Dice {
   @override
-  Widget fancyDisplay(BuildContext context, {Gradient? gradient}) {
+  Widget fancyDisplay(BuildContext context, {Gradient? gradient, double? drawSize}) {
     return super.fancyDisplay(
       context,
       gradient: Theme.of(context).diceBotchCheckGradient,
+      drawSize: drawSize,
     );
   }
 }
 
 class D6Dice extends Dice {
-  D6Dice({Color? fill, Color? border}) : super(6, fill: fill, border: border);
+  D6Dice({Color? fill, Color? border, double size = 40}) : super(6, fill: fill, border: border, size: size);
 
   @override
-  Widget fancyDisplay(BuildContext context) {
+  Widget fancyDisplay(BuildContext context, {double? drawSize}) {
     fancyFill ??= Theme.of(context).diceBackground;
     fancyFill ??= fallbackFancyFill;
 
     fancyBorder ??= Theme.of(context).diceBorder;
     fancyBorder ??= fallbackFancyBorder;
 
+    final double effectiveSize = drawSize ?? size;
+
     return SizedBox(
-      width: 40,
-      height: 40,
+      width: effectiveSize,
+      height: effectiveSize,
       child: CustomPaint(
         painter: PolygonPainter(
           sides: 4,
@@ -149,19 +156,21 @@ class D6Dice extends Dice {
 }
 
 class D3Dice extends Dice {
-  D3Dice({Color? fill, Color? border}) : super(3, fill: fill, border: border);
+  D3Dice({Color? fill, Color? border, double size = 40}) : super(3, fill: fill, border: border, size: size);
 
   @override
-  Widget fancyDisplay(BuildContext context) {
+  Widget fancyDisplay(BuildContext context, {double? drawSize}) {
     fancyFill ??= Theme.of(context).diceBackground;
     fancyFill ??= fallbackFancyFill;
 
     fancyBorder ??= Theme.of(context).diceBorder;
     fancyBorder ??= fallbackFancyBorder;
 
+    final double effectiveSize = drawSize ?? size;
+
     return SizedBox(
-      width: 40,
-      height: 40,
+      width: effectiveSize,
+      height: effectiveSize,
       child: CustomPaint(
         painter: PolygonPainter(
           sides: 3,
