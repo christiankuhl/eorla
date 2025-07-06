@@ -59,7 +59,10 @@ class DamageRollResult extends GenerericRollResult {
                 .map(
                   (d) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: d.displayWidget(context, displayMode: DisplayMode.fancy),
+                    child: d.displayWidget(
+                      context,
+                      displayMode: DisplayMode.fancy,
+                    ),
                   ),
                 )
                 .toList(),
@@ -90,8 +93,8 @@ class AttributeRollResult extends GenerericRollResult {
   final DiceValue? roll;
   final RollEvent event;
   final ExplainedValue targetValue;
-  final Dice? checkDice;
   String? resultContext;
+  final Dice? checkDice;
 
   // Override the dice and combinedResult for the superclass
   // ignore: prefer_initializing_formals
@@ -120,7 +123,7 @@ class AttributeRollResult extends GenerericRollResult {
          "I AM ERROR",
        );
 
-  @Deprecated("Will soon be removed!")
+  @Deprecated("Get text from combinedResult instead")
   String text() {
     switch (event) {
       case RollEvent.success:
@@ -148,13 +151,13 @@ class AttributeRollResult extends GenerericRollResult {
                   (d) => Padding(
                     padding: const EdgeInsets.only(left: 12.0, right: 40.0),
                     child: d.displayWidget(
-                      context, 
-                      displayMode: DisplayMode.fancy, 
-                      topRight: Text("≤ ${targetValue.value}"), 
-                      bottomRight: d.result <= targetValue.value 
-                          ? Icon(Icons.check, color: Colors.green,size: 20.0,)
-                          : Icon(Icons.close, color: Colors.red, size: 20.0,)
-                      ),
+                      context,
+                      displayMode: DisplayMode.fancy,
+                      topRight: Text("≤ ${targetValue.value}"),
+                      bottomRight: d.result <= targetValue.value
+                          ? Icon(Icons.check, color: Colors.green, size: 20.0)
+                          : Icon(Icons.close, color: Colors.red, size: 20.0),
+                    ),
                   ),
                 )
                 .toList(),
@@ -181,6 +184,153 @@ class AttributeRollResult extends GenerericRollResult {
   }
 }
 
+class SkillRollResult extends GenerericRollResult {
+  final List<AttributeRollResult> rolls;
+  final Quality quality;
+
+  SkillRollResult(this.rolls, this.quality)
+    : super(
+        [rolls[0].dice[0], rolls[1].dice[0], rolls[2].dice[0]],
+        (() {
+          switch (quality.type) {
+            case RollEvent.success:
+              return "Erfolg! (QS: ${quality.qs})";
+            case RollEvent.failure:
+              return "Fehlschlag!";
+            case RollEvent.critical:
+              return "Kritischer Erfolg!";
+            case RollEvent.botch:
+              return "Kritischer Fehlschlag!";
+          }
+        })(),
+        "I AM ERROR",
+      );
+
+  String text() {
+    switch (quality.type) {
+      case RollEvent.success:
+        return "Erfolg! (QS: ${quality.qs})";
+      case RollEvent.failure:
+        return "Fehlschlag!";
+      case RollEvent.critical:
+        return "Kritischer Erfolg!";
+      case RollEvent.botch:
+        return "Kritischer Fehlschlag!";
+    }
+  }
+
+  RichText resultText(BuildContext context) {
+    switch (quality.type) {
+      case RollEvent.success:
+        return RichText(
+          text: TextSpan(
+            style: Theme.of(context).textTheme.bodyMedium,
+            children: [
+              TextSpan(
+                text: "Erfolg! (",
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400, fontSize: 18),
+              ),
+              TextSpan(
+                text: "QS: ${quality.qs}",
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 18),
+              ),
+              TextSpan(
+                text: ")",
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400, fontSize: 18),
+              ),
+            ],
+          ),
+        );
+      case RollEvent.failure:
+      case RollEvent.critical:
+      case RollEvent.botch:
+        return RichText(
+          text: TextSpan(
+            style: Theme.of(context).textTheme.bodyMedium,
+            children: [
+              TextSpan(
+                text: text(),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600, fontSize: 18),
+              ),
+            ],
+          ),
+        );
+    }
+  }
+
+  String addText<T extends Trial>(T skillOrSpell) {
+    if (skillOrSpell is Skill) {
+      switch (quality.type) {
+        case RollEvent.success:
+          return "";
+        case RollEvent.failure:
+          return "";
+        case RollEvent.critical:
+          return (skillOrSpell as Skill).critical;
+        case RollEvent.botch:
+          return (skillOrSpell as Skill).botch;
+      }
+    } else {
+      return "";
+    }
+  }
+
+  @override
+  Widget resultsWidget(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Column(
+          children: rolls
+              .map(
+                (roll) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0, top: 5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(roll.resultContext ?? "i"),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 40.0),
+                        child: roll.dice[0].displayWidget(
+                          context,
+                          displayMode: DisplayMode.fancy,
+                          topRight: Text("≤ ${roll.targetValue.value}"),
+                          bottomRight:
+                              roll.dice[0].result <= roll.targetValue.value
+                              ? Icon(
+                                  Icons.check,
+                                  color: Colors.green,
+                                  size: 20.0,
+                                )
+                              : Text(
+                                  "- ${roll.dice[0].result - roll.targetValue.value}",
+                                  style: TextStyle(
+                                    color: Colors.redAccent,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+        const SizedBox(height: 14),
+        resultText(context),
+      ],
+    );
+  }
+}
 
 abstract class Trial {
   Attribute get attr1;
@@ -287,7 +437,7 @@ class SkillRoll<T extends Trial> {
       explainations.add(expl);
     }
     if (illegal) {
-      return SkillRollResult(
+      return SkillRollResult([
         AttributeRollResult(
           null,
           RollEvent.failure,
@@ -309,8 +459,7 @@ class SkillRoll<T extends Trial> {
           dice3,
           resultContext: attr3.name,
         ),
-        Quality(RollEvent.failure, 0),
-      );
+      ], Quality(RollEvent.failure, 0));
     }
     random ??= Random();
     int roll1 = dice1.roll(random);
@@ -338,7 +487,7 @@ class SkillRoll<T extends Trial> {
     if (fw == 0) {
       qs = 1;
     }
-    return SkillRollResult(
+    return SkillRollResult([
       AttributeRollResult(
         DiceValue(roll1),
         event,
@@ -360,8 +509,7 @@ class SkillRoll<T extends Trial> {
         dice3,
         resultContext: attr3.name,
       ),
-      Quality(event, qs),
-    );
+    ], Quality(event, qs));
   }
 }
 
@@ -372,45 +520,6 @@ class Quality {
   int qs;
 
   Quality(this.type, this.qs);
-}
-
-class SkillRollResult {
-  final AttributeRollResult roll1;
-  final AttributeRollResult roll2;
-  final AttributeRollResult roll3;
-  final Quality quality;
-
-  SkillRollResult(this.roll1, this.roll2, this.roll3, this.quality);
-
-  String text() {
-    switch (quality.type) {
-      case RollEvent.success:
-        return "Erfolg! (QS: ${quality.qs})";
-      case RollEvent.failure:
-        return "Fehlschlag!";
-      case RollEvent.critical:
-        return "Kritischer Erfolg!";
-      case RollEvent.botch:
-        return "Kritischer Fehlschlag!";
-    }
-  }
-
-  String addText<T extends Trial>(T skillOrSpell) {
-    if (skillOrSpell is Skill) {
-      switch (quality.type) {
-        case RollEvent.success:
-          return "";
-        case RollEvent.failure:
-          return "";
-        case RollEvent.critical:
-          return (skillOrSpell as Skill).critical;
-        case RollEvent.botch:
-          return (skillOrSpell as Skill).botch;
-      }
-    } else {
-      return "";
-    }
-  }
 }
 
 class CombatRoll {

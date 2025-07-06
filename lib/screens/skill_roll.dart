@@ -32,11 +32,7 @@ class RollScreenState extends State<RollScreen> {
     );
     SkillRollResult rollResults = engine.roll();
 
-    List<AttributeRollResult> results = [
-      rollResults.roll1,
-      rollResults.roll2,
-      rollResults.roll3,
-    ];
+    List<AttributeRollResult> results = rollResults.rolls;
     String txt = results
         .map((r) => "${r.resultContext}: ${r.targetValue.value} → 🎲 ${r.roll}")
         .join("\n");
@@ -59,9 +55,11 @@ class RollScreenState extends State<RollScreen> {
     }
 
     if (results.any((r) => r.targetValue.explanation.length > 1)) {
-      showDetailDialog(rollResults.text(), Text(txt), detail, context);
+      showDetailDialog("${widget.skillOrSpell.name} (FW ${engine.talentValue})", rollResults.contentAsWidget(context), detail, context);
+      //showDetailDialog(rollResults.text(), Text(txt), detail, context);
     } else {
-      showSimpleDialog(rollResults.text(), Text(txt), context);
+      showSimpleDialog("${widget.skillOrSpell.name} (FW ${engine.talentValue})", rollResults.contentAsWidget(context), context);
+      //showSimpleDialog(rollResults.text(), Text(txt), context);
     }
 
   }
