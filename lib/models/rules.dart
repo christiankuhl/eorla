@@ -515,19 +515,11 @@ AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
     int roll2 = random.nextInt(20) + 1;
     int fw2 = target.value - roll2;
     if (fw2 >= 0 && roll2 != 20) {
-      if (fw >= 0) {
-        return AttributeRollResult(
-          DiceValue(roll, confirmationThrow: roll2),
-          RollEvent.success,
-          target,
-        );
-      } else {
-        return AttributeRollResult(
-          DiceValue(roll, confirmationThrow: roll2),
-          RollEvent.failure,
-          target,
-        );
-      }
+      return AttributeRollResult(
+        DiceValue(roll, confirmationThrow: roll2),
+        RollEvent.failure,
+        target,
+      );
     } else {
       return AttributeRollResult(
         DiceValue(roll, confirmationThrow: roll2),
