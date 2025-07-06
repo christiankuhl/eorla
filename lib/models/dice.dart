@@ -159,6 +159,17 @@ class D20DiceCritical extends D20Dice {
       bottomRight: bottomRight,
     );
   }
+
+  D20DiceCritical({super.fill, super.border, super.size = 40});
+
+  D20DiceCritical.fromD20(D20Dice base)
+      : super(
+          fill: base.fancyFill,
+          border: base.fancyBorder,
+          size: base.size,
+        ) {
+    result = base.result;
+  }
 }
 
 class D20DiceBotch extends D20Dice {
@@ -177,6 +188,17 @@ class D20DiceBotch extends D20Dice {
       topRight: topRight,
       bottomRight: bottomRight,
     );
+  }
+
+  D20DiceBotch({super.fill, super.border, super.size = 40});
+
+  D20DiceBotch.fromD20(D20Dice base)
+      : super(
+          fill: base.fancyFill,
+          border: base.fancyBorder,
+          size: base.size,
+        ) {
+    result = base.result;
   }
 }
 
