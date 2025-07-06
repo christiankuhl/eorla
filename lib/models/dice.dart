@@ -353,12 +353,12 @@ class PolygonPainter extends CustomPainter {
           Rect.fromLTWH(0, 0, size.width, size.height),
         )
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2;
+        ..strokeWidth = 3;
     } else {
       borderPaint = Paint()
         ..color = borderColor
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2;
+        ..strokeWidth = 3;
     }
 
     canvas.drawPath(path, borderPaint);
