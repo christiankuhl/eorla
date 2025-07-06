@@ -200,12 +200,13 @@ class D6Dice extends Dice {
 
     final double effectiveSize = drawSize ?? size;
 
-    return SizedBox(
-      width: effectiveSize,
-      height: effectiveSize,
-      child: Stack(
-        children: [
-          CustomPaint(
+    return Stack(
+      clipBehavior: Clip.none, // allow children to paint outside
+      children: [
+        SizedBox(
+          width: effectiveSize,
+          height: effectiveSize,
+          child: CustomPaint(
             painter: PolygonPainter(
               sides: 4,
               fillColor: fancyFill!,
@@ -219,11 +220,17 @@ class D6Dice extends Dice {
               ),
             ),
           ),
-          if (topRight != null) Positioned(top: 2, right: 2, child: topRight),
-          if (bottomRight != null)
-            Positioned(bottom: 2, right: 2, child: bottomRight),
-        ],
-      ),
+        ),
+        // Overlay widgets outside the hexagon bounds
+        if (topRight != null)
+          Positioned(
+            top: -5, // negative to offset outside
+            left: effectiveSize+5,
+            child: topRight,
+          ),
+        if (bottomRight != null)
+          Positioned(bottom: -5, left: effectiveSize+5, child: bottomRight),
+      ],
     );
   }
 }
@@ -248,12 +255,13 @@ class D3Dice extends Dice {
 
     final double effectiveSize = drawSize ?? size;
 
-    return SizedBox(
-      width: effectiveSize,
-      height: effectiveSize,
-      child: Stack(
-        children: [
-          CustomPaint(
+    return Stack(
+      clipBehavior: Clip.none, // allow children to paint outside
+      children: [
+        SizedBox(
+          width: effectiveSize,
+          height: effectiveSize,
+          child: CustomPaint(
             painter: PolygonPainter(
               sides: 3,
               fillColor: fancyFill!,
@@ -267,11 +275,17 @@ class D3Dice extends Dice {
               ),
             ),
           ),
-          if (topRight != null) Positioned(top: 2, right: 2, child: topRight),
-          if (bottomRight != null)
-            Positioned(bottom: 2, right: 2, child: bottomRight),
-        ],
-      ),
+        ),
+        // Overlay widgets outside the hexagon bounds
+        if (topRight != null)
+          Positioned(
+            top: -5, // negative to offset outside
+            left: effectiveSize+5,
+            child: topRight,
+          ),
+        if (bottomRight != null)
+          Positioned(bottom: -5, left: effectiveSize+5, child: bottomRight),
+      ],
     );
   }
 }
