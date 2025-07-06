@@ -80,9 +80,19 @@ class _CombatScreenState extends State<CombatScreen> {
     }
 
     if (result[0].targetValue.explanation.length > 1) {
-      showDetailDialog(title, Text(txt), detail, context);
+      if (result.length == 1) {
+        showDetailDialog(title, result[0].contentAsWidget(context), detail, context);
+      } else {
+        // TODO: Implement me! (Might be simillar to SkillRollResult)
+        showDetailDialog(title, Text(txt), detail, context);
+      }
     } else {
-      showSimpleDialog(title, Text(txt), context);
+      if (result.length == 1) {
+        showSimpleDialog(title, result[0].contentAsWidget(context), context);
+      } else {
+        // TODO: Implement me! (Might be simillar to SkillRollResult)
+        showSimpleDialog(title, Text(txt), context);
+      }
     }
   }
 
