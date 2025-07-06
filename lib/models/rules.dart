@@ -292,7 +292,7 @@ class SkillRollResult extends GenerericRollResult {
           children: rolls
               .map(
                 (roll) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0, top: 5.0),
+                  padding: const EdgeInsets.only(bottom: 15.0, top: 5.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -325,7 +325,7 @@ class SkillRollResult extends GenerericRollResult {
               )
               .toList(),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 9),
         resultText(context),
       ],
     );
