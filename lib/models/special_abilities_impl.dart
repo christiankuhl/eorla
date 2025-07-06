@@ -350,7 +350,7 @@ List<AttributeRollResult> Function(CombatRoll, CombatActionType) multiAttack(
           .targetValue(action)
           .addUnconditional(mod, context, true);
       var res = attributeRoll(tgt);
-      res.context = context;
+      res.resultContext = context;
       results.add(res);
     }
     return results;
