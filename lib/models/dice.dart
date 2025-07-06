@@ -79,9 +79,23 @@ class Dice {
           bottomRight: bottomRight,
         );
       case DisplayMode.colored:
-        return coloredDisplay(context);
+        return Wrap(
+          spacing: 8,
+          children: [
+            coloredDisplay(context),
+            if (topRight != null) topRight,
+            if (bottomRight != null) bottomRight,
+          ],
+        );
       case DisplayMode.text:
-        return textDisplay(context);
+        return Wrap(
+          spacing: 8,
+          children: [
+            textDisplay(context),
+            if (topRight != null) topRight,
+            if (bottomRight != null) bottomRight,
+          ],
+        );
     }
   }
 }
@@ -132,11 +146,11 @@ class D20Dice extends Dice {
         if (topRight != null)
           Positioned(
             top: -5, // negative to offset outside
-            left: effectiveSize+5,
+            left: effectiveSize + 5,
             child: topRight,
           ),
         if (bottomRight != null)
-          Positioned(bottom: -5, left: effectiveSize+5, child: bottomRight),
+          Positioned(bottom: -5, left: effectiveSize + 5, child: bottomRight),
       ],
     );
   }
@@ -163,11 +177,7 @@ class D20DiceCritical extends D20Dice {
   D20DiceCritical({super.fill, super.border, super.size = 40});
 
   D20DiceCritical.fromD20(D20Dice base)
-      : super(
-          fill: base.fancyFill,
-          border: base.fancyBorder,
-          size: base.size,
-        ) {
+    : super(fill: base.fancyFill, border: base.fancyBorder, size: base.size) {
     result = base.result;
   }
 }
@@ -193,11 +203,7 @@ class D20DiceBotch extends D20Dice {
   D20DiceBotch({super.fill, super.border, super.size = 40});
 
   D20DiceBotch.fromD20(D20Dice base)
-      : super(
-          fill: base.fancyFill,
-          border: base.fancyBorder,
-          size: base.size,
-        ) {
+    : super(fill: base.fancyFill, border: base.fancyBorder, size: base.size) {
     result = base.result;
   }
 }
@@ -247,11 +253,11 @@ class D6Dice extends Dice {
         if (topRight != null)
           Positioned(
             top: -5, // negative to offset outside
-            left: effectiveSize+5,
+            left: effectiveSize + 5,
             child: topRight,
           ),
         if (bottomRight != null)
-          Positioned(bottom: -5, left: effectiveSize+5, child: bottomRight),
+          Positioned(bottom: -5, left: effectiveSize + 5, child: bottomRight),
       ],
     );
   }
@@ -302,11 +308,11 @@ class D3Dice extends Dice {
         if (topRight != null)
           Positioned(
             top: -5, // negative to offset outside
-            left: effectiveSize+5,
+            left: effectiveSize + 5,
             child: topRight,
           ),
         if (bottomRight != null)
-          Positioned(bottom: -5, left: effectiveSize+5, child: bottomRight),
+          Positioned(bottom: -5, left: effectiveSize + 5, child: bottomRight),
       ],
     );
   }
