@@ -323,7 +323,7 @@ Text colouredValue(ExplainedValue v) {
 
 void showDetailDialog(
   String title,
-  String txt,
+  Widget body,
   String detail,
   BuildContext context,
 ) {
@@ -340,7 +340,7 @@ void showDetailDialog(
             children: [
               Row(
                 children: [
-                  Expanded(child: Text(txt)),
+                  Expanded(child: body),
                   IconButton(
                     icon: Icon(
                       expanded ? Icons.expand_less : Icons.expand_more,
@@ -371,12 +371,12 @@ void showDetailDialog(
   );
 }
 
-void showSimpleDialog(String title, String txt, BuildContext context) {
+void showSimpleDialog(String title, Widget body, BuildContext context) {
   showDialog(
     context: context,
     builder: (_) => AlertDialog(
       title: Text(title),
-      content: Text(txt),
+      content: body,
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
       ],

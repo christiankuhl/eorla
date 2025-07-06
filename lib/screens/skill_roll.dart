@@ -38,14 +38,14 @@ class RollScreenState extends State<RollScreen> {
       rollResults.roll3,
     ];
     String txt = results
-        .map((r) => "${r.context}: ${r.targetValue.value} → 🎲 ${r.roll}")
+        .map((r) => "${r.resultContext}: ${r.targetValue.value} → 🎲 ${r.roll}")
         .join("\n");
     String detail = results
         .map((r) {
           String expl = r.targetValue.explanation
               .map((c) => "${c.value}\t\t${c.explanation}")
               .join("\n");
-          return "${r.context}:\n$expl";
+          return "${r.resultContext}:\n$expl";
         })
         .join("\n\n");
     if (rollResults.addText(widget.skillOrSpell).isNotEmpty) {
@@ -59,9 +59,9 @@ class RollScreenState extends State<RollScreen> {
     }
 
     if (results.any((r) => r.targetValue.explanation.length > 1)) {
-      showDetailDialog(rollResults.text(), txt, detail, context);
+      showDetailDialog(rollResults.text(), Text(txt), detail, context);
     } else {
-      showSimpleDialog(rollResults.text(), txt, context);
+      showSimpleDialog(rollResults.text(), Text(txt), context);
     }
 
   }
