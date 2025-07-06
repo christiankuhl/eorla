@@ -596,6 +596,7 @@ AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
         RollEvent.botch,
         target,
         dice,
+        checkDice: checkDice,
       );
     }
   } else {
