@@ -8,8 +8,8 @@ Image? decodeAndResizeImageBytes(String b64Content) {
 
   final resized = img.copyResize(
     image,
-    height: 500,
-  ); // 25k pixels ought to be enough for everyone ;o)
+    height: 265,
+  ); // 65k pixels ought to be enough for everyone ;o)
   return Image.memory(img.encodePng(resized));
 }
 
