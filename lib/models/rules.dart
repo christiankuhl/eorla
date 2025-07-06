@@ -570,7 +570,7 @@ AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
     }
   } else if (roll == 20) {
     Dice checkDice = D20DiceBotch();
-    int roll2 = random.nextInt(20) + 1;
+    int roll2 = checkDice.roll(random);
     int fw2 = target.value - roll2;
     if (fw2 >= 0 && roll2 != 20) {
       if (fw >= 0) {
