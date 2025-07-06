@@ -59,12 +59,12 @@ class DamageRollResult extends GenerericRollResult {
                 .map(
                   (d) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: d.displayWidget(context, DisplayMode.fancy),
+                    child: d.displayWidget(context, displayMode: DisplayMode.fancy),
                   ),
                 )
                 .toList(),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 24),
           RichText(
             text: TextSpan(
               style: Theme.of(context).textTheme.bodyMedium,
@@ -85,6 +85,102 @@ class DamageRollResult extends GenerericRollResult {
     );
   }
 }
+
+class AttributeRollResult extends GenerericRollResult {
+  final DiceValue? roll;
+  final RollEvent event;
+  final ExplainedValue targetValue;
+  final Dice? checkDice;
+  String? resultContext;
+
+  // Override the dice and combinedResult for the superclass
+  // ignore: prefer_initializing_formals
+  AttributeRollResult(
+    this.roll,
+    this.event,
+    this.targetValue,
+    Dice die, {
+    this.resultContext,
+    this.checkDice,
+  }) : super(
+         checkDice != null ? [die, checkDice] : [die],
+         (() {
+           // Use the text() method for combinedResult
+           switch (event) {
+             case RollEvent.success:
+               return "Erfolg!";
+             case RollEvent.failure:
+               return "Fehlschlag!";
+             case RollEvent.critical:
+               return "Kritischer Erfolg!";
+             case RollEvent.botch:
+               return "Kritischer Fehlschlag!";
+           }
+         })(),
+         "I AM ERROR",
+       );
+
+  @Deprecated("Will soon be removed!")
+  String text() {
+    switch (event) {
+      case RollEvent.success:
+        return "Erfolg!";
+      case RollEvent.failure:
+        return "Fehlschlag!";
+      case RollEvent.critical:
+        return "Kritischer Erfolg!";
+      case RollEvent.botch:
+        return "Kritischer Fehlschlag!";
+    }
+  }
+
+  @override
+  Widget resultsWidget(BuildContext context) {
+    return IntrinsicHeight(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: dice
+                .map(
+                  (d) => Padding(
+                    padding: const EdgeInsets.only(left: 12.0, right: 40.0),
+                    child: d.displayWidget(
+                      context, 
+                      displayMode: DisplayMode.fancy, 
+                      topRight: Text("≤ ${targetValue.value}"), 
+                      bottomRight: d.result <= targetValue.value 
+                          ? Icon(Icons.check, color: Colors.green,size: 20.0,)
+                          : Icon(Icons.close, color: Colors.red, size: 20.0,)
+                      ),
+                  ),
+                )
+                .toList(),
+          ),
+          const SizedBox(height: 24),
+          Center(
+            child: RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.bodyMedium,
+                children: [
+                  TextSpan(
+                    text: combinedResult,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 abstract class Trial {
   Attribute get attr1;
@@ -313,56 +409,6 @@ class SkillRollResult {
       }
     } else {
       return "";
-    }
-  }
-}
-
-class AttributeRollResult extends GenerericRollResult {
-  final DiceValue? roll;
-  final RollEvent event;
-  final ExplainedValue targetValue;
-  final Dice? checkDice;
-  String? resultContext;
-
-
-  // Override the dice and combinedResult for the superclass
-  // ignore: prefer_initializing_formals
-  AttributeRollResult(
-    this.roll,
-    this.event,
-    this.targetValue,
-    Dice die, {
-    this.resultContext,
-    this.checkDice,
-  }) : super(
-         checkDice != null ? [die, checkDice] : [die],
-         (() {
-           // Use the text() method for combinedResult
-           switch (event) {
-             case RollEvent.success:
-               return "Erfolg!";
-             case RollEvent.failure:
-               return "Fehlschlag!";
-             case RollEvent.critical:
-               return "Kritischer Erfolg!";
-             case RollEvent.botch:
-               return "Kritischer Fehlschlag!";
-           }
-         })(),
-         "I AM ERROR",
-       );
-
-  @Deprecated("Will soon be removed!")
-  String text() {
-    switch (event) {
-      case RollEvent.success:
-        return "Erfolg!";
-      case RollEvent.failure:
-        return "Fehlschlag!";
-      case RollEvent.critical:
-        return "Kritischer Erfolg!";
-      case RollEvent.botch:
-        return "Kritischer Fehlschlag!";
     }
   }
 }
