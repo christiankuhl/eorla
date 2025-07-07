@@ -745,23 +745,13 @@ AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
     int roll2 = checkDice.roll(random);
     int fw2 = target.value - roll2;
     if (fw2 >= 0 && roll2 != 20) {
-      if (fw >= 0) {
-        return AttributeRollResult(
-          DiceValue(roll, confirmationThrow: roll2),
-          RollEvent.success,
-          target,
-          dice,
-          checkDice: checkDice,
-        );
-      } else {
-        return AttributeRollResult(
-          DiceValue(roll, confirmationThrow: roll2),
-          RollEvent.failure,
-          target,
-          dice,
-          checkDice: checkDice,
-        );
-      }
+      return AttributeRollResult(
+        DiceValue(roll, confirmationThrow: roll2),
+        RollEvent.failure,
+        target,
+        dice,
+        checkDice: checkDice,
+      );
     } else {
       return AttributeRollResult(
         DiceValue(roll, confirmationThrow: roll2),
