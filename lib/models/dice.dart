@@ -1,8 +1,7 @@
 import 'package:eorla/main.dart';
+import 'package:eorla/models/rules.dart' show DisplayMode;
 import 'package:flutter/material.dart';
 import 'dart:math';
-
-enum DiceDisplayMode { text, colored, fancy }
 
 class Dice {
   final int sides;
@@ -11,21 +10,27 @@ class Dice {
   Color? fancyBorder;
   final Color fallbackFancyFill = const Color.fromARGB(255, 29, 27, 32);
   final Color fallbackFancyBorder = const Color.fromARGB(255, 126, 118, 139);
+  final double size;
 
-  factory Dice.create(int sides, {Color? fill, Color? border}) {
+  factory Dice.create(
+    int sides, {
+    Color? fill,
+    Color? border,
+    double size = 40,
+  }) {
     switch (sides) {
       case 20:
-        return D20Dice(fill: fill, border: border);
+        return D20Dice(fill: fill, border: border, size: size);
       case 6:
-        return D6Dice(fill: fill, border: border);
+        return D6Dice(fill: fill, border: border, size: size);
       case 3:
-        return D3Dice(fill: fill, border: border);
+        return D3Dice(fill: fill, border: border, size: size);
       default:
-        return Dice(sides, fill: fill, border: border);
+        return Dice(sides, fill: fill, border: border, size: size);
     }
   }
 
-  Dice(this.sides, {Color? fill, Color? border});
+  Dice(this.sides, {Color? fill, Color? border, this.size = 40});
 
   int roll([Random? rng]) {
     rng ??= Random();
@@ -33,7 +38,14 @@ class Dice {
     return result;
   }
 
-  Widget fancyDisplay(BuildContext context) {
+  /// Override this to allow extra widgets in dice corners.
+  Widget fancyDisplay(
+    BuildContext context, {
+    Gradient? gradient,
+    double? drawSize,
+    Widget? topRight,
+    Widget? bottomRight,
+  }) {
     return coloredDisplay(context);
   }
 
@@ -50,132 +62,258 @@ class Dice {
   }
 
   Widget displayWidget(
-    BuildContext context, [
-    DiceDisplayMode displayMode = DiceDisplayMode.text,
-  ]) {
+    BuildContext context, {
+    DisplayMode displayMode = DisplayMode.text,
+    Gradient? gradient,
+    double? drawSize,
+    Widget? topRight,
+    Widget? bottomRight,
+  }) {
     switch (displayMode) {
-      case DiceDisplayMode.fancy:
-        return fancyDisplay(context);
-      case DiceDisplayMode.colored:
-        return coloredDisplay(context);
-      case DiceDisplayMode.text:
-        return textDisplay(context);
+      case DisplayMode.fancy:
+        return fancyDisplay(
+          context,
+          gradient: gradient,
+          drawSize: drawSize,
+          topRight: topRight,
+          bottomRight: bottomRight,
+        );
+      case DisplayMode.colored:
+        return Wrap(
+          spacing: 8,
+          children: [
+            coloredDisplay(context),
+            if (topRight != null) topRight,
+            if (bottomRight != null) bottomRight,
+          ],
+        );
+      case DisplayMode.text:
+        return Wrap(
+          spacing: 8,
+          children: [
+            textDisplay(context),
+            if (topRight != null) topRight,
+            if (bottomRight != null) bottomRight,
+          ],
+        );
     }
   }
 }
 
 class D20Dice extends Dice {
-  D20Dice({Color? fill, Color? border}) : super(20, fill: fill, border: border);
+  D20Dice({Color? fill, Color? border, double size = 40})
+    : super(20, fill: fill, border: border, size: size);
 
   @override
-  Widget fancyDisplay(BuildContext context, {Gradient? gradient}) {
+  Widget fancyDisplay(
+    BuildContext context, {
+    Gradient? gradient,
+    double? drawSize,
+    Widget? topRight,
+    Widget? bottomRight,
+  }) {
     fancyFill ??= Theme.of(context).diceBackground;
     fancyFill ??= fallbackFancyFill;
 
     fancyBorder ??= Theme.of(context).diceBorder;
     fancyBorder ??= fallbackFancyBorder;
 
-    return SizedBox(
-      width: 40,
-      height: 40,
-      child: CustomPaint(
-        painter: PolygonPainter(
-          sides: 6,
-          fillColor: fancyFill!,
-          borderColor: fancyBorder!,
-          rotation: -pi / 6,
-          borderGradient: gradient,
-        ),
-        child: Center(
-          child: Text(
-            result == -999999 ? "?" : "$result",
-            style: TextStyle(fontWeight: FontWeight.bold),
+    final double effectiveSize = drawSize ?? size;
+
+    return Stack(
+      clipBehavior: Clip.none, // allow children to paint outside
+      children: [
+        SizedBox(
+          width: effectiveSize,
+          height: effectiveSize,
+          child: CustomPaint(
+            painter: PolygonPainter(
+              sides: 6,
+              fillColor: fancyFill ?? Colors.grey,
+              borderColor: fancyBorder ?? Colors.black,
+              rotation: -pi / 6,
+              borderGradient: gradient,
+            ),
+            child: Center(
+              child: Text(
+                result == -999999 ? "?" : "$result",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
         ),
-      ),
+        // Overlay widgets outside the hexagon bounds
+        if (topRight != null)
+          Positioned(
+            top: -5, // negative to offset outside
+            left: effectiveSize + 5,
+            child: topRight,
+          ),
+        if (bottomRight != null)
+          Positioned(bottom: -5, left: effectiveSize + 5, child: bottomRight),
+      ],
     );
   }
 }
 
 class D20DiceCritical extends D20Dice {
   @override
-  Widget fancyDisplay(BuildContext context, {Gradient? gradient}) {
+  Widget fancyDisplay(
+    BuildContext context, {
+    Gradient? gradient,
+    double? drawSize,
+    Widget? topRight,
+    Widget? bottomRight,
+  }) {
     return super.fancyDisplay(
       context,
       gradient: Theme.of(context).diceCriticalCheckGradient,
+      drawSize: drawSize,
+      topRight: topRight,
+      bottomRight: bottomRight,
     );
   }
+
+  D20DiceCritical({super.fill, super.border, super.size = 40});
+
+  D20DiceCritical.fromD20(D20Dice base)
+    : super(fill: base.fancyFill, border: base.fancyBorder, size: base.size) {
+    result = base.result;
+  }
 }
+
 class D20DiceBotch extends D20Dice {
   @override
-  Widget fancyDisplay(BuildContext context, {Gradient? gradient}) {
+  Widget fancyDisplay(
+    BuildContext context, {
+    Gradient? gradient,
+    double? drawSize,
+    Widget? topRight,
+    Widget? bottomRight,
+  }) {
     return super.fancyDisplay(
       context,
       gradient: Theme.of(context).diceBotchCheckGradient,
+      drawSize: drawSize,
+      topRight: topRight,
+      bottomRight: bottomRight,
     );
+  }
+
+  D20DiceBotch({super.fill, super.border, super.size = 40});
+
+  D20DiceBotch.fromD20(D20Dice base)
+    : super(fill: base.fancyFill, border: base.fancyBorder, size: base.size) {
+    result = base.result;
   }
 }
 
 class D6Dice extends Dice {
-  D6Dice({Color? fill, Color? border}) : super(6, fill: fill, border: border);
+  D6Dice({Color? fill, Color? border, double size = 40})
+    : super(6, fill: fill, border: border, size: size);
 
   @override
-  Widget fancyDisplay(BuildContext context) {
+  Widget fancyDisplay(
+    BuildContext context, {
+    Gradient? gradient,
+    double? drawSize,
+    Widget? topRight,
+    Widget? bottomRight,
+  }) {
     fancyFill ??= Theme.of(context).diceBackground;
     fancyFill ??= fallbackFancyFill;
 
     fancyBorder ??= Theme.of(context).diceBorder;
     fancyBorder ??= fallbackFancyBorder;
 
-    return SizedBox(
-      width: 40,
-      height: 40,
-      child: CustomPaint(
-        painter: PolygonPainter(
-          sides: 4,
-          fillColor: fancyFill!,
-          borderColor: fancyBorder!,
-          rotation: pi / 4,
-        ),
-        child: Center(
-          child: Text(
-            result == -999999 ? "?" : "$result",
-            style: TextStyle(fontWeight: FontWeight.bold),
+    final double effectiveSize = drawSize ?? size;
+
+    return Stack(
+      clipBehavior: Clip.none, // allow children to paint outside
+      children: [
+        SizedBox(
+          width: effectiveSize,
+          height: effectiveSize,
+          child: CustomPaint(
+            painter: PolygonPainter(
+              sides: 4,
+              fillColor: fancyFill!,
+              borderColor: fancyBorder!,
+              rotation: pi / 4,
+            ),
+            child: Center(
+              child: Text(
+                result == -999999 ? "?" : "$result",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
         ),
-      ),
+        // Overlay widgets outside the hexagon bounds
+        if (topRight != null)
+          Positioned(
+            top: -5, // negative to offset outside
+            left: effectiveSize + 5,
+            child: topRight,
+          ),
+        if (bottomRight != null)
+          Positioned(bottom: -5, left: effectiveSize + 5, child: bottomRight),
+      ],
     );
   }
 }
 
 class D3Dice extends Dice {
-  D3Dice({Color? fill, Color? border}) : super(3, fill: fill, border: border);
+  D3Dice({Color? fill, Color? border, double size = 40})
+    : super(3, fill: fill, border: border, size: size);
 
   @override
-  Widget fancyDisplay(BuildContext context) {
+  Widget fancyDisplay(
+    BuildContext context, {
+    Gradient? gradient,
+    double? drawSize,
+    Widget? topRight,
+    Widget? bottomRight,
+  }) {
     fancyFill ??= Theme.of(context).diceBackground;
     fancyFill ??= fallbackFancyFill;
 
     fancyBorder ??= Theme.of(context).diceBorder;
     fancyBorder ??= fallbackFancyBorder;
 
-    return SizedBox(
-      width: 40,
-      height: 40,
-      child: CustomPaint(
-        painter: PolygonPainter(
-          sides: 3,
-          fillColor: fancyFill!,
-          borderColor: fancyBorder!,
-          rotation: 0,
-        ),
-        child: Center(
-          child: Text(
-            result == -999999 ? "?" : "$result",
-            style: TextStyle(fontWeight: FontWeight.bold),
+    final double effectiveSize = drawSize ?? size;
+
+    return Stack(
+      clipBehavior: Clip.none, // allow children to paint outside
+      children: [
+        SizedBox(
+          width: effectiveSize,
+          height: effectiveSize,
+          child: CustomPaint(
+            painter: PolygonPainter(
+              sides: 3,
+              fillColor: fancyFill!,
+              borderColor: fancyBorder!,
+              rotation: 0,
+            ),
+            child: Center(
+              child: Text(
+                result == -999999 ? "?" : "$result",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
         ),
-      ),
+        // Overlay widgets outside the hexagon bounds
+        if (topRight != null)
+          Positioned(
+            top: -5, // negative to offset outside
+            left: effectiveSize + 5,
+            child: topRight,
+          ),
+        if (bottomRight != null)
+          Positioned(bottom: -5, left: effectiveSize + 5, child: bottomRight),
+      ],
     );
   }
 }
@@ -243,12 +381,12 @@ class PolygonPainter extends CustomPainter {
           Rect.fromLTWH(0, 0, size.width, size.height),
         )
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2;
+        ..strokeWidth = 3;
     } else {
       borderPaint = Paint()
         ..color = borderColor
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2;
+        ..strokeWidth = 3;
     }
 
     canvas.drawPath(path, borderPaint);

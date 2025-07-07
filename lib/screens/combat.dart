@@ -60,7 +60,7 @@ class _CombatScreenState extends State<CombatScreen> {
       txt = result
           .map(
             (r) =>
-                "${r.context}: ${r.text()} (${r.targetValue.value} → 🎲 ${r.roll})",
+                "${r.resultContext}: ${r.text()} (${r.targetValue.value} → 🎲 ${r.roll})",
           )
           .join("\n");
       detail = result
@@ -68,7 +68,7 @@ class _CombatScreenState extends State<CombatScreen> {
             String expl = r.targetValue.explanation
                 .map((c) => "${c.value}\t\t${c.explanation}")
                 .join("\n");
-            return "${r.context}:\n$expl";
+            return "${r.resultContext}:\n$expl";
           })
           .join("\n\n");
     }
@@ -80,9 +80,19 @@ class _CombatScreenState extends State<CombatScreen> {
     }
 
     if (result[0].targetValue.explanation.length > 1) {
-      showDetailDialog(title, txt, detail, context);
+      if (result.length == 1) {
+        showDetailDialog(title, result[0].contentAsWidget(context), detail, context);
+      } else {
+        // TODO: Implement me! (Might be simillar to SkillRollResult)
+        showDetailDialog(title, Text(txt), detail, context);
+      }
     } else {
-      showSimpleDialog(title, txt, context);
+      if (result.length == 1) {
+        showSimpleDialog(title, result[0].contentAsWidget(context), context);
+      } else {
+        // TODO: Implement me! (Might be simillar to SkillRollResult)
+        showSimpleDialog(title, Text(txt), context);
+      }
     }
   }
 

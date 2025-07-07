@@ -122,10 +122,10 @@ Column attributesCard(SkillRoll stats, {SkillRollResult? rollResults}) {
       TextSpan(
         children: [
           TextSpan(
-            text: "${rollResults.roll1.targetValue.value}",
-            style: tgtValueColour(rollResults.roll2.targetValue),
+            text: "${rollResults.rolls[0].targetValue.value}",
+            style: tgtValueColour(rollResults.rolls[0].targetValue),
           ),
-          TextSpan(text: " → 🎲 ${rollResults.roll1.roll ?? '-/-'}"),
+          TextSpan(text: " → 🎲 ${rollResults.rolls[0].roll ?? '-/-'}"),
         ],
       ),
     );
@@ -133,10 +133,10 @@ Column attributesCard(SkillRoll stats, {SkillRollResult? rollResults}) {
       TextSpan(
         children: [
           TextSpan(
-            text: "${rollResults.roll2.targetValue.value}",
-            style: tgtValueColour(rollResults.roll2.targetValue),
+            text: "${rollResults.rolls[1].targetValue.value}",
+            style: tgtValueColour(rollResults.rolls[1].targetValue),
           ),
-          TextSpan(text: " → 🎲 ${rollResults.roll2.roll ?? '-/-'}"),
+          TextSpan(text: " → 🎲 ${rollResults.rolls[1].roll ?? '-/-'}"),
         ],
       ),
     );
@@ -144,10 +144,10 @@ Column attributesCard(SkillRoll stats, {SkillRollResult? rollResults}) {
       TextSpan(
         children: [
           TextSpan(
-            text: "${rollResults.roll3.targetValue.value}",
-            style: tgtValueColour(rollResults.roll3.targetValue),
+            text: "${rollResults.rolls[2].targetValue.value}",
+            style: tgtValueColour(rollResults.rolls[2].targetValue),
           ),
-          TextSpan(text: " → 🎲 ${rollResults.roll3.roll ?? '-/-'}"),
+          TextSpan(text: " → 🎲 ${rollResults.rolls[2].roll ?? '-/-'}"),
         ],
       ),
     );
@@ -323,7 +323,7 @@ Text colouredValue(ExplainedValue v) {
 
 void showDetailDialog(
   String title,
-  String txt,
+  Widget body,
   String detail,
   BuildContext context,
 ) {
@@ -340,7 +340,7 @@ void showDetailDialog(
             children: [
               Row(
                 children: [
-                  Expanded(child: Text(txt)),
+                  Expanded(child: body),
                   IconButton(
                     icon: Icon(
                       expanded ? Icons.expand_less : Icons.expand_more,
@@ -371,12 +371,12 @@ void showDetailDialog(
   );
 }
 
-void showSimpleDialog(String title, String txt, BuildContext context) {
+void showSimpleDialog(String title, Widget body, BuildContext context) {
   showDialog(
     context: context,
     builder: (_) => AlertDialog(
       title: Text(title),
-      content: Text(txt),
+      content: body,
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
       ],
