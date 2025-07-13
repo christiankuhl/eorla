@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/character_card.dart';
-import '../models/character.dart';
-import '../models/rules.dart';
 import '../widgets/widget_helpers.dart';
 import '../managers/settings.dart';
+import '../managers/character_manager.dart';
+import '../models/rules.dart';
+import '../models/character.dart';
 import 'dice_rolls.dart';
 
 class RollScreen<T extends Trial> extends StatefulWidget {
   final T skillOrSpell;
-  final Character character;
 
   const RollScreen({
     required this.skillOrSpell,
-    required this.character,
     super.key,
   });
 
@@ -24,9 +23,9 @@ class RollScreen<T extends Trial> extends StatefulWidget {
 class RollScreenState extends State<RollScreen> {
   int modifier = 0;
 
-  void performRoll(int modifier) async {
+  void performRoll(Character character, int modifier) async {
     SkillRoll engine = SkillRoll.from(
-      widget.character,
+      character,
       widget.skillOrSpell,
       modifier,
     );
@@ -60,8 +59,9 @@ class RollScreenState extends State<RollScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final character = Provider.of<CharacterManager>(context).activeCharacter!;
     SkillRoll stats = SkillRoll.from(
-      widget.character,
+      character,
       widget.skillOrSpell,
       modifier,
     );
@@ -117,7 +117,7 @@ class RollScreenState extends State<RollScreen> {
               SizedBox(height: 24),
               ElevatedButton(
                 key: const Key("skill_roll_button"),
-                onPressed: () => performRoll(modifier),
+                onPressed: () => performRoll(character, modifier),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                 ),

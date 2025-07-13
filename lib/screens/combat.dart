@@ -1,9 +1,11 @@
 import 'package:eorla/models/rules.dart';
 import 'package:flutter/material.dart';
-import '../models/character.dart';
+import 'package:provider/provider.dart';
+import '../managers/character_manager.dart';
 import '../models/weapons.dart';
 import '../models/special_abilities.dart';
 import '../models/audit.dart';
+import '../models/character.dart';
 import '../widgets/character_card.dart';
 import '../widgets/widget_helpers.dart';
 import '../widgets/weapon_card.dart';
@@ -12,9 +14,7 @@ import 'combat_technique_selection.dart';
 import 'dice_rolls.dart';
 
 class CombatScreen extends StatefulWidget {
-  final Character character;
-
-  const CombatScreen({required this.character, super.key});
+  const CombatScreen({super.key});
 
   @override
   State<CombatScreen> createState() => _CombatScreenState();
@@ -27,13 +27,14 @@ class _CombatScreenState extends State<CombatScreen> {
   Widget? genericAttack;
 
   Future<void> rollCombat(
+    Character character,
     CombatActionType action,
     Weapon weapon,
     SpecialAbility? specialAbilityBaseManeuvre,
     SpecialAbility? specialAbilitySpecialManeuvre,
   ) async {
     final engine = CombatRoll.fromWeapon(
-      widget.character,
+      character,
       weapon,
       specialAbilityBaseManeuvre,
       specialAbilitySpecialManeuvre,
@@ -95,13 +96,14 @@ class _CombatScreenState extends State<CombatScreen> {
   }
 
   Future<void> rollDamage(
+    Character character,
     Weapon weapon,
     SpecialAbility? selectedSpecialBaseManeuvre,
     SpecialAbility? selectedSpecialSpecialManeuvre,
   ) async {
     final damage = damageRoll(
       weapon,
-      widget.character,
+      character,
       selectedSpecialBaseManeuvre,
       selectedSpecialSpecialManeuvre,
     );
@@ -122,12 +124,13 @@ class _CombatScreenState extends State<CombatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final character = Provider.of<CharacterManager>(context).activeCharacter!;
     final List<SpecialAbility> specialOptionsBaseManeuvre =
-        (widget.character.abilities ?? [])
+        (character.abilities ?? [])
             .where((a) => a.value.type == SpecialAbilityType.baseManeuvre)
             .toList();
     final List<SpecialAbility> specialOptionsSpecialManeuvre =
-        (widget.character.abilities ?? [])
+        (character.abilities ?? [])
             .where((a) => a.value.type == SpecialAbilityType.specialManeuvre)
             .toList();
 
@@ -147,7 +150,7 @@ class _CombatScreenState extends State<CombatScreen> {
     );
 
     ExplainedValue aw = CombatRoll.fromTechnique(
-      widget.character,
+      character,
       CombatTechnique.raufen,
       selectedSpecialBaseManeuvre,
       selectedSpecialSpecialManeuvre,
@@ -163,6 +166,7 @@ class _CombatScreenState extends State<CombatScreen> {
             aw,
             // Note: The default weapon does not actually matter here.
             () => rollCombat(
+              character,
               CombatActionType.dodge,
               genericWeapons[CombatTechnique.raufen]!,
               selectedSpecialBaseManeuvre,
@@ -172,28 +176,31 @@ class _CombatScreenState extends State<CombatScreen> {
         ),
       ),
     ];
-    for (Weapon weapon in widget.character.weapons ?? []) {
+    for (Weapon weapon in character.weapons ?? []) {
       tlChildren.add(
         weaponInfoCard(
           context,
           weapon,
-          widget.character,
+          character,
           selectedSpecialBaseManeuvre,
           selectedSpecialSpecialManeuvre,
           modifier,
           onAttack: () => rollCombat(
+            character,
             CombatActionType.attack,
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
           ),
           onParry: () => rollCombat(
+            character,
             CombatActionType.parry,
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
           ),
           onDamage: () => rollDamage(
+            character,
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
@@ -220,23 +227,26 @@ class _CombatScreenState extends State<CombatScreen> {
                   genericAttack = weaponInfoCard(
                     context,
                     weapon,
-                    widget.character,
+                    character,
                     selectedSpecialBaseManeuvre,
                     selectedSpecialSpecialManeuvre,
                     modifier,
                     onAttack: () => rollCombat(
+                      character,
                       CombatActionType.attack,
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,
                     ),
                     onParry: () => rollCombat(
+                      character,
                       CombatActionType.parry,
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,
                     ),
                     onDamage: () => rollDamage(
+                      character,
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,

@@ -1,7 +1,5 @@
 import 'package:eorla/models/attributes.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../managers/character_manager.dart';
 import '../widgets/character_card.dart';
 import '../widgets/plain_card.dart';
 import 'attribute_roll.dart';
@@ -12,7 +10,6 @@ class AttributeSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final character = Provider.of<CharacterManager>(context).activeCharacter;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -52,7 +49,6 @@ class AttributeSelectionScreen extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (_) => AttributeRollScreen(
                                 attribute: attribute,
-                                character: character!,
                               ),
                             ),
                           );

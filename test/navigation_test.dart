@@ -20,7 +20,6 @@ void main() {
     await diceTransitionAndBack(
       AttributeRollScreen(
         attribute: Attribute.charisma,
-        character: durchschnittsdoedel(),
       ),
       const Key("attribute_roll_button"),
       tester,
@@ -33,7 +32,6 @@ void main() {
     await diceTransitionAndBack(
       RollScreen(
         skillOrSpell: SkillWrapper(Skill.betoeren),
-        character: durchschnittsdoedel(),
       ),
       const Key("skill_roll_button"),
       tester,

@@ -51,7 +51,6 @@ class SpellSelectionScreen extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (_) => RollScreen(
                                 skillOrSpell: SpellWrapper(spell),
-                                character: character!,
                               ),
                             ),
                           );

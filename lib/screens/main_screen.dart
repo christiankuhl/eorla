@@ -44,7 +44,7 @@ class MainScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => CombatScreen(character: character),
+                builder: (_) => CombatScreen(),
               ),
             );
           }
