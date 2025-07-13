@@ -33,9 +33,6 @@ class RollScreenState extends State<RollScreen> {
     SkillRollResult rollResults = engine.roll();
 
     List<AttributeRollResult> results = rollResults.rolls;
-    String txt = results
-        .map((r) => "${r.resultContext}: ${r.targetValue.value} → 🎲 ${r.roll}")
-        .join("\n");
     String detail = results
         .map((r) {
           String expl = r.targetValue.explanation
@@ -44,9 +41,6 @@ class RollScreenState extends State<RollScreen> {
           return "${r.resultContext}:\n$expl";
         })
         .join("\n\n");
-    if (rollResults.addText(widget.skillOrSpell).isNotEmpty) {
-      txt += "\n\n${rollResults.addText(widget.skillOrSpell)}";
-    }
 
     await fadeDice(context, DiceAnimation.d20);
 
@@ -56,10 +50,8 @@ class RollScreenState extends State<RollScreen> {
 
     if (results.any((r) => r.targetValue.explanation.length > 1)) {
       showDetailDialog("${widget.skillOrSpell.name} (FW ${engine.talentValue})", rollResults.contentAsWidget(context), detail, context);
-      //showDetailDialog(rollResults.text(), Text(txt), detail, context);
     } else {
       showSimpleDialog("${widget.skillOrSpell.name} (FW ${engine.talentValue})", rollResults.contentAsWidget(context), context);
-      //showSimpleDialog(rollResults.text(), Text(txt), context);
     }
 
   }

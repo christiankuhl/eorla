@@ -33,8 +33,6 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
       modifier,
     );
     AttributeRollResult result = attributeRoll(attrValue);
-    String txt =
-        "${result.text()} (${attrValue.value} → 🎲 ${result.roll ?? '-/-'})";
 
     String detail = attrValue.explanation
         .map((c) => "${c.value}\t\t${c.explanation}")
