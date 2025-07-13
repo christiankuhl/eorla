@@ -26,7 +26,6 @@ class _CombatScreenState extends State<CombatScreen> {
   SpecialAbility? selectedSpecialSpecialManeuvre;
   Widget? genericAttack;
 
-  // TODO: Prettify this!
   Future<void> rollCombat(
     CombatActionType action,
     Weapon weapon,

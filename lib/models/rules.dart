@@ -48,6 +48,19 @@ class AttributeRollResult {
         ),
     ];
   }
+
+  String text() {
+    switch (event) {
+      case RollEvent.success:
+        return "Erfolg!";
+      case RollEvent.failure:
+        return "Fehlschlag!";
+      case RollEvent.critical:
+        return "Kritischer Erfolg!";
+      case RollEvent.botch:
+        return "Kritischer Fehlschlag!";
+    }
+  }
 }
 
 class SkillRollResult {
