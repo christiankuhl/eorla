@@ -71,42 +71,26 @@ class _CombatScreenState extends State<CombatScreen> {
       return;
     }
 
-    if (result[0].targetValue.explanation.length > 1) {
-      if (result.length == 1) {
-        showDetailDialog(
-          title,
-          result[0].widget(context),
-          result[0].resultText(context),
-          detail,
-          context,
-        );
-      } else {
-        showDetailDialog(
-          title,
-          skillRollResultWidget(result, context),
-          result[0].resultText(
-            context,
-          ), // FIXME: this is not technically correct, since for multiple attacks, individual attack rolls may fail
-          detail,
-          context,
-        );
-      }
+    if (result.length == 1) {
+      showDetailDialog(
+        title,
+        result[0].widget(context),
+        result[0].resultText(context),
+        detail,
+        null,
+        context,
+      );
     } else {
-      if (result.length == 1) {
-        showSimpleDialog(
-          title,
-          result[0].widget(context),
-          result[0].resultText(context),
+      showDetailDialog(
+        title,
+        skillRollResultWidget(result, context),
+        result[0].resultText(
           context,
-        );
-      } else {
-        showSimpleDialog(
-          title,
-          skillRollResultWidget(result, context),
-          result[0].resultText(context),
-          context,
-        );
-      }
+        ), // FIXME: this is not technically correct, since for multiple attacks, individual attack rolls may fail
+        detail,
+        null,
+        context,
+      );
     }
   }
 
@@ -128,18 +112,11 @@ class _CombatScreenState extends State<CombatScreen> {
       return;
     }
 
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text("${weapon.name} - Schaden"),
-        content: damage.widget(context),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('OK'),
-          ),
-        ],
-      ),
+    showSimpleDialog(
+      "${weapon.name} - Schaden",
+      damage.widget(context),
+      damage.resultText(context),
+      context,
     );
   }
 

@@ -44,11 +44,14 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
       return;
     }
 
-    if (attrValue.explanation.length > 1) {
-      showDetailDialog(widget.attribute.name, result.widget(context), result.resultText(context), detail, context);
-    } else {
-      showSimpleDialog(widget.attribute.name, result.widget(context), result.resultText(context), context);
-    }
+    showDetailDialog(
+      widget.attribute.name,
+      result.widget(context),
+      result.resultText(context),
+      detail,
+      null,
+      context,
+    );
   }
 
   @override

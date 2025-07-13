@@ -48,22 +48,14 @@ class RollScreenState extends State<RollScreen> {
       return;
     }
 
-    if (results.any((r) => r.targetValue.explanation.length > 1)) {
-      showDetailDialog(
-        "${widget.skillOrSpell.name} (FW ${engine.talentValue})",
-        rollResults.widget(context),
-        rollResults.resultText(context),
-        detail,
-        context,
-      );
-    } else {
-      showSimpleDialog(
-        "${widget.skillOrSpell.name} (FW ${engine.talentValue})",
-        rollResults.widget(context),
-        rollResults.resultText(context),
-        context,
-      );
-    }
+    showDetailDialog(
+      "${widget.skillOrSpell.name} (FW ${engine.talentValue})",
+      rollResults.widget(context),
+      rollResults.resultText(context),
+      detail,
+      rollResults.addText(widget.skillOrSpell),
+      context,
+    );
   }
 
   @override

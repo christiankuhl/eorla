@@ -321,56 +321,204 @@ Text colouredValue(ExplainedValue v) {
   );
 }
 
+// void showDetailDialog(
+//   String title,
+//   Widget dice,
+//   Widget resultText,
+//   String detail,
+//   BuildContext context,
+// ) {
+//   showDialog(
+//     context: context,
+//     builder: (_) {
+//       bool expanded = false;
+
+//       return StatefulBuilder(
+//         builder: (context, setState) => AlertDialog(
+//           title: Text(title, style: Theme.of(context).textTheme.titleLarge),
+//           content: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               dice,
+//               Row(
+//                 children: [
+//                   Expanded(child: resultText),
+//                   IconButton(
+//                     icon: Icon(
+//                       expanded ? Icons.expand_less : Icons.expand_more,
+//                     ),
+//                     onPressed: () => setState(() => expanded = !expanded),
+//                   ),
+//                 ],
+//               ),
+//               if (expanded)
+//                 Padding(
+//                   padding: const EdgeInsets.only(top: 12.0),
+//                   child: Text(
+//                     detail,
+//                     style: Theme.of(context).textTheme.bodySmall,
+//                   ),
+//                 ),
+//             ],
+//           ),
+//           actions: [
+//             TextButton(
+//               onPressed: () => Navigator.pop(context),
+//               child: Text('OK'),
+//             ),
+//           ],
+//         ),
+//       );
+//     },
+//   );
+// }
+
 void showDetailDialog(
   String title,
   Widget dice,
   Widget resultText,
-  String detail,
-  BuildContext context,
-) {
+  String auditTrailText,
+  String? rulebookText,
+  BuildContext context, {
+  bool startExpanded = false,
+  int initialTabIndex = 0, // 0 = Audit, 1 = Rulebook
+}) {
   showDialog(
     context: context,
     builder: (_) {
-      bool expanded = false;
+      bool expanded = startExpanded;
+      int selectedTab = initialTabIndex;
 
       return StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           title: Text(title, style: Theme.of(context).textTheme.titleLarge),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              dice,
-              Row(
-                children: [
-                  Expanded(child: resultText),
-                  IconButton(
-                    icon: Icon(
-                      expanded ? Icons.expand_less : Icons.expand_more,
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 240),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                dice,
+                Row(
+                  children: [
+                    Expanded(child: resultText),
+                    IconButton(
+                      icon: Icon(
+                        expanded ? Icons.expand_less : Icons.expand_more,
+                      ),
+                      onPressed: () => setState(() => expanded = !expanded),
                     ),
-                    onPressed: () => setState(() => expanded = !expanded),
-                  ),
-                ],
-              ),
-              if (expanded)
-                Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: Text(
-                    detail,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  ],
                 ),
-            ],
+                if (expanded)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            if (rulebookText != null)
+                              _TabButton(
+                                label: 'Regeln',
+                                selected: selectedTab == 0,
+                                onTap: () => setState(() => selectedTab = 0),
+                              ),
+                            _TabButton(
+                              label: 'Zielwerte',
+                              selected: selectedTab == 1,
+                              onTap: () => setState(
+                                () =>
+                                    selectedTab = rulebookText != null ? 1 : 0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      IndexedStack(
+                        index: selectedTab,
+                        children: [
+                          if (rulebookText != null)
+                            Text(
+                              rulebookText,
+                              style: Theme.of(context).textTheme.bodySmall,
+                              softWrap: true,
+                            ),
+                          Text(
+                            auditTrailText,
+                            style: Theme.of(context).textTheme.bodySmall,
+                            softWrap: true,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
       );
     },
   );
+}
+
+class _TabButton extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _TabButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: selected
+                    ? theme.colorScheme.primary
+                    : Colors.transparent,
+                width: 2,
+              ),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                color: selected
+                    ? theme.colorScheme.primary
+                    : theme.textTheme.bodyMedium?.color,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 void showSimpleDialog(

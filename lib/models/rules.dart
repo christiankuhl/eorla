@@ -1,3 +1,4 @@
+import 'package:eorla/models/spells.dart';
 import 'package:flutter/material.dart';
 import 'character.dart';
 import 'skill.dart';
@@ -94,21 +95,24 @@ class SkillRollResult {
     return skillRollResultText(this, context);
   }
 
-  String addText<T extends Trial>(T skillOrSpell) {
-    if (skillOrSpell is Skill) {
+  String? addText<T extends Trial>(T skillOrSpell) {
+    if (skillOrSpell is SkillWrapper) {
+      Skill skill = skillOrSpell.skill;
       switch (quality.type) {
         case RollEvent.success:
-          return "";
+          return skill.quality;
         case RollEvent.failure:
-          return "";
+          return skill.failed;
         case RollEvent.critical:
-          return (skillOrSpell as Skill).critical;
+          return skill.critical;
         case RollEvent.botch:
-          return (skillOrSpell as Skill).botch;
+          return skill.botch;
       }
-    } else {
-      return "";
+    } else if (skillOrSpell is SpellWrapper) {
+      Spell spell = skillOrSpell.spell;
+      return spell.effect; // TODO: Add costs, actions, etc.,...
     }
+    return null;
   }
 
   Widget widget(BuildContext context) {
