@@ -31,7 +31,9 @@ class CharacterSelectionScreen extends StatelessWidget {
             return ListTile(
               leading: CircleAvatar(
                 backgroundImage: character.avatar.image,
-                child: character.avatar.image == null ? Icon(Icons.person) : null,
+                child: character.avatar.image == null
+                    ? Icon(Icons.person)
+                    : null,
               ),
               trailing: IconButton(
                 icon: Icon(Icons.delete, color: Colors.red),
@@ -74,33 +76,34 @@ class CharacterSelectionScreen extends StatelessWidget {
     final Map<String, dynamic> jsonData = await getOptolithCharacterData();
     if (jsonData.isEmpty) return;
     try {
-      // TODO: Figure out async boundary
-      if (context.mounted) {
-        showLoadingDialog(context);
-        final Character newCharacter = await Future.delayed(
-          Duration(milliseconds: 100),
-          () => Character.fromJson(jsonData),
-        );
-
-        if (context.mounted) {
-          final manager = Provider.of<CharacterManager>(context, listen: false);
-          manager.addCharacter(newCharacter);
-          await CharacterStorage.saveCharacters(manager.characters);
-          manager.setActiveCharacter(newCharacter);
-          if (context.mounted) {
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName(Navigator.defaultRouteName),
-            );
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => CharacterDetailScreen(character: newCharacter),
-              ),
-            );
-          }
-        }
+      if (!context.mounted) {
+        return;
       }
+      showLoadingDialog(context);
+      final Character newCharacter = await Future.delayed(
+        Duration(milliseconds: 100),
+        () => Character.fromJson(jsonData),
+      );
+      if (!context.mounted) {
+        return;
+      }
+      final manager = Provider.of<CharacterManager>(context, listen: false);
+      manager.addCharacter(newCharacter);
+      await CharacterStorage.saveCharacters(manager.characters);
+      manager.setActiveCharacter(newCharacter);
+      if (!context.mounted) {
+        return;
+      }
+      Navigator.popUntil(
+        context,
+        ModalRoute.withName(Navigator.defaultRouteName),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => CharacterDetailScreen(character: newCharacter),
+        ),
+      );
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop();

@@ -558,7 +558,6 @@ DamageRollResult damageRoll(
     tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
       damageDice = impact.additionalDice;
-      //TODO: Check if we want this behaviour.
       tpFlat = 0;
     } else {
       damageDice.addAll(impact.additionalDice);
@@ -580,7 +579,6 @@ DamageRollResult damageRoll(
     tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
       damageDice = impact.additionalDice;
-      //TODO: Check if we want this behaviour.
       tpFlat = 0;
     } else {
       damageDice.addAll(impact.additionalDice);
@@ -637,7 +635,6 @@ RichText damageRollTextGenerator(
     tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
       damageDice = impact.additionalDice;
-      //TODO: Check if we want this behaviour.
       tpFlat = 0;
       diceChange = -5;
     } else {
@@ -663,7 +660,6 @@ RichText damageRollTextGenerator(
     tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
       damageDice = impact.additionalDice;
-      //TODO: Check if we want this behaviour.
       tpFlat = 0;
       diceChange = -5;
     } else {

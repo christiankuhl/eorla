@@ -208,11 +208,8 @@ class SpecialAbilityImpact {
         ];
         callback = multiAttack(attacks, modifier, paMod: -20, awMod: -20);
         break;
-      case SpecialAbilityBase.blutgraetsche: //FIXME: Probe is already raufen
-        callback = alternateCombatTechnique(
-          CombatTechnique.raufen,
-          modifier - 2,
-        );
+      case SpecialAbilityBase.blutgraetsche:
+        atMod = -2;
         tpMod = 1;
         break;
       case SpecialAbilityBase.doppelangriff:
@@ -315,7 +312,7 @@ bool abilityImpactsTechnique(
     case _Melee():
       return ct.group == CombatType.melee;
     case _MeleeOneHanded():
-      return ct.group == CombatType.melee; // TODO: one handed weapons only
+      return oneHandedCTs.contains(ct.id);
     case _MeleeWithParry():
       return ct.group == CombatType.melee && !ct.hasNoParry;
     case _Ranged():

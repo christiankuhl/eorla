@@ -54,33 +54,32 @@ void main() {
     });
   });
 
-  group('Combat techneques assignment', () {
-    // TODO: one handed weapons test after implementation
+  group('Combat techniques assignment', () {
     test('Armbrüste', () {
       final ct = CombatTechnique.armbrueste;
       expect(ct.group == CombatType.melee, false); // Melee
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, false);// Melee with Parry
       expect(ct.group == CombatType.range, true); // Ranged
     });
     test('Bögen', () {
       final ct = CombatTechnique.boegen;
       expect(ct.group == CombatType.melee, false); // Melee
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, false);// Melee with Parry
       expect(ct.group == CombatType.range, true); // Ranged
     });
     test('Dolche', () {
       final ct = CombatTechnique.dolche;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(true, true); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), true); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true);// Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
     test('Fechtwaffen', () {
       final ct = CombatTechnique.fechtwaffen;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(true, true); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), true); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -88,7 +87,7 @@ void main() {
     test('Hiebwaffen', () {
       final ct = CombatTechnique.hiebwaffen;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(true, true); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), true); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -96,7 +95,7 @@ void main() {
     test('Kettenwaffen', () {
       final ct = CombatTechnique.kettenwaffen;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(true, true); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), true); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, false); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -104,7 +103,7 @@ void main() {
     test('Lanzen', () {
       final ct = CombatTechnique.lanzen;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -112,7 +111,7 @@ void main() {
     test('Peitschen', () {
       final ct = CombatTechnique.peitschen;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(true, true); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), true); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, false); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -120,7 +119,7 @@ void main() {
     test('Raufen', () {
       final ct = CombatTechnique.raufen;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(true, true); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -128,7 +127,7 @@ void main() {
     test('Schilde', () {
       final ct = CombatTechnique.schilde;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(true, true); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), true); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -136,7 +135,7 @@ void main() {
     test('Schleudern', () {
       final ct = CombatTechnique.schleudern;
       expect(ct.group == CombatType.range, true); // Ranged
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, false); // Melee with Parry
       expect(ct.group == CombatType.melee, false); // Melee
     });
@@ -144,7 +143,7 @@ void main() {
     test('Schwerter', () {
       final ct = CombatTechnique.schwerter;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(true, true); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), true); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -152,7 +151,7 @@ void main() {
     test('Stangenwaffen', () {
       final ct = CombatTechnique.stangenwaffen;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -160,7 +159,7 @@ void main() {
     test('Wurfwaffen', () {
       final ct = CombatTechnique.wurfwaffen;
       expect(ct.group == CombatType.range, true); // Ranged
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, false); // Melee with Parry
       expect(ct.group == CombatType.melee, false); // Melee
     });
@@ -168,7 +167,7 @@ void main() {
     test('Zweihandhiebwaffen', () {
       final ct = CombatTechnique.zweihandhiebwaffen;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -176,7 +175,7 @@ void main() {
     test('Zweihandschwerter', () {
       final ct = CombatTechnique.zweihandschwerter;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -184,7 +183,7 @@ void main() {
     test('Feuerspeien', () {
       final ct = CombatTechnique.feuerspeien;
       expect(ct.group == CombatType.range, true); // Ranged
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, false); // Melee with Parry
       expect(ct.group == CombatType.melee, false); // Melee
     });
@@ -192,7 +191,7 @@ void main() {
     test('Blasrohre', () {
       final ct = CombatTechnique.blasrohre;
       expect(ct.group == CombatType.range, true); // Ranged
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, false); // Melee with Parry
       expect(ct.group == CombatType.melee, false); // Melee
     });
@@ -200,7 +199,7 @@ void main() {
     test('Diskusse', () {
       final ct = CombatTechnique.diskusse;
       expect(ct.group == CombatType.range, true); // Ranged
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, false); // Melee with Parry
       expect(ct.group == CombatType.melee, false); // Melee
     });
@@ -208,7 +207,7 @@ void main() {
     test('Fächer', () {
       final ct = CombatTechnique.faecher;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(true, true); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), true); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -216,7 +215,7 @@ void main() {
     test('Spiesswaffen', () {
       final ct = CombatTechnique.spiesswaffen;
       expect(ct.group == CombatType.melee, true); // Melee
-      expect(false, false); // Melee One Handed
+      expect(oneHandedCTs.contains(ct.id), false); // Melee One Handed
       expect(ct.group == CombatType.melee && !ct.hasNoParry, true); // Melee with Parry
       expect(ct.group == CombatType.range, false); // Ranged
     });
@@ -956,41 +955,6 @@ void main() {
         expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.spiesswaffen.id)));
       });
     });
-    group('Geschütz bedienen', () {
-      test('Combat Technique', () {
-        //TODO: Uncomment when SpecialAbilityBase.geschuetzeBedienen is defined
-        
-        //final ability = SpecialAbility(SpecialAbilityBase.geschuetzeBedienen, null);
-
-        //expect(ability.value.type, SpecialAbilityType.passive);
-        //// check if ability.value.ct is instance of _Explicit
-        //expect(ability.value.ct, isA<ApplicableCombatTechniques>());
-        //expect(ability.value.ct.runtimeType.toString(), contains('_Explicit'));
-        //expect((ability.value.ct as dynamic).ids, isNotNull);
-        //expect((ability.value.ct as dynamic).ids, isA<List<String>>());
-        //expect((ability.value.ct as dynamic).ids, (contains(CombatTechnique.armbrueste.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.boegen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.dolche.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.fechtwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.hiebwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.kettenwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.lanzen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.peitschen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.raufen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schilde.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schleudern.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schwerter.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.stangenwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.wurfwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.zweihandhiebwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.zweihandschwerter.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.feuerspeien.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.blasrohre.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.diskusse.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.faecher.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.spiesswaffen.id)));
-      });
-    });
     group('Gezielter Angriff', () {
       test('Combat Technique', () {
         final ability = SpecialAbility(SpecialAbilityBase.gezielterAngriff, null);
@@ -1182,41 +1146,6 @@ void main() {
         // check if ability.value.ct is instance of _Explicit
         expect(ability.value.ct, isA<ApplicableCombatTechniques>());
         expect(ability.value.ct.runtimeType.toString(), contains('_Ranged'));
-      });
-    });
-    group('Kettenkugelkampf', () {
-      test('Combat Technique', () {
-        //TODO: Uncomment when SpecialAbilityBase.kettenkugelkampf is defined
-
-        //final ability = SpecialAbility(SpecialAbilityBase.kettenkugelkampf, null);
-
-        //expect(ability.value.type, SpecialAbilityType.passive);
-        //// check if ability.value.ct is instance of _Explicit
-        //expect(ability.value.ct, isA<ApplicableCombatTechniques>());
-        //expect(ability.value.ct.runtimeType.toString(), contains('_Explicit'));
-        //expect((ability.value.ct as dynamic).ids, isNotNull);
-        //expect((ability.value.ct as dynamic).ids, isA<List<String>>());
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.armbrueste.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.boegen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.dolche.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.fechtwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.hiebwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, (contains(CombatTechnique.kettenwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.lanzen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.peitschen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.raufen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schilde.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schleudern.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schwerter.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.stangenwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, (contains(CombatTechnique.wurfwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.zweihandhiebwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.zweihandschwerter.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.feuerspeien.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.blasrohre.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.diskusse.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.faecher.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.spiesswaffen.id)));
       });
     });
     group('Kha-Formation', () {
@@ -1845,41 +1774,6 @@ void main() {
         expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.diskusse.id)));
         expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.faecher.id)));
         expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.spiesswaffen.id)));
-      });
-    });
-    group('Schildwall', () {
-      test('Combat Technique', () {
-        //TODO: Uncomment when SpecialAbilityBase.schildwall is implemented
-
-        //final ability = SpecialAbility(SpecialAbilityBase.schildwall, null);
-
-        //expect(ability.value.type, SpecialAbilityType.passive);
-        //// check if ability.value.ct is instance of _Explicit
-        //expect(ability.value.ct, isA<ApplicableCombatTechniques>());
-        //expect(ability.value.ct.runtimeType.toString(), contains('_Explicit'));
-        //expect((ability.value.ct as dynamic).ids, isNotNull);
-        //expect((ability.value.ct as dynamic).ids, isA<List<String>>());
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.armbrueste.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.boegen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.dolche.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.fechtwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.hiebwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.kettenwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.lanzen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.peitschen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.raufen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schilde.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schleudern.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schwerter.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.stangenwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.wurfwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.zweihandhiebwaffen.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.zweihandschwerter.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.feuerspeien.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.blasrohre.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.diskusse.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.faecher.id)));
-        //expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.spiesswaffen.id)));
       });
     });
     group('Schnellladen', () {
@@ -2575,67 +2469,32 @@ void main() {
 
 
 
-    // test('wuchtschlag impact returns correct atMod and tpMod', () {
-    //   final ability = SpecialAbility(SpecialAbilityBase.wuchtschlag, 2);
-    //   final impact = SpecialAbilityImpact.fromActive(ability, null, null, 0);
-    //   expect(impact.atMod, equals(-4)); // -2 * tier
-    //   expect(impact.tpMod, equals(4)); // 2 * tier
-    // });
+    test('Wuchtschlag impact returns correct atMod and tpMod', () {
+      final ability = SpecialAbility(SpecialAbilityBase.wuchtschlag, 2);
+      final impact = SpecialAbilityImpact.derive(ability, null, null, 0);
+      expect(impact.atMod, equals(-4)); // -2 * tier
+      expect(impact.tpMod, equals(4)); // 2 * tier
+    });
 
-    // test('finte impact returns correct atMod', () {
-    //   final ability = SpecialAbility(SpecialAbilityBase.finte, 3);
-    //   final impact = SpecialAbilityImpact.fromActive(ability, null, null, 0);
-    //   expect(impact.atMod, equals(-3));
-    // });
+    test('Finte impact returns correct atMod', () {
+      final ability = SpecialAbility(SpecialAbilityBase.finte, 3);
+      final impact = SpecialAbilityImpact.derive(ability, null, null, 0);
+      expect(impact.atMod, equals(-3));
+    });
 
-    // test('riposte impact returns correct paMod', () {
-    //   final ability = SpecialAbility(SpecialAbilityBase.riposte, null);
-    //   final impact = SpecialAbilityImpact.fromActive(ability, null, null, 0);
-    //   expect(impact.paMod, equals(-2));
-    // });
+    test('Riposte impact returns correct paMod', () {
+      final ability = SpecialAbility(SpecialAbilityBase.riposte, null);
+      final impact = SpecialAbilityImpact.derive(ability, null, null, 0);
+      expect(impact.paMod, equals(-2));
+    });
 
-    // test('none impact returns all mods zero except modifier', () {
-    //   final impact = SpecialAbilityImpact.none(5);
-    //   expect(impact.atMod, equals(0));
-    //   expect(impact.paMod, equals(0));
-    //   expect(impact.awMod, equals(0));
-    //   expect(impact.tpMod, equals(0));
-    //   expect(impact.modifier, equals(5));
-    // });
+    test('SpecialAbilityImpact.none impact returns all mods zero except modifier', () {
+      final impact = SpecialAbilityImpact.none(5);
+      expect(impact.atMod, equals(0));
+      expect(impact.paMod, equals(0));
+      expect(impact.awMod, equals(0));
+      expect(impact.tpMod, equals(0));
+      expect(impact.modifier, equals(5));
+    });
   });
 }
-
-
-    // group('...', () {
-    //   test('Combat Technique', () {
-    //     final ability = SpecialAbility(SpecialAbilityBase., null);
-
-    //     expect(ability.value.type, SpecialAbilityType.passive);
-    //     // check if ability.value.ct is instance of _Explicit
-    //     expect(ability.value.ct, isA<ApplicableCombatTechniques>());
-    //     expect(ability.value.ct.runtimeType.toString(), contains('_Explicit'));
-    //     expect((ability.value.ct as dynamic).ids, isNotNull);
-    //     expect((ability.value.ct as dynamic).ids, isA<List<String>>());
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.armbrueste.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.boegen.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.dolche.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.fechtwaffen.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.hiebwaffen.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.kettenwaffen.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.lanzen.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.peitschen.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.raufen.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schilde.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schleudern.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.schwerter.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.stangenwaffen.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.wurfwaffen.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.zweihandhiebwaffen.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.zweihandschwerter.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.feuerspeien.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.blasrohre.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.diskusse.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.faecher.id)));
-    //     expect((ability.value.ct as dynamic).ids, isNot(contains(CombatTechnique.spiesswaffen.id)));
-    //   });
-    // });
