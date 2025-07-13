@@ -114,6 +114,7 @@ class RollScreenState extends State<RollScreen> {
 
               SizedBox(height: 24),
               ElevatedButton(
+                key: const Key("skill_roll_button"),
                 onPressed: () => performRoll(modifier),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),

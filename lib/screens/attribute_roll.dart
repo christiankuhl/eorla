@@ -110,6 +110,7 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
 
               SizedBox(height: 24),
               ElevatedButton(
+                key: const Key("attribute_roll_button"),
                 onPressed: () => performRoll(modifier),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
