@@ -78,15 +78,15 @@ Widget attributeRollResult(AttributeRollResult result, BuildContext context) {
         Center(
           child: RichText(
             text: TextSpan(
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.titleMedium,
               children: [
                 TextSpan(
                   text: result.roll != null
-                      ? result.roll?.value.toString()
+                      ? result.text()
                       : "?",
                   style: Theme.of(
                     context,
-                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),

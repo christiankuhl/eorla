@@ -334,7 +334,7 @@ void showDetailDialog(
 
       return StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: Text(title),
+          title: Text(title, style: Theme.of(context).textTheme.titleLarge),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -375,7 +375,7 @@ void showSimpleDialog(String title, Widget body, BuildContext context) {
   showDialog(
     context: context,
     builder: (_) => AlertDialog(
-      title: Text(title),
+      title: Text(title, style: Theme.of(context).textTheme.titleLarge),
       content: body,
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
