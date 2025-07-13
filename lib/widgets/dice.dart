@@ -229,7 +229,7 @@ class DiceDisplay {
     if (die != null) {
       return Text("[X]");
     } else {
-      return Text("[$die]");
+      return Text("[${die!.value}]");
     }
   }
 
@@ -310,7 +310,7 @@ class D20Display extends DiceDisplay {
             ),
             child: Center(
               child: Text(
-                die == null ? "?" : "$die",
+                die == null ? "?" : "${die.value}",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -417,7 +417,7 @@ class D6Display extends DiceDisplay {
             ),
             child: Center(
               child: Text(
-                die == null ? "?" : "$die",
+                die == null ? "?" : "${die.value}",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
