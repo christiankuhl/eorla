@@ -110,7 +110,7 @@ class SkillRollResult {
       }
     } else if (skillOrSpell is SpellWrapper) {
       Spell spell = skillOrSpell.spell;
-      return spell.effect; // TODO: Add costs, actions, etc.,...
+      return spell.ruleText();
     }
     return null;
   }

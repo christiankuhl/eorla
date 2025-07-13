@@ -321,58 +321,6 @@ Text colouredValue(ExplainedValue v) {
   );
 }
 
-// void showDetailDialog(
-//   String title,
-//   Widget dice,
-//   Widget resultText,
-//   String detail,
-//   BuildContext context,
-// ) {
-//   showDialog(
-//     context: context,
-//     builder: (_) {
-//       bool expanded = false;
-
-//       return StatefulBuilder(
-//         builder: (context, setState) => AlertDialog(
-//           title: Text(title, style: Theme.of(context).textTheme.titleLarge),
-//           content: Column(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               dice,
-//               Row(
-//                 children: [
-//                   Expanded(child: resultText),
-//                   IconButton(
-//                     icon: Icon(
-//                       expanded ? Icons.expand_less : Icons.expand_more,
-//                     ),
-//                     onPressed: () => setState(() => expanded = !expanded),
-//                   ),
-//                 ],
-//               ),
-//               if (expanded)
-//                 Padding(
-//                   padding: const EdgeInsets.only(top: 12.0),
-//                   child: Text(
-//                     detail,
-//                     style: Theme.of(context).textTheme.bodySmall,
-//                   ),
-//                 ),
-//             ],
-//           ),
-//           actions: [
-//             TextButton(
-//               onPressed: () => Navigator.pop(context),
-//               child: Text('OK'),
-//             ),
-//           ],
-//         ),
-//       );
-//     },
-//   );
-// }
-
 void showDetailDialog(
   String title,
   Widget dice,
@@ -381,7 +329,7 @@ void showDetailDialog(
   String? rulebookText,
   BuildContext context, {
   bool startExpanded = false,
-  int initialTabIndex = 0, // 0 = Audit, 1 = Rulebook
+  int initialTabIndex = 0,
 }) {
   showDialog(
     context: context,
@@ -393,7 +341,7 @@ void showDetailDialog(
         builder: (context, setState) => AlertDialog(
           title: Text(title, style: Theme.of(context).textTheme.titleLarge),
           content: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 240),
+            constraints: const BoxConstraints(maxWidth: 240, maxHeight: 600),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -441,21 +389,28 @@ void showDetailDialog(
                         ),
                       ),
                       const SizedBox(height: 12),
-                      IndexedStack(
-                        index: selectedTab,
-                        children: [
-                          if (rulebookText != null)
-                            Text(
-                              rulebookText,
-                              style: Theme.of(context).textTheme.bodySmall,
-                              softWrap: true,
+                      SizedBox(
+                        height: 240,
+                        child: IndexedStack(
+                          index: selectedTab,
+                          children: [
+                            if (rulebookText != null)
+                              SingleChildScrollView(
+                                child: Text(
+                                  rulebookText,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  softWrap: true,
+                                ),
+                              ),
+                            SingleChildScrollView(
+                              child: Text(
+                                auditTrailText,
+                                style: Theme.of(context).textTheme.bodySmall,
+                                softWrap: true,
+                              ),
                             ),
-                          Text(
-                            auditTrailText,
-                            style: Theme.of(context).textTheme.bodySmall,
-                            softWrap: true,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
