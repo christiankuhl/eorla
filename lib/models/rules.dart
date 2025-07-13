@@ -8,8 +8,7 @@ import 'special_abilities_impl.dart';
 import 'dart:math';
 import 'dice.dart';
 import 'audit.dart';
-
-enum DisplayMode { text, colored, fancy }
+import '../widgets/dice.dart';
 
 class GenerericRollResult {
   final List<Dice> dice;
@@ -48,44 +47,7 @@ class DamageRollResult extends GenerericRollResult {
 
   @override
   Widget resultsWidget(BuildContext context) {
-    return IntrinsicHeight(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: dice
-                .map(
-                  (d) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: d.displayWidget(
-                      context,
-                      displayMode: DisplayMode.fancy,
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
-          const SizedBox(height: 24),
-          RichText(
-            text: TextSpan(
-              style: Theme.of(context).textTheme.bodyMedium,
-              children: [
-                const TextSpan(text: "Dein Angriff verursacht "),
-                TextSpan(
-                  text: combinedResult,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const TextSpan(text: " Trefferpunkt(e)."),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+    return diceResultsWidget(this, context);
   }
 }
 
@@ -123,64 +85,9 @@ class AttributeRollResult extends GenerericRollResult {
          "I AM ERROR",
        );
 
-  @Deprecated("Get text from combinedResult instead")
-  String text() {
-    switch (event) {
-      case RollEvent.success:
-        return "Erfolg!";
-      case RollEvent.failure:
-        return "Fehlschlag!";
-      case RollEvent.critical:
-        return "Kritischer Erfolg!";
-      case RollEvent.botch:
-        return "Kritischer Fehlschlag!";
-    }
-  }
-
   @override
   Widget resultsWidget(BuildContext context) {
-    return IntrinsicHeight(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: dice
-                .map(
-                  (d) => Padding(
-                    padding: const EdgeInsets.only(left: 12.0, right: 40.0),
-                    child: d.displayWidget(
-                      context,
-                      displayMode: DisplayMode.fancy,
-                      topRight: Text("≤ ${targetValue.value}"),
-                      bottomRight: d.result <= targetValue.value
-                          ? Icon(Icons.check, color: Colors.green, size: 20.0)
-                          : Icon(Icons.close, color: Colors.red, size: 20.0),
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
-          const SizedBox(height: 24),
-          Center(
-            child: RichText(
-              text: TextSpan(
-                style: Theme.of(context).textTheme.bodyMedium,
-                children: [
-                  TextSpan(
-                    text: combinedResult,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    return attributeRollResult(this, context);
   }
 }
 
@@ -220,54 +127,7 @@ class SkillRollResult extends GenerericRollResult {
   }
 
   RichText resultText(BuildContext context) {
-    switch (quality.type) {
-      case RollEvent.success:
-        return RichText(
-          text: TextSpan(
-            style: Theme.of(context).textTheme.bodyMedium,
-            children: [
-              TextSpan(
-                text: "Erfolg! (",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 18,
-                ),
-              ),
-              TextSpan(
-                text: "QS: ${quality.qs}",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 18,
-                ),
-              ),
-              TextSpan(
-                text: ")",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          ),
-        );
-      case RollEvent.failure:
-      case RollEvent.critical:
-      case RollEvent.botch:
-        return RichText(
-          text: TextSpan(
-            style: Theme.of(context).textTheme.bodyMedium,
-            children: [
-              TextSpan(
-                text: text(),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          ),
-        );
-    }
+    return skillRollResultText(this, context);
   }
 
   String addText<T extends Trial>(T skillOrSpell) {
@@ -302,50 +162,7 @@ class SkillRollResult extends GenerericRollResult {
       }
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Column(
-          children: rolls
-              .map(
-                (roll) => Padding(
-                  padding: const EdgeInsets.only(bottom: 15.0, top: 5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(roll.resultContext ?? "i"),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 40.0),
-                        child: roll.dice[0].displayWidget(
-                          context,
-                          displayMode: DisplayMode.fancy,
-                          topRight: Text("≤ ${roll.targetValue.value}"),
-                          bottomRight:
-                              roll.dice[0].result <= roll.targetValue.value
-                              ? Icon(
-                                  Icons.check,
-                                  color: Colors.green,
-                                  size: 20.0,
-                                )
-                              : Text(
-                                  "- ${roll.dice[0].result - roll.targetValue.value}",
-                                  style: TextStyle(
-                                    color: Colors.redAccent,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-              .toList(),
-        ),
-        const SizedBox(height: 9),
-        resultText(context),
-      ],
-    );
+    return skillRollResultWidget(this, context);
   }
 }
 

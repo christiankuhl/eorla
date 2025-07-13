@@ -1,7 +1,7 @@
-import 'package:eorla/main.dart';
-import 'package:eorla/models/rules.dart' show DisplayMode;
 import 'package:flutter/material.dart';
 import 'dart:math';
+import '../widgets/dice.dart' show DisplayMode;
+import '../main.dart';
 
 const int _diceSentinelValue = -999999;
 
