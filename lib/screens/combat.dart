@@ -73,22 +73,37 @@ class _CombatScreenState extends State<CombatScreen> {
 
     if (result[0].targetValue.explanation.length > 1) {
       if (result.length == 1) {
-        showDetailDialog(title, result[0].widget(context), detail, context);
+        showDetailDialog(
+          title,
+          result[0].widget(context),
+          result[0].resultText(context),
+          detail,
+          context,
+        );
       } else {
         showDetailDialog(
           title,
-          skillRollResultWidget(result, null, context),
+          skillRollResultWidget(result, context),
+          result[0].resultText(
+            context,
+          ), // FIXME: this is not technically correct, since for multiple attacks, individual attack rolls may fail
           detail,
           context,
         );
       }
     } else {
       if (result.length == 1) {
-        showSimpleDialog(title, result[0].widget(context), context);
+        showSimpleDialog(
+          title,
+          result[0].widget(context),
+          result[0].resultText(context),
+          context,
+        );
       } else {
         showSimpleDialog(
           title,
-          skillRollResultWidget(result, null, context),
+          skillRollResultWidget(result, context),
+          result[0].resultText(context),
           context,
         );
       }

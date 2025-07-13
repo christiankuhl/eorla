@@ -6,7 +6,7 @@ import '../main.dart';
 
 enum DisplayMode { text, colored, fancy }
 
-Widget diceResultsWidget(DamageRollResult result, BuildContext context) {
+Widget damageResultsWidget(DamageRollResult result, BuildContext context) {
   return IntrinsicHeight(
     child: Column(
       mainAxisSize: MainAxisSize.min,
@@ -28,21 +28,24 @@ Widget diceResultsWidget(DamageRollResult result, BuildContext context) {
               .toList(),
         ),
         const SizedBox(height: 24),
-        RichText(
-          text: TextSpan(
-            style: Theme.of(context).textTheme.bodyMedium,
-            children: [
-              const TextSpan(text: "Dein Angriff verursacht "),
-              TextSpan(
-                text: result.combinedResult.toString(),
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const TextSpan(text: " Trefferpunkt(e)."),
-            ],
-          ),
+      ],
+    ),
+  );
+}
+
+Widget damageText(DamageRollResult result, BuildContext context) {
+  return RichText(
+    text: TextSpan(
+      style: Theme.of(context).textTheme.bodyMedium,
+      children: [
+        const TextSpan(text: "Dein Angriff verursacht "),
+        TextSpan(
+          text: result.combinedResult.toString(),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
+        const TextSpan(text: " Trefferpunkt(e)."),
       ],
     ),
   );
@@ -75,29 +78,30 @@ Widget attributeRollResult(AttributeRollResult result, BuildContext context) {
               .toList(),
         ),
         const SizedBox(height: 24),
-        Center(
-          child: RichText(
-            text: TextSpan(
-              style: Theme.of(context).textTheme.titleMedium,
-              children: [
-                TextSpan(
-                  text: result.roll != null
-                      ? result.text()
-                      : "?",
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-        ),
       ],
     ),
   );
 }
 
-RichText skillRollResultText(SkillRollResult result, BuildContext context) {
+Widget attributeResultText(AttributeRollResult result, BuildContext context) {
+  return Center(
+    child: RichText(
+      text: TextSpan(
+        style: Theme.of(context).textTheme.titleMedium,
+        children: [
+          TextSpan(
+            text: result.roll != null ? result.text() : "?",
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget skillRollResultText(SkillRollResult result, BuildContext context) {
   switch (result.quality.type) {
     case RollEvent.success:
       return RichText(
@@ -150,7 +154,6 @@ RichText skillRollResultText(SkillRollResult result, BuildContext context) {
 
 Widget skillRollResultWidget(
   List<AttributeRollResult> results,
-  RichText? resultText,
   BuildContext context,
 ) {
   return Column(
@@ -191,12 +194,10 @@ Widget skillRollResultWidget(
             )
             .toList(),
       ),
-      if (resultText != null) const SizedBox(height: 9),
-      if (resultText != null) resultText,
+      const SizedBox(height: 24),
     ],
   );
 }
-
 
 class DiceDisplay {
   Color? fancyFill;
@@ -209,7 +210,6 @@ class DiceDisplay {
 
   DiceDisplay({this.fill, this.border, this.size = 40});
 
-    /// Override this to allow extra widgets in dice corners.
   Widget fancyDisplay(
     DiceValue? die,
     BuildContext context, {

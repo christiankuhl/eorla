@@ -16,7 +16,11 @@ class DamageRollResult {
   DamageRollResult(this.dice, this.combinedResult);
 
   Widget widget(BuildContext context) {
-    return diceResultsWidget(this, context);
+    return damageResultsWidget(this, context);
+  }
+
+  Widget resultText(BuildContext context) {
+    return damageText(this, context);
   }
 }
 
@@ -35,6 +39,10 @@ class AttributeRollResult {
 
   Widget widget(BuildContext context) {
     return attributeRollResult(this, context);
+  }
+
+  Widget resultText(BuildContext context) {
+    return attributeResultText(this, context);
   }
 
   List<Dice> get dice {
@@ -82,7 +90,7 @@ class SkillRollResult {
     }
   }
 
-  RichText resultText(BuildContext context) {
+  Widget resultText(BuildContext context) {
     return skillRollResultText(this, context);
   }
 
@@ -104,7 +112,7 @@ class SkillRollResult {
   }
 
   Widget widget(BuildContext context) {
-    return skillRollResultWidget(rolls, resultText(context), context);
+    return skillRollResultWidget(rolls, context);
   }
 }
 

@@ -323,7 +323,8 @@ Text colouredValue(ExplainedValue v) {
 
 void showDetailDialog(
   String title,
-  Widget body,
+  Widget dice,
+  Widget resultText,
   String detail,
   BuildContext context,
 ) {
@@ -338,9 +339,10 @@ void showDetailDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              dice,
               Row(
                 children: [
-                  Expanded(child: body),
+                  Expanded(child: resultText),
                   IconButton(
                     icon: Icon(
                       expanded ? Icons.expand_less : Icons.expand_more,
@@ -371,12 +373,20 @@ void showDetailDialog(
   );
 }
 
-void showSimpleDialog(String title, Widget body, BuildContext context) {
+void showSimpleDialog(
+  String title,
+  Widget dice,
+  Widget resultText,
+  BuildContext context,
+) {
   showDialog(
     context: context,
     builder: (_) => AlertDialog(
       title: Text(title, style: Theme.of(context).textTheme.titleLarge),
-      content: body,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [dice, resultText],
+      ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
       ],
