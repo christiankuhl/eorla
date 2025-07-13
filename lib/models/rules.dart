@@ -28,8 +28,8 @@ class GenerericRollResult {
     if (dice.isEmpty) {
       return Text("No dice rolled.");
     }
-    // If any of the dice result is still the default of -999999 return error Text
-    if (dice.any((d) => d.result == -999999)) {
+    // If any of the dice have not been rolled yet, return error Text
+    if (dice.any((d) => !d.hasBeenRolled())) {
       return Text("Error: Some dice have not been rolled.");
     }
     return resultsWidget(context);

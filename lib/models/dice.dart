@@ -3,14 +3,20 @@ import 'package:eorla/models/rules.dart' show DisplayMode;
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+const int _diceSentinelValue = -999999;
+
 class Dice {
   final int sides;
-  int result = -999999; // Default nonsensical, non-null value
+  int result = _diceSentinelValue;
   Color? fancyFill;
   Color? fancyBorder;
   final Color fallbackFancyFill = const Color.fromARGB(255, 29, 27, 32);
   final Color fallbackFancyBorder = const Color.fromARGB(255, 126, 118, 139);
   final double size;
+
+  bool hasBeenRolled() {
+    return result == _diceSentinelValue;
+  }
 
   factory Dice.create(
     int sides, {
@@ -54,7 +60,7 @@ class Dice {
   }
 
   Widget textDisplay(BuildContext context) {
-    if (result == -999999) {
+    if (!hasBeenRolled()) {
       return Text("[X]");
     } else {
       return Text("[$result]");
@@ -136,7 +142,7 @@ class D20Dice extends Dice {
             ),
             child: Center(
               child: Text(
-                result == -999999 ? "?" : "$result",
+                !hasBeenRolled() ? "?" : "$result",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -243,7 +249,7 @@ class D6Dice extends Dice {
             ),
             child: Center(
               child: Text(
-                result == -999999 ? "?" : "$result",
+                !hasBeenRolled() ? "?" : "$result",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -298,7 +304,7 @@ class D3Dice extends Dice {
             ),
             child: Center(
               child: Text(
-                result == -999999 ? "?" : "$result",
+                !hasBeenRolled() ? "?" : "$result",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
