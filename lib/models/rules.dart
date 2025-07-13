@@ -10,108 +10,51 @@ import 'dice.dart';
 import 'audit.dart';
 import '../widgets/dice.dart';
 
-class GenerericRollResult {
-  final List<Dice> dice;
-  final String combinedResult;
-  final String title;
+class DamageRollResult {
+  List<Dice> dice;
+  int combinedResult;
+  DamageRollResult(this.dice, this.combinedResult);
 
-  GenerericRollResult(this.dice, this.combinedResult, this.title);
-
-  Widget titleAsWidget(BuildContext context) {
-    return Text(title);
-  }
-
-  // All RollResults should have a function displaying its output
-  // Subclasses may override this to return any Flutter Widget for display, if they also handle the dice List being empty.
-  Widget contentAsWidget(BuildContext context) {
-    if (dice.isEmpty) {
-      return Text("No dice rolled.");
-    }
-    // If any of the dice have not been rolled yet, return error Text
-    if (dice.any((d) => !d.hasBeenRolled())) {
-      return Text("Error: Some dice have not been rolled.");
-    }
-    return resultsWidget(context);
-  }
-
-  // Subclasses may override this to return any Flutter Widget for display.
-  Widget resultsWidget(BuildContext context) {
-    final rolls = dice.map((d) => d.result).join(", ");
-    return Text("Rolls: [$rolls], Combined Result: $combinedResult");
-  }
-}
-
-class DamageRollResult extends GenerericRollResult {
-  DamageRollResult(List<Dice> dice, int combinedResult)
-    : super(dice, "$combinedResult", "Schaden");
-
-  @override
-  Widget resultsWidget(BuildContext context) {
+  Widget widget(BuildContext context) {
     return diceResultsWidget(this, context);
   }
 }
 
-class AttributeRollResult extends GenerericRollResult {
+class AttributeRollResult {
   final DiceValue? roll;
   final RollEvent event;
   final ExplainedValue targetValue;
   String? resultContext;
-  final Dice? checkDice;
 
-  // Override the dice and combinedResult for the superclass
-  // ignore: prefer_initializing_formals
   AttributeRollResult(
     this.roll,
     this.event,
-    this.targetValue,
-    Dice die, {
+    this.targetValue, {
     this.resultContext,
-    this.checkDice,
-  }) : super(
-         checkDice != null ? [die, checkDice] : [die],
-         (() {
-           // Use the text() method for combinedResult
-           switch (event) {
-             case RollEvent.success:
-               return "Erfolg!";
-             case RollEvent.failure:
-               return "Fehlschlag!";
-             case RollEvent.critical:
-               return "Kritischer Erfolg!";
-             case RollEvent.botch:
-               return "Kritischer Fehlschlag!";
-           }
-         })(),
-         "I AM ERROR",
-       );
+  });
 
-  @override
-  Widget resultsWidget(BuildContext context) {
+  Widget widget(BuildContext context) {
     return attributeRollResult(this, context);
+  }
+
+  List<Dice> get dice {
+    return [
+      Dice.create(20, event: event, value: roll),
+      if (roll?.confirmationThrow != null)
+        Dice.create(
+          20,
+          event: event,
+          value: DiceValue(roll!.confirmationThrow!),
+        ),
+    ];
   }
 }
 
-class SkillRollResult extends GenerericRollResult {
+class SkillRollResult {
   final List<AttributeRollResult> rolls;
   final Quality quality;
 
-  SkillRollResult(this.rolls, this.quality)
-    : super(
-        [rolls[0].dice[0], rolls[1].dice[0], rolls[2].dice[0]],
-        (() {
-          switch (quality.type) {
-            case RollEvent.success:
-              return "Erfolg! (QS: ${quality.qs})";
-            case RollEvent.failure:
-              return "Fehlschlag!";
-            case RollEvent.critical:
-              return "Kritischer Erfolg!";
-            case RollEvent.botch:
-              return "Kritischer Fehlschlag!";
-          }
-        })(),
-        "I AM ERROR",
-      );
+  SkillRollResult(this.rolls, this.quality);
 
   String text() {
     switch (quality.type) {
@@ -147,22 +90,8 @@ class SkillRollResult extends GenerericRollResult {
     }
   }
 
-  @override
-  Widget resultsWidget(BuildContext context) {
-    for (AttributeRollResult roll in rolls) {
-      if (roll.dice[0] is D20Dice) {
-        switch (roll.dice[0].result) {
-          case 1:
-            roll.dice[0] = D20DiceCritical.fromD20(roll.dice[0] as D20Dice);
-            break;
-          case 20:
-            roll.dice[0] = D20DiceBotch.fromD20(roll.dice[0] as D20Dice);
-            break;
-        }
-      }
-    }
-
-    return skillRollResultWidget(this, context);
+  Widget widget(BuildContext context) {
+    return skillRollResultWidget(rolls, resultText(context), context);
   }
 }
 
@@ -182,9 +111,6 @@ class SkillRoll<T extends Trial> {
   final int attrValue3;
   final int talentValue;
   final CharacterState characterState;
-  final Dice dice1;
-  final Dice dice2;
-  final Dice dice3;
 
   ExplainedValue get tgtValue1 {
     return ExplainedValue.base(
@@ -219,9 +145,6 @@ class SkillRoll<T extends Trial> {
     this.talentValue,
     this.characterState,
     this.modifier,
-    this.dice1,
-    this.dice2,
-    this.dice3,
   );
 
   factory SkillRoll.from(Character character, T skillOrSpell, int modifier) {
@@ -233,10 +156,6 @@ class SkillRoll<T extends Trial> {
     int attrValue3 = character.getAttribute(attr3);
     int talentValue = character.getTalentOrSpell(skillOrSpell);
 
-    Dice dice1 = Dice.create(20);
-    Dice dice2 = Dice.create(20);
-    Dice dice3 = Dice.create(20);
-
     return SkillRoll(
       attr1,
       attr2,
@@ -247,9 +166,6 @@ class SkillRoll<T extends Trial> {
       talentValue,
       character.state,
       modifier,
-      dice1,
-      dice2,
-      dice3,
     );
   }
 
@@ -276,29 +192,26 @@ class SkillRoll<T extends Trial> {
           null,
           RollEvent.failure,
           explainations[0],
-          dice1,
           resultContext: attr1.name,
         ),
         AttributeRollResult(
           null,
           RollEvent.failure,
           explainations[1],
-          dice2,
           resultContext: attr2.name,
         ),
         AttributeRollResult(
           null,
           RollEvent.failure,
           explainations[2],
-          dice3,
           resultContext: attr3.name,
         ),
       ], Quality(RollEvent.failure, 0));
     }
     random ??= Random();
-    int roll1 = dice1.roll(random);
-    int roll2 = dice2.roll(random);
-    int roll3 = dice3.roll(random);
+    int roll1 = random.nextInt(20) + 1;
+    int roll2 = random.nextInt(20) + 1;
+    int roll3 = random.nextInt(20) + 1;
     int fw =
         talentValue +
         min(tgtValue1.value - roll1, 0).toInt() +
@@ -326,21 +239,18 @@ class SkillRoll<T extends Trial> {
         DiceValue(roll1),
         event,
         tgtValue1,
-        dice1,
         resultContext: attr1.name,
       ),
       AttributeRollResult(
         DiceValue(roll2),
         event,
         tgtValue2,
-        dice2,
         resultContext: attr2.name,
       ),
       AttributeRollResult(
         DiceValue(roll3),
         event,
         tgtValue3,
-        dice3,
         resultContext: attr3.name,
       ),
     ], Quality(event, qs));
@@ -532,67 +442,46 @@ AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
         "Ein Wurf mit einem effektiven FW < 1 darf nicht versucht werden",
         true,
       ),
-      dice,
     );
   }
   int fw = target.value - roll;
   if (roll == 1) {
-    Dice checkDice = D20DiceCritical();
-    int roll2 = checkDice.roll(random);
+    int roll2 = Dice.create(20).roll(random);
     int fw2 = target.value - roll2;
     if (fw2 >= 0) {
       return AttributeRollResult(
         DiceValue(roll, confirmationThrow: roll2),
         RollEvent.critical,
         target,
-        dice,
-        checkDice: checkDice,
       );
     } else {
       return AttributeRollResult(
         DiceValue(roll, confirmationThrow: roll2),
         RollEvent.success,
         target,
-        dice,
-        checkDice: checkDice,
       );
     }
   } else if (roll == 20) {
-    Dice checkDice = D20DiceBotch();
-    int roll2 = checkDice.roll(random);
+    int roll2 = Dice.create(20).roll(random);
     int fw2 = target.value - roll2;
     if (fw2 >= 0 && roll2 != 20) {
       return AttributeRollResult(
         DiceValue(roll, confirmationThrow: roll2),
         RollEvent.failure,
         target,
-        dice,
-        checkDice: checkDice,
       );
     } else {
       return AttributeRollResult(
         DiceValue(roll, confirmationThrow: roll2),
         RollEvent.botch,
         target,
-        dice,
-        checkDice: checkDice,
       );
     }
   } else {
     if (fw >= 0) {
-      return AttributeRollResult(
-        DiceValue(roll),
-        RollEvent.success,
-        target,
-        dice,
-      );
+      return AttributeRollResult(DiceValue(roll), RollEvent.success, target);
     } else {
-      return AttributeRollResult(
-        DiceValue(roll),
-        RollEvent.failure,
-        target,
-        dice,
-      );
+      return AttributeRollResult(DiceValue(roll), RollEvent.failure, target);
     }
   }
 }

@@ -7,6 +7,7 @@ import '../models/audit.dart';
 import '../widgets/character_card.dart';
 import '../widgets/widget_helpers.dart';
 import '../widgets/weapon_card.dart';
+import '../widgets/dice.dart';
 import 'combat_technique_selection.dart';
 import 'dice_rolls.dart';
 
@@ -49,20 +50,12 @@ class _CombatScreenState extends State<CombatScreen> {
       case CombatActionType.dodge:
         title = "Ausweichen";
     }
-    String txt, detail;
+    String detail;
     if (result.length == 1) {
-      txt =
-          "${result[0].text()} (${result[0].targetValue.value} → 🎲 ${result[0].roll})";
       detail = result[0].targetValue.explanation
           .map((c) => "${c.value}\t\t${c.explanation}")
           .join("\n");
     } else {
-      txt = result
-          .map(
-            (r) =>
-                "${r.resultContext}: ${r.text()} (${r.targetValue.value} → 🎲 ${r.roll})",
-          )
-          .join("\n");
       detail = result
           .map((r) {
             String expl = r.targetValue.explanation
@@ -81,17 +74,24 @@ class _CombatScreenState extends State<CombatScreen> {
 
     if (result[0].targetValue.explanation.length > 1) {
       if (result.length == 1) {
-        showDetailDialog(title, result[0].contentAsWidget(context), detail, context);
+        showDetailDialog(title, result[0].widget(context), detail, context);
       } else {
-        // TODO: Implement me! (Might be simillar to SkillRollResult)
-        showDetailDialog(title, Text(txt), detail, context);
+        showDetailDialog(
+          title,
+          skillRollResultWidget(result, null, context),
+          detail,
+          context,
+        );
       }
     } else {
       if (result.length == 1) {
-        showSimpleDialog(title, result[0].contentAsWidget(context), context);
+        showSimpleDialog(title, result[0].widget(context), context);
       } else {
-        // TODO: Implement me! (Might be simillar to SkillRollResult)
-        showSimpleDialog(title, Text(txt), context);
+        showSimpleDialog(
+          title,
+          skillRollResultWidget(result, null, context),
+          context,
+        );
       }
     }
   }
@@ -117,8 +117,8 @@ class _CombatScreenState extends State<CombatScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: damage.titleAsWidget(context),
-        content: damage.contentAsWidget(context),
+        title: Text("${weapon.name} - Schaden"),
+        content: damage.widget(context),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

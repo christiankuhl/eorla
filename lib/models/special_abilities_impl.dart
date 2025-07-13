@@ -141,7 +141,7 @@ class SpecialAbilityImpact {
       case SpecialAbilityBase.hammerschlag:
       case SpecialAbilityBase.todesstoss:
         atMod = -2;
-        additionalDice = [D6Dice()];
+        additionalDice = [Dice.create(6)];
         break;
       case SpecialAbilityBase.lanzenangriff:
         // TODO: Probe auf Reiten -> Angriff Kriegslanze ->  TP um 2 + GS/2 des Reittiers
@@ -173,7 +173,7 @@ class SpecialAbilityImpact {
         break;
       case SpecialAbilityBase.zuFallBringen:
         atMod = -4;
-        additionalDice = [D3Dice()];
+        additionalDice = [Dice.create(3)];
         additionalDiceReplaceOriginal = true;
         break;
       case SpecialAbilityBase.ballistischerSchuss:
@@ -184,7 +184,7 @@ class SpecialAbilityImpact {
         break;
       case SpecialAbilityBase.betaeubungsschlag:
         atMod = -2;
-        additionalDice = [D3Dice()];
+        additionalDice = [Dice.create(3)];
         additionalDiceReplaceOriginal = true;
         break;
       case SpecialAbilityBase.festnageln:
