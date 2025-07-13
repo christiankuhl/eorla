@@ -21,6 +21,7 @@ class Character {
   int ge;
   int ko;
   int kk;
+  int lp;
   Race race;
   CharacterState state;
   Map<Skill, int>? talents;
@@ -43,6 +44,7 @@ class Character {
     this.ge = 8,
     this.ko = 8,
     this.kk = 8,
+    this.lp = 0,
     this.race = Race.menschen,
     required this.state,
     this.talents,
@@ -119,6 +121,7 @@ class Character {
           spellsById[e.key]!: e.value.toInt(),
       };
     }
+    character.lp = character.getHealthMax();
     return character;
   }
 
@@ -215,6 +218,20 @@ class Character {
     if (nimble) base += 1;
     if (lightfooted) base += 1;
     if (slow) base -= 1;
+    return base;
+  }
+
+  int getHealthMax() {
+    int base = race.lp + 2 * ko;
+    Map<String, dynamic> activatables = optolith.data["activatable"];
+    final incLP = activatables["ADV_25"] ?? [];
+    final decLP = activatables["DISADV_28"] ?? [];
+    final int lostLP = (optolith.data["attr"]["permanentLP"] ?? {"lost": 0})["lost"];
+    base -= lostLP;
+    if (incLP.length == 1) base += (activatables["ADV_25"][0]["tier"] ?? 0) as int;
+    if (decLP.length == 1) base -= (activatables["DISADV_28"][0]["tier"] ?? 0) as int;
+    final int addedLP = optolith.data["attr"]["lp"];
+    base += addedLP;
     return base;
   }
 }
@@ -338,4 +355,11 @@ class CharacterState {
     }
     return states;
   }
+}
+
+int painLevel(Character c) {
+  final m = c.getHealthMax();
+  final lvls = [(0.75*m).round(), (0.5*m).round(), (0.25*m).round(), 5, -1];
+  final lvl = lvls.indexWhere((l) => l < c.lp);
+  return lvl;
 }
