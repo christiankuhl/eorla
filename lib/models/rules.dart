@@ -195,7 +195,7 @@ class SkillRoll<T extends Trial> {
   }
 
   SkillRollResult roll({Random? random, bool ignoreBotch = false}) {
-    List<ExplainedValue> explainations = [];
+    List<ExplainedValue> explanations = [];
     bool illegal = false;
     for (var effFW in [tgtValue1, tgtValue2, tgtValue3]) {
       ExplainedValue? expl;
@@ -209,26 +209,26 @@ class SkillRoll<T extends Trial> {
       } else {
         expl = effFW;
       }
-      explainations.add(expl);
+      explanations.add(expl);
     }
     if (illegal) {
       return SkillRollResult([
         AttributeRollResult(
           null,
           RollEvent.failure,
-          explainations[0],
+          explanations[0],
           resultContext: attr1.name,
         ),
         AttributeRollResult(
           null,
           RollEvent.failure,
-          explainations[1],
+          explanations[1],
           resultContext: attr2.name,
         ),
         AttributeRollResult(
           null,
           RollEvent.failure,
-          explainations[2],
+          explanations[2],
           resultContext: attr3.name,
         ),
       ], Quality(RollEvent.failure, 0));
