@@ -55,7 +55,7 @@ class SpecialAbilityImpact {
   final int paMod;
   final int awMod;
   final int tpMod; // flat tp modifier, applied before multiplier
-  final double tpMult; // tp multiplyer
+  final double tpMult; // tp multiplier
   final int tpModAfterMultiplier; // flat tp modifier, applied after multiplier
   final List<Dice> additionalDice;
   final bool additionalDiceReplaceOriginal;
@@ -141,7 +141,7 @@ class SpecialAbilityImpact {
       case SpecialAbilityBase.hammerschlag:
       case SpecialAbilityBase.todesstoss:
         atMod = -2;
-        additionalDice = [D6Dice()];
+        additionalDice = [Dice.create(6)];
         break;
       case SpecialAbilityBase.lanzenangriff:
         // TODO: Probe auf Reiten -> Angriff Kriegslanze ->  TP um 2 + GS/2 des Reittiers
@@ -173,7 +173,7 @@ class SpecialAbilityImpact {
         break;
       case SpecialAbilityBase.zuFallBringen:
         atMod = -4;
-        additionalDice = [D3Dice()];
+        additionalDice = [Dice.create(3)];
         additionalDiceReplaceOriginal = true;
         break;
       case SpecialAbilityBase.ballistischerSchuss:
@@ -184,7 +184,7 @@ class SpecialAbilityImpact {
         break;
       case SpecialAbilityBase.betaeubungsschlag:
         atMod = -2;
-        additionalDice = [D3Dice()];
+        additionalDice = [Dice.create(3)];
         additionalDiceReplaceOriginal = true;
         break;
       case SpecialAbilityBase.festnageln:
@@ -208,11 +208,8 @@ class SpecialAbilityImpact {
         ];
         callback = multiAttack(attacks, modifier, paMod: -20, awMod: -20);
         break;
-      case SpecialAbilityBase.blutgraetsche: //FIXME: Probe is already raufen
-        callback = alternateCombatTechnique(
-          CombatTechnique.raufen,
-          modifier - 2,
-        );
+      case SpecialAbilityBase.blutgraetsche:
+        atMod = -2;
         tpMod = 1;
         break;
       case SpecialAbilityBase.doppelangriff:
@@ -315,7 +312,7 @@ bool abilityImpactsTechnique(
     case _Melee():
       return ct.group == CombatType.melee;
     case _MeleeOneHanded():
-      return ct.group == CombatType.melee; // TODO: one handed weapons only
+      return oneHandedCTs.contains(ct.id);
     case _MeleeWithParry():
       return ct.group == CombatType.melee && !ct.hasNoParry;
     case _Ranged():

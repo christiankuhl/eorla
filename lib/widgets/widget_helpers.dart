@@ -303,7 +303,7 @@ TextStyle? tgtValueColour(ExplainedValue value) {
   int totalMod = value.explanation
       .where((comp) => comp.isMod)
       .map((comp) => comp.value)
-      .fold(0, (x, y) => x + y);
+      .fold(0, (x, y) => x + y.round());
 
   TextStyle? style;
   if (totalMod > 0) {
@@ -323,46 +323,104 @@ Text colouredValue(ExplainedValue v) {
 
 void showDetailDialog(
   String title,
-  Widget body,
-  String detail,
-  BuildContext context,
-) {
+  Widget dice,
+  Widget resultText,
+  String auditTrailText,
+  String? rulebookText,
+  BuildContext context, {
+  bool startExpanded = false,
+  int initialTabIndex = 0,
+}) {
   showDialog(
     context: context,
     builder: (_) {
-      bool expanded = false;
+      bool expanded = startExpanded;
+      int selectedTab = initialTabIndex;
 
       return StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: Text(title),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Expanded(child: body),
-                  IconButton(
-                    icon: Icon(
-                      expanded ? Icons.expand_less : Icons.expand_more,
+          title: Text(title, style: Theme.of(context).textTheme.titleLarge),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 240, maxHeight: 600),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                dice,
+                Row(
+                  children: [
+                    Expanded(child: resultText),
+                    IconButton(
+                      icon: Icon(
+                        expanded ? Icons.expand_less : Icons.expand_more,
+                      ),
+                      onPressed: () => setState(() => expanded = !expanded),
                     ),
-                    onPressed: () => setState(() => expanded = !expanded),
-                  ),
-                ],
-              ),
-              if (expanded)
-                Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: Text(
-                    detail,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  ],
                 ),
-            ],
+                if (expanded)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            if (rulebookText != null)
+                              _TabButton(
+                                label: 'Regeln',
+                                selected: selectedTab == 0,
+                                onTap: () => setState(() => selectedTab = 0),
+                              ),
+                            _TabButton(
+                              label: 'Zielwerte',
+                              selected: selectedTab == 1,
+                              onTap: () => setState(
+                                () =>
+                                    selectedTab = rulebookText != null ? 1 : 0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        height: 240,
+                        child: IndexedStack(
+                          index: selectedTab,
+                          children: [
+                            if (rulebookText != null)
+                              SingleChildScrollView(
+                                child: Text(
+                                  rulebookText,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  softWrap: true,
+                                ),
+                              ),
+                            SingleChildScrollView(
+                              child: Text(
+                                auditTrailText,
+                                style: Theme.of(context).textTheme.bodySmall,
+                                softWrap: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -371,12 +429,67 @@ void showDetailDialog(
   );
 }
 
-void showSimpleDialog(String title, Widget body, BuildContext context) {
+class _TabButton extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _TabButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: selected
+                    ? theme.colorScheme.primary
+                    : Colors.transparent,
+                width: 2,
+              ),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                color: selected
+                    ? theme.colorScheme.primary
+                    : theme.textTheme.bodyMedium?.color,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+void showSimpleDialog(
+  String title,
+  Widget dice,
+  Widget resultText,
+  BuildContext context,
+) {
   showDialog(
     context: context,
     builder: (_) => AlertDialog(
-      title: Text(title),
-      content: body,
+      title: Text(title, style: Theme.of(context).textTheme.titleLarge),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [dice, resultText],
+      ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
       ],

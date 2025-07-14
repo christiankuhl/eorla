@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../widgets/character_card.dart';
-import '../widgets/widget_helpers.dart';
+import '../managers/character_manager.dart';
 import '../managers/settings.dart';
 import '../models/attributes.dart';
-import '../models/character.dart';
 import '../models/rules.dart';
 import '../models/audit.dart';
+import '../models/character.dart';
+import '../widgets/character_card.dart';
+import '../widgets/widget_helpers.dart';
 import 'dice_rolls.dart';
 
 class AttributeRollScreen extends StatefulWidget {
   final Attribute attribute;
-  final Character character;
 
   const AttributeRollScreen({
     required this.attribute,
-    required this.character,
     super.key,
   });
 
@@ -26,15 +25,13 @@ class AttributeRollScreen extends StatefulWidget {
 class AttributeRollScreenState extends State<AttributeRollScreen> {
   int modifier = 0;
 
-  Future<void> performRoll(int modifier) async {
+  Future<void> performRoll(Character character, int modifier) async {
     ExplainedValue attrValue = attributeTargetValue(
-      widget.character,
+      character,
       widget.attribute,
       modifier,
     );
     AttributeRollResult result = attributeRoll(attrValue);
-    String txt =
-        "${result.text()} (${attrValue.value} → 🎲 ${result.roll ?? '-/-'})";
 
     String detail = attrValue.explanation
         .map((c) => "${c.value}\t\t${c.explanation}")
@@ -46,15 +43,19 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
       return;
     }
 
-    if (attrValue.explanation.length > 1) {
-      showDetailDialog(widget.attribute.name, result.contentAsWidget(context), detail, context);
-    } else {
-      showSimpleDialog(widget.attribute.name, result.contentAsWidget(context), context);
-    }
+    showDetailDialog(
+      widget.attribute.name,
+      result.widget(context),
+      result.resultText(context),
+      detail,
+      null,
+      context,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final character = Provider.of<CharacterManager>(context).activeCharacter!;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -78,15 +79,15 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
               attributeInfoCard(
                 widget.attribute,
                 ExplainedValue.base(
-                      widget.character.getAttribute(widget.attribute),
+                      character.getAttribute(widget.attribute),
                       "${widget.attribute.short} Basis",
                     )
                     .add(modifier, "Modifikator", true)
-                    .andThen(widget.character.state.explain()),
+                    .andThen(character.state.explain()),
                 Provider.of<AppSettings>(context).nerdMode,
               ),
-              if (widget.character.state.value() > 0)
-                statesCard(widget.character.state),
+              if (character.state.value() > 0)
+                statesCard(character.state),
 
               Card(
                 margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -112,7 +113,8 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
 
               SizedBox(height: 24),
               ElevatedButton(
-                onPressed: () => performRoll(modifier),
+                key: const Key("attribute_roll_button"),
+                onPressed: () => performRoll(character, modifier),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                 ),

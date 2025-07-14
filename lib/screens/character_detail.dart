@@ -71,6 +71,19 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
             statRow('Konstitution (KO)', c.ko),
             statRow('Körperkraft (KK)', c.kk),
             SizedBox(height: 16),
+            modifierRow(
+              'Lebensenergie (LE)',
+              c.lp,
+              () => setState(() {
+                if (c.lp < c.getHealthMax()) c.lp++;
+                if (c.state.schmerz == painLevel(c) + 1) c.state.schmerz = painLevel(c);
+              }),
+              () => setState(() {
+                if (c.lp > 0) c.lp--;
+                if (c.state.schmerz < painLevel(c)) c.state.schmerz = painLevel(c);
+              }),
+            ),
+            SizedBox(height: 16),
             Text(
               'Zustände',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -133,7 +146,7 @@ class CharacterDetailScreenState extends State<CharacterDetailScreen> {
                 if (c.state.schmerz < 4) c.state.schmerz++;
               }),
               () => setState(() {
-                if (c.state.schmerz > 0) c.state.schmerz--;
+                if (c.state.schmerz > painLevel(c)) c.state.schmerz--;
               }),
             ),
             modifierRow(

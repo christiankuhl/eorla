@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/character_card.dart';
-import '../models/character.dart';
-import '../models/rules.dart';
 import '../widgets/widget_helpers.dart';
 import '../managers/settings.dart';
+import '../managers/character_manager.dart';
+import '../models/rules.dart';
+import '../models/character.dart';
 import 'dice_rolls.dart';
 
 class RollScreen<T extends Trial> extends StatefulWidget {
   final T skillOrSpell;
-  final Character character;
 
   const RollScreen({
     required this.skillOrSpell,
-    required this.character,
     super.key,
   });
 
@@ -24,18 +23,15 @@ class RollScreen<T extends Trial> extends StatefulWidget {
 class RollScreenState extends State<RollScreen> {
   int modifier = 0;
 
-  void performRoll(int modifier) async {
+  void performRoll(Character character, int modifier) async {
     SkillRoll engine = SkillRoll.from(
-      widget.character,
+      character,
       widget.skillOrSpell,
       modifier,
     );
     SkillRollResult rollResults = engine.roll();
 
     List<AttributeRollResult> results = rollResults.rolls;
-    String txt = results
-        .map((r) => "${r.resultContext}: ${r.targetValue.value} → 🎲 ${r.roll}")
-        .join("\n");
     String detail = results
         .map((r) {
           String expl = r.targetValue.explanation
@@ -44,9 +40,6 @@ class RollScreenState extends State<RollScreen> {
           return "${r.resultContext}:\n$expl";
         })
         .join("\n\n");
-    if (rollResults.addText(widget.skillOrSpell).isNotEmpty) {
-      txt += "\n\n${rollResults.addText(widget.skillOrSpell)}";
-    }
 
     await fadeDice(context, DiceAnimation.d20);
 
@@ -54,20 +47,21 @@ class RollScreenState extends State<RollScreen> {
       return;
     }
 
-    if (results.any((r) => r.targetValue.explanation.length > 1)) {
-      showDetailDialog("${widget.skillOrSpell.name} (FW ${engine.talentValue})", rollResults.contentAsWidget(context), detail, context);
-      //showDetailDialog(rollResults.text(), Text(txt), detail, context);
-    } else {
-      showSimpleDialog("${widget.skillOrSpell.name} (FW ${engine.talentValue})", rollResults.contentAsWidget(context), context);
-      //showSimpleDialog(rollResults.text(), Text(txt), context);
-    }
-
+    showDetailDialog(
+      "${widget.skillOrSpell.name} (FW ${engine.talentValue})",
+      rollResults.widget(context),
+      rollResults.resultText(context),
+      detail,
+      rollResults.addText(widget.skillOrSpell),
+      context,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final character = Provider.of<CharacterManager>(context).activeCharacter!;
     SkillRoll stats = SkillRoll.from(
-      widget.character,
+      character,
       widget.skillOrSpell,
       modifier,
     );
@@ -122,7 +116,8 @@ class RollScreenState extends State<RollScreen> {
 
               SizedBox(height: 24),
               ElevatedButton(
-                onPressed: () => performRoll(modifier),
+                key: const Key("skill_roll_button"),
+                onPressed: () => performRoll(character, modifier),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                 ),

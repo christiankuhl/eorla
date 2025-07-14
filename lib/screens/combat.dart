@@ -1,19 +1,20 @@
 import 'package:eorla/models/rules.dart';
 import 'package:flutter/material.dart';
-import '../models/character.dart';
+import 'package:provider/provider.dart';
+import '../managers/character_manager.dart';
 import '../models/weapons.dart';
 import '../models/special_abilities.dart';
 import '../models/audit.dart';
+import '../models/character.dart';
 import '../widgets/character_card.dart';
 import '../widgets/widget_helpers.dart';
 import '../widgets/weapon_card.dart';
+import '../widgets/dice.dart';
 import 'combat_technique_selection.dart';
 import 'dice_rolls.dart';
 
 class CombatScreen extends StatefulWidget {
-  final Character character;
-
-  const CombatScreen({required this.character, super.key});
+  const CombatScreen({super.key});
 
   @override
   State<CombatScreen> createState() => _CombatScreenState();
@@ -25,15 +26,15 @@ class _CombatScreenState extends State<CombatScreen> {
   SpecialAbility? selectedSpecialSpecialManeuvre;
   Widget? genericAttack;
 
-  // TODO: Prettify this!
   Future<void> rollCombat(
+    Character character,
     CombatActionType action,
     Weapon weapon,
     SpecialAbility? specialAbilityBaseManeuvre,
     SpecialAbility? specialAbilitySpecialManeuvre,
   ) async {
     final engine = CombatRoll.fromWeapon(
-      widget.character,
+      character,
       weapon,
       specialAbilityBaseManeuvre,
       specialAbilitySpecialManeuvre,
@@ -49,24 +50,16 @@ class _CombatScreenState extends State<CombatScreen> {
       case CombatActionType.dodge:
         title = "Ausweichen";
     }
-    String txt, detail;
+    String detail;
     if (result.length == 1) {
-      txt =
-          "${result[0].text()} (${result[0].targetValue.value} → 🎲 ${result[0].roll})";
       detail = result[0].targetValue.explanation
-          .map((c) => "${c.value}\t\t${c.explanation}")
+          .map((c) => c.toString())
           .join("\n");
     } else {
-      txt = result
-          .map(
-            (r) =>
-                "${r.resultContext}: ${r.text()} (${r.targetValue.value} → 🎲 ${r.roll})",
-          )
-          .join("\n");
       detail = result
           .map((r) {
             String expl = r.targetValue.explanation
-                .map((c) => "${c.value}\t\t${c.explanation}")
+                .map((c) => c.toString())
                 .join("\n");
             return "${r.resultContext}:\n$expl";
           })
@@ -79,64 +72,71 @@ class _CombatScreenState extends State<CombatScreen> {
       return;
     }
 
-    if (result[0].targetValue.explanation.length > 1) {
-      if (result.length == 1) {
-        showDetailDialog(title, result[0].contentAsWidget(context), detail, context);
-      } else {
-        // TODO: Implement me! (Might be simillar to SkillRollResult)
-        showDetailDialog(title, Text(txt), detail, context);
-      }
+    if (result.length == 1) {
+      showDetailDialog(
+        title,
+        result[0].widget(context),
+        result[0].resultText(context),
+        detail,
+        null,
+        context,
+      );
     } else {
-      if (result.length == 1) {
-        showSimpleDialog(title, result[0].contentAsWidget(context), context);
-      } else {
-        // TODO: Implement me! (Might be simillar to SkillRollResult)
-        showSimpleDialog(title, Text(txt), context);
-      }
+      showDetailDialog(
+        title,
+        skillRollResultWidget(result, context),
+        result[0].resultText(
+          context,
+        ), // FIXME: this is not technically correct, since for multiple attacks, individual attack rolls may fail
+        detail,
+        null,
+        context,
+      );
     }
   }
 
   Future<void> rollDamage(
+    Character character,
     Weapon weapon,
     SpecialAbility? selectedSpecialBaseManeuvre,
     SpecialAbility? selectedSpecialSpecialManeuvre,
   ) async {
     final damage = damageRoll(
       weapon,
-      widget.character,
+      character,
       selectedSpecialBaseManeuvre,
       selectedSpecialSpecialManeuvre,
     );
 
-    await fadeDice(context, DiceAnimation.d6);
+    // await fadeDice(context, DiceAnimation.d6);
 
     if (!mounted) {
       return;
     }
 
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: damage.titleAsWidget(context),
-        content: damage.contentAsWidget(context),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('OK'),
-          ),
-        ],
-      ),
+    String detail = damage.combinedResult.explanation
+          .map((c) => c.toString())
+          .join("\n");
+
+    showDetailDialog(
+      "${weapon.name} - Schaden",
+      damage.widget(context),
+      damage.resultText(context),
+      detail,
+      null,
+      context,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final character = Provider.of<CharacterManager>(context).activeCharacter!;
     final List<SpecialAbility> specialOptionsBaseManeuvre =
-        (widget.character.abilities ?? [])
+        (character.abilities ?? [])
             .where((a) => a.value.type == SpecialAbilityType.baseManeuvre)
             .toList();
     final List<SpecialAbility> specialOptionsSpecialManeuvre =
-        (widget.character.abilities ?? [])
+        (character.abilities ?? [])
             .where((a) => a.value.type == SpecialAbilityType.specialManeuvre)
             .toList();
 
@@ -156,7 +156,7 @@ class _CombatScreenState extends State<CombatScreen> {
     );
 
     ExplainedValue aw = CombatRoll.fromTechnique(
-      widget.character,
+      character,
       CombatTechnique.raufen,
       selectedSpecialBaseManeuvre,
       selectedSpecialSpecialManeuvre,
@@ -172,6 +172,7 @@ class _CombatScreenState extends State<CombatScreen> {
             aw,
             // Note: The default weapon does not actually matter here.
             () => rollCombat(
+              character,
               CombatActionType.dodge,
               genericWeapons[CombatTechnique.raufen]!,
               selectedSpecialBaseManeuvre,
@@ -181,28 +182,31 @@ class _CombatScreenState extends State<CombatScreen> {
         ),
       ),
     ];
-    for (Weapon weapon in widget.character.weapons ?? []) {
+    for (Weapon weapon in character.weapons ?? []) {
       tlChildren.add(
         weaponInfoCard(
           context,
           weapon,
-          widget.character,
+          character,
           selectedSpecialBaseManeuvre,
           selectedSpecialSpecialManeuvre,
           modifier,
           onAttack: () => rollCombat(
+            character,
             CombatActionType.attack,
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
           ),
           onParry: () => rollCombat(
+            character,
             CombatActionType.parry,
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
           ),
           onDamage: () => rollDamage(
+            character,
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
@@ -229,23 +233,26 @@ class _CombatScreenState extends State<CombatScreen> {
                   genericAttack = weaponInfoCard(
                     context,
                     weapon,
-                    widget.character,
+                    character,
                     selectedSpecialBaseManeuvre,
                     selectedSpecialSpecialManeuvre,
                     modifier,
                     onAttack: () => rollCombat(
+                      character,
                       CombatActionType.attack,
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,
                     ),
                     onParry: () => rollCombat(
+                      character,
                       CombatActionType.parry,
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,
                     ),
                     onDamage: () => rollDamage(
+                      character,
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,

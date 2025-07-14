@@ -6624,6 +6624,10 @@ enum Spell {
   final String duration;
   final String target;
 
+  String ruleText() {
+    return "$effect\n\nKosten: $aeCost\nZauberdauer: $castingTime\nReichweite: $range\nWirkungsdauer: $duration\nZiele: $target";
+  }
+
   const Spell(
     this.id,
     this.check1,

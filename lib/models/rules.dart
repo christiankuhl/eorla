@@ -1,3 +1,4 @@
+import 'package:eorla/models/spells.dart';
 import 'package:flutter/material.dart';
 import 'character.dart';
 import 'skill.dart';
@@ -8,122 +9,55 @@ import 'special_abilities_impl.dart';
 import 'dart:math';
 import 'dice.dart';
 import 'audit.dart';
+import '../widgets/dice.dart';
 
-enum DisplayMode { text, colored, fancy }
+class DamageRollResult {
+  List<Dice> dice;
+  ExplainedValue combinedResult;
+  DamageRollResult(this.dice, this.combinedResult);
 
-class GenerericRollResult {
-  final List<Dice> dice;
-  final String combinedResult;
-  final String title;
-
-  GenerericRollResult(this.dice, this.combinedResult, this.title);
-
-  Widget titleAsWidget(BuildContext context) {
-    return Text(title);
+  Widget widget(BuildContext context) {
+    return damageResultsWidget(this, context);
   }
 
-  // All RollResults should have a function displaying its output
-  // Subclasses may override this to return any Flutter Widget for display, if they also handle the dice List being empty.
-  Widget contentAsWidget(BuildContext context) {
-    if (dice.isEmpty) {
-      return Text("No dice rolled.");
-    }
-    // If any of the dice result is still the default of -999999 return error Text
-    if (dice.any((d) => d.result == -999999)) {
-      return Text("Error: Some dice have not been rolled.");
-    }
-    return resultsWidget(context);
-  }
-
-  // Subclasses may override this to return any Flutter Widget for display.
-  Widget resultsWidget(BuildContext context) {
-    final rolls = dice.map((d) => d.result).join(", ");
-    return Text("Rolls: [$rolls], Combined Result: $combinedResult");
+  Widget resultText(BuildContext context) {
+    return damageText(this, context);
   }
 }
 
-class DamageRollResult extends GenerericRollResult {
-  DamageRollResult(List<Dice> dice, int combinedResult)
-    : super(dice, "$combinedResult", "Schaden");
-
-  @override
-  Widget resultsWidget(BuildContext context) {
-    return IntrinsicHeight(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: dice
-                .map(
-                  (d) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: d.displayWidget(
-                      context,
-                      displayMode: DisplayMode.fancy,
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
-          const SizedBox(height: 24),
-          RichText(
-            text: TextSpan(
-              style: Theme.of(context).textTheme.bodyMedium,
-              children: [
-                const TextSpan(text: "Dein Angriff verursacht "),
-                TextSpan(
-                  text: combinedResult,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const TextSpan(text: " Trefferpunkt(e)."),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class AttributeRollResult extends GenerericRollResult {
+class AttributeRollResult {
   final DiceValue? roll;
   final RollEvent event;
   final ExplainedValue targetValue;
   String? resultContext;
-  final Dice? checkDice;
 
-  // Override the dice and combinedResult for the superclass
-  // ignore: prefer_initializing_formals
   AttributeRollResult(
     this.roll,
     this.event,
-    this.targetValue,
-    Dice die, {
+    this.targetValue, {
     this.resultContext,
-    this.checkDice,
-  }) : super(
-         checkDice != null ? [die, checkDice] : [die],
-         (() {
-           // Use the text() method for combinedResult
-           switch (event) {
-             case RollEvent.success:
-               return "Erfolg!";
-             case RollEvent.failure:
-               return "Fehlschlag!";
-             case RollEvent.critical:
-               return "Kritischer Erfolg!";
-             case RollEvent.botch:
-               return "Kritischer Fehlschlag!";
-           }
-         })(),
-         "I AM ERROR",
-       );
+  });
 
-  @Deprecated("Get text from combinedResult instead")
+  Widget widget(BuildContext context) {
+    return attributeRollResult(this, context);
+  }
+
+  Widget resultText(BuildContext context) {
+    return attributeResultText(this, context);
+  }
+
+  List<Dice> get dice {
+    return [
+      Dice.create(20, event: event, value: roll),
+      if (roll?.confirmationThrow != null)
+        Dice.create(
+          20,
+          event: event,
+          value: DiceValue(roll!.confirmationThrow!),
+        ),
+    ];
+  }
+
   String text() {
     switch (event) {
       case RollEvent.success:
@@ -136,75 +70,13 @@ class AttributeRollResult extends GenerericRollResult {
         return "Kritischer Fehlschlag!";
     }
   }
-
-  @override
-  Widget resultsWidget(BuildContext context) {
-    return IntrinsicHeight(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: dice
-                .map(
-                  (d) => Padding(
-                    padding: const EdgeInsets.only(left: 12.0, right: 40.0),
-                    child: d.displayWidget(
-                      context,
-                      displayMode: DisplayMode.fancy,
-                      topRight: Text("≤ ${targetValue.value}"),
-                      bottomRight: d.result <= targetValue.value
-                          ? Icon(Icons.check, color: Colors.green, size: 20.0)
-                          : Icon(Icons.close, color: Colors.red, size: 20.0),
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
-          const SizedBox(height: 24),
-          Center(
-            child: RichText(
-              text: TextSpan(
-                style: Theme.of(context).textTheme.bodyMedium,
-                children: [
-                  TextSpan(
-                    text: combinedResult,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-class SkillRollResult extends GenerericRollResult {
+class SkillRollResult {
   final List<AttributeRollResult> rolls;
   final Quality quality;
 
-  SkillRollResult(this.rolls, this.quality)
-    : super(
-        [rolls[0].dice[0], rolls[1].dice[0], rolls[2].dice[0]],
-        (() {
-          switch (quality.type) {
-            case RollEvent.success:
-              return "Erfolg! (QS: ${quality.qs})";
-            case RollEvent.failure:
-              return "Fehlschlag!";
-            case RollEvent.critical:
-              return "Kritischer Erfolg!";
-            case RollEvent.botch:
-              return "Kritischer Fehlschlag!";
-          }
-        })(),
-        "I AM ERROR",
-      );
+  SkillRollResult(this.rolls, this.quality);
 
   String text() {
     switch (quality.type) {
@@ -219,133 +91,32 @@ class SkillRollResult extends GenerericRollResult {
     }
   }
 
-  RichText resultText(BuildContext context) {
-    switch (quality.type) {
-      case RollEvent.success:
-        return RichText(
-          text: TextSpan(
-            style: Theme.of(context).textTheme.bodyMedium,
-            children: [
-              TextSpan(
-                text: "Erfolg! (",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 18,
-                ),
-              ),
-              TextSpan(
-                text: "QS: ${quality.qs}",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 18,
-                ),
-              ),
-              TextSpan(
-                text: ")",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          ),
-        );
-      case RollEvent.failure:
-      case RollEvent.critical:
-      case RollEvent.botch:
-        return RichText(
-          text: TextSpan(
-            style: Theme.of(context).textTheme.bodyMedium,
-            children: [
-              TextSpan(
-                text: text(),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          ),
-        );
-    }
+  Widget resultText(BuildContext context) {
+    return skillRollResultText(this, context);
   }
 
-  String addText<T extends Trial>(T skillOrSpell) {
-    if (skillOrSpell is Skill) {
+  String? addText<T extends Trial>(T skillOrSpell) {
+    if (skillOrSpell is SkillWrapper) {
+      Skill skill = skillOrSpell.skill;
       switch (quality.type) {
         case RollEvent.success:
-          return "";
+          return skill.quality;
         case RollEvent.failure:
-          return "";
+          return skill.failed;
         case RollEvent.critical:
-          return (skillOrSpell as Skill).critical;
+          return skill.critical;
         case RollEvent.botch:
-          return (skillOrSpell as Skill).botch;
+          return skill.botch;
       }
-    } else {
-      return "";
+    } else if (skillOrSpell is SpellWrapper) {
+      Spell spell = skillOrSpell.spell;
+      return spell.ruleText();
     }
+    return null;
   }
 
-  @override
-  Widget resultsWidget(BuildContext context) {
-    for (AttributeRollResult roll in rolls) {
-      if (roll.dice[0] is D20Dice) {
-        switch (roll.dice[0].result) {
-          case 1:
-            roll.dice[0] = D20DiceCritical.fromD20(roll.dice[0] as D20Dice);
-            break;
-          case 20:
-            roll.dice[0] = D20DiceBotch.fromD20(roll.dice[0] as D20Dice);
-            break;
-        }
-      }
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Column(
-          children: rolls
-              .map(
-                (roll) => Padding(
-                  padding: const EdgeInsets.only(bottom: 15.0, top: 5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(roll.resultContext ?? "i"),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 40.0),
-                        child: roll.dice[0].displayWidget(
-                          context,
-                          displayMode: DisplayMode.fancy,
-                          topRight: Text("≤ ${roll.targetValue.value}"),
-                          bottomRight:
-                              roll.dice[0].result <= roll.targetValue.value
-                              ? Icon(
-                                  Icons.check,
-                                  color: Colors.green,
-                                  size: 20.0,
-                                )
-                              : Text(
-                                  "- ${roll.dice[0].result - roll.targetValue.value}",
-                                  style: TextStyle(
-                                    color: Colors.redAccent,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-              .toList(),
-        ),
-        const SizedBox(height: 9),
-        resultText(context),
-      ],
-    );
+  Widget widget(BuildContext context) {
+    return skillRollResultWidget(rolls, context);
   }
 }
 
@@ -365,9 +136,6 @@ class SkillRoll<T extends Trial> {
   final int attrValue3;
   final int talentValue;
   final CharacterState characterState;
-  final Dice dice1;
-  final Dice dice2;
-  final Dice dice3;
 
   ExplainedValue get tgtValue1 {
     return ExplainedValue.base(
@@ -402,9 +170,6 @@ class SkillRoll<T extends Trial> {
     this.talentValue,
     this.characterState,
     this.modifier,
-    this.dice1,
-    this.dice2,
-    this.dice3,
   );
 
   factory SkillRoll.from(Character character, T skillOrSpell, int modifier) {
@@ -416,10 +181,6 @@ class SkillRoll<T extends Trial> {
     int attrValue3 = character.getAttribute(attr3);
     int talentValue = character.getTalentOrSpell(skillOrSpell);
 
-    Dice dice1 = Dice.create(20);
-    Dice dice2 = Dice.create(20);
-    Dice dice3 = Dice.create(20);
-
     return SkillRoll(
       attr1,
       attr2,
@@ -430,14 +191,11 @@ class SkillRoll<T extends Trial> {
       talentValue,
       character.state,
       modifier,
-      dice1,
-      dice2,
-      dice3,
     );
   }
 
   SkillRollResult roll({Random? random, bool ignoreBotch = false}) {
-    List<ExplainedValue> explainations = [];
+    List<ExplainedValue> explanations = [];
     bool illegal = false;
     for (var effFW in [tgtValue1, tgtValue2, tgtValue3]) {
       ExplainedValue? expl;
@@ -451,37 +209,34 @@ class SkillRoll<T extends Trial> {
       } else {
         expl = effFW;
       }
-      explainations.add(expl);
+      explanations.add(expl);
     }
     if (illegal) {
       return SkillRollResult([
         AttributeRollResult(
           null,
           RollEvent.failure,
-          explainations[0],
-          dice1,
+          explanations[0],
           resultContext: attr1.name,
         ),
         AttributeRollResult(
           null,
           RollEvent.failure,
-          explainations[1],
-          dice2,
+          explanations[1],
           resultContext: attr2.name,
         ),
         AttributeRollResult(
           null,
           RollEvent.failure,
-          explainations[2],
-          dice3,
+          explanations[2],
           resultContext: attr3.name,
         ),
       ], Quality(RollEvent.failure, 0));
     }
     random ??= Random();
-    int roll1 = dice1.roll(random);
-    int roll2 = dice2.roll(random);
-    int roll3 = dice3.roll(random);
+    int roll1 = random.nextInt(20) + 1;
+    int roll2 = random.nextInt(20) + 1;
+    int roll3 = random.nextInt(20) + 1;
     int fw =
         talentValue +
         min(tgtValue1.value - roll1, 0).toInt() +
@@ -509,21 +264,18 @@ class SkillRoll<T extends Trial> {
         DiceValue(roll1),
         event,
         tgtValue1,
-        dice1,
         resultContext: attr1.name,
       ),
       AttributeRollResult(
         DiceValue(roll2),
         event,
         tgtValue2,
-        dice2,
         resultContext: attr2.name,
       ),
       AttributeRollResult(
         DiceValue(roll3),
         event,
         tgtValue3,
-        dice3,
         resultContext: attr3.name,
       ),
     ], Quality(event, qs));
@@ -715,67 +467,46 @@ AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
         "Ein Wurf mit einem effektiven FW < 1 darf nicht versucht werden",
         true,
       ),
-      dice,
     );
   }
   int fw = target.value - roll;
   if (roll == 1) {
-    Dice checkDice = D20DiceCritical();
-    int roll2 = checkDice.roll(random);
+    int roll2 = Dice.create(20).roll(random);
     int fw2 = target.value - roll2;
     if (fw2 >= 0) {
       return AttributeRollResult(
         DiceValue(roll, confirmationThrow: roll2),
         RollEvent.critical,
         target,
-        dice,
-        checkDice: checkDice,
       );
     } else {
       return AttributeRollResult(
         DiceValue(roll, confirmationThrow: roll2),
         RollEvent.success,
         target,
-        dice,
-        checkDice: checkDice,
       );
     }
   } else if (roll == 20) {
-    Dice checkDice = D20DiceBotch();
-    int roll2 = checkDice.roll(random);
+    int roll2 = Dice.create(20).roll(random);
     int fw2 = target.value - roll2;
     if (fw2 >= 0 && roll2 != 20) {
       return AttributeRollResult(
         DiceValue(roll, confirmationThrow: roll2),
         RollEvent.failure,
         target,
-        dice,
-        checkDice: checkDice,
       );
     } else {
       return AttributeRollResult(
         DiceValue(roll, confirmationThrow: roll2),
         RollEvent.botch,
         target,
-        dice,
-        checkDice: checkDice,
       );
     }
   } else {
     if (fw >= 0) {
-      return AttributeRollResult(
-        DiceValue(roll),
-        RollEvent.success,
-        target,
-        dice,
-      );
+      return AttributeRollResult(DiceValue(roll), RollEvent.success, target);
     } else {
-      return AttributeRollResult(
-        DiceValue(roll),
-        RollEvent.failure,
-        target,
-        dice,
-      );
+      return AttributeRollResult(DiceValue(roll), RollEvent.failure, target);
     }
   }
 }
@@ -800,16 +531,22 @@ DamageRollResult damageRoll(
       .reduce((a, b) => a > b ? a : b);
 
   random ??= Random();
-  int result = 0;
+  ExplainedValue result = ExplainedValue.empty();
   int tpMod = 0;
   double tpMult = 1;
   int tpModAfterMultiplier = 0;
-  int tpFlat =
-      weapon.damageFlat + max(primary - weapon.primaryThreshold, 0).toInt();
   List<Dice> damageDice = [];
   for (var i = 0; i < weapon.damageDice; i++) {
-    damageDice.add(Dice.create(weapon.damageDiceSides));
+    Dice die = Dice.create(weapon.damageDiceSides);
+    damageDice.add(die);
+    result = result.add(die.roll(random), "${weapon.name} Würfel${weapon.damageDice > 1 ? i + 1 : ''}", false);
   }
+  result = result.add(weapon.damageFlat, "${weapon.name} Basis", false);
+  result = result.add(
+    max(primary - weapon.primaryThreshold, 0).toInt(),
+    "Schadensbonus",
+    true,
+  );
 
   // Check impact from base maneuvre
   if (specialAbilityBaseManeuvre != null) {
@@ -826,12 +563,25 @@ DamageRollResult damageRoll(
     tpMult *= impact.tpMult;
     tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
+      result = ExplainedValue.empty();
       damageDice = impact.additionalDice;
-      //TODO: Check if we want this behaviour.
-      tpFlat = 0;
     } else {
       damageDice.addAll(impact.additionalDice);
     }
+    for (var die in impact.additionalDice) {
+      result = result.add(
+        die.roll(random),
+        specialAbilityBaseManeuvre.toString(),
+        false,
+      );
+    }
+    result = result.add(tpMod, specialAbilityBaseManeuvre.toString(), true);
+    result = result.mul(tpMult, specialAbilityBaseManeuvre.toString());
+    result = result.add(
+      tpModAfterMultiplier,
+      specialAbilityBaseManeuvre.toString(),
+      true,
+    );
   }
   // Check impact from special maneuvre
   if (specialAbilitySpecialManeuvre != null) {
@@ -848,21 +598,26 @@ DamageRollResult damageRoll(
     tpMult *= impact.tpMult;
     tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
+      result = ExplainedValue.empty();
       damageDice = impact.additionalDice;
-      //TODO: Check if we want this behaviour.
-      tpFlat = 0;
     } else {
       damageDice.addAll(impact.additionalDice);
     }
+    for (var die in impact.additionalDice) {
+      result = result.add(
+        die.roll(random),
+        specialAbilityBaseManeuvre.toString(),
+        false,
+      );
+    }
+    result = result.add(tpMod, specialAbilitySpecialManeuvre.toString(), true);
+    result = result.mul(tpMult, specialAbilitySpecialManeuvre.toString());
+    result = result.add(
+      tpModAfterMultiplier,
+      specialAbilitySpecialManeuvre.toString(),
+      true,
+    );
   }
-
-  // Roll all dice and add their results to the result variable
-  for (var dice in damageDice) {
-    result += dice.roll(random);
-  }
-  // Apply modifiers and multipliers
-  result = ((result + tpFlat + tpMod) * tpMult).round() + tpModAfterMultiplier;
-
   return DamageRollResult(damageDice, result);
 }
 
@@ -906,7 +661,6 @@ RichText damageRollTextGenerator(
     tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
       damageDice = impact.additionalDice;
-      //TODO: Check if we want this behaviour.
       tpFlat = 0;
       diceChange = -5;
     } else {
@@ -932,7 +686,6 @@ RichText damageRollTextGenerator(
     tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
       damageDice = impact.additionalDice;
-      //TODO: Check if we want this behaviour.
       tpFlat = 0;
       diceChange = -5;
     } else {
