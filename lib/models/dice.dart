@@ -47,7 +47,7 @@ class Dice {
 
   Dice(this.sides, this.display);
 
-  setDisplay(DisplayValue? event) {
+  setDisplay(DisplayValue? event, Color? fill, Color? border, double size = 40) {
     switch (sides) {
       case 20:
         switch (event ?? RollEvent.success) {
