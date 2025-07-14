@@ -47,6 +47,29 @@ class Dice {
 
   Dice(this.sides, this.display);
 
+  setDisplay(DisplayValue? event) {
+    switch (sides) {
+      case 20:
+        switch (event ?? RollEvent.success) {
+          case RollEvent.botch:
+            display = D20DisplayBotch(fill: fill, border: border, size: size);
+            break;
+          case RollEvent.critical:
+            display = D20DisplayCritical(fill: fill, border: border, size: size);
+            break;
+          default:
+            display = D20Display(fill: fill, border: border, size: size);
+        }
+        break;
+      case 6:
+        display = D6Display(fill: fill, border: border, size: size);
+        break;
+      case 3:
+        display = D3Display(fill: fill, border: border, size: size);
+        break;
+    }
+  }
+
   int roll([Random? rng]) {
     rng ??= Random();
     result = DiceValue(rng.nextInt(sides) + 1);
