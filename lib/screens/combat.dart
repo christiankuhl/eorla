@@ -53,13 +53,13 @@ class _CombatScreenState extends State<CombatScreen> {
     String detail;
     if (result.length == 1) {
       detail = result[0].targetValue.explanation
-          .map((c) => "${c.value}\t\t${c.explanation}")
+          .map((c) => c.toString())
           .join("\n");
     } else {
       detail = result
           .map((r) {
             String expl = r.targetValue.explanation
-                .map((c) => "${c.value}\t\t${c.explanation}")
+                .map((c) => c.toString())
                 .join("\n");
             return "${r.resultContext}:\n$expl";
           })
@@ -108,16 +108,22 @@ class _CombatScreenState extends State<CombatScreen> {
       selectedSpecialSpecialManeuvre,
     );
 
-    await fadeDice(context, DiceAnimation.d6);
+    // await fadeDice(context, DiceAnimation.d6);
 
     if (!mounted) {
       return;
     }
 
-    showSimpleDialog(
+    String detail = damage.combinedResult.explanation
+          .map((c) => c.toString())
+          .join("\n");
+
+    showDetailDialog(
       "${weapon.name} - Schaden",
       damage.widget(context),
       damage.resultText(context),
+      detail,
+      null,
       context,
     );
   }

@@ -13,7 +13,7 @@ import '../widgets/dice.dart';
 
 class DamageRollResult {
   List<Dice> dice;
-  int combinedResult;
+  ExplainedValue combinedResult;
   DamageRollResult(this.dice, this.combinedResult);
 
   Widget widget(BuildContext context) {
@@ -531,16 +531,22 @@ DamageRollResult damageRoll(
       .reduce((a, b) => a > b ? a : b);
 
   random ??= Random();
-  int result = 0;
+  ExplainedValue result = ExplainedValue.empty();
   int tpMod = 0;
   double tpMult = 1;
   int tpModAfterMultiplier = 0;
-  int tpFlat =
-      weapon.damageFlat + max(primary - weapon.primaryThreshold, 0).toInt();
   List<Dice> damageDice = [];
   for (var i = 0; i < weapon.damageDice; i++) {
-    damageDice.add(Dice.create(weapon.damageDiceSides));
+    Dice die = Dice.create(weapon.damageDiceSides);
+    damageDice.add(die);
+    result = result.add(die.roll(random), "${weapon.name} Würfel${weapon.damageDice > 1 ? i + 1 : ''}", false);
   }
+  result = result.add(weapon.damageFlat, "${weapon.name} Basis", false);
+  result = result.add(
+    max(primary - weapon.primaryThreshold, 0).toInt(),
+    "Schadensbonus",
+    true,
+  );
 
   // Check impact from base maneuvre
   if (specialAbilityBaseManeuvre != null) {
@@ -557,11 +563,25 @@ DamageRollResult damageRoll(
     tpMult *= impact.tpMult;
     tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
+      result = ExplainedValue.empty();
       damageDice = impact.additionalDice;
-      tpFlat = 0;
     } else {
       damageDice.addAll(impact.additionalDice);
     }
+    for (var die in impact.additionalDice) {
+      result = result.add(
+        die.roll(random),
+        specialAbilityBaseManeuvre.toString(),
+        false,
+      );
+    }
+    result = result.add(tpMod, specialAbilityBaseManeuvre.toString(), true);
+    result = result.mul(tpMult, specialAbilityBaseManeuvre.toString());
+    result = result.add(
+      tpModAfterMultiplier,
+      specialAbilityBaseManeuvre.toString(),
+      true,
+    );
   }
   // Check impact from special maneuvre
   if (specialAbilitySpecialManeuvre != null) {
@@ -578,20 +598,26 @@ DamageRollResult damageRoll(
     tpMult *= impact.tpMult;
     tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
+      result = ExplainedValue.empty();
       damageDice = impact.additionalDice;
-      tpFlat = 0;
     } else {
       damageDice.addAll(impact.additionalDice);
     }
+    for (var die in impact.additionalDice) {
+      result = result.add(
+        die.roll(random),
+        specialAbilityBaseManeuvre.toString(),
+        false,
+      );
+    }
+    result = result.add(tpMod, specialAbilitySpecialManeuvre.toString(), true);
+    result = result.mul(tpMult, specialAbilitySpecialManeuvre.toString());
+    result = result.add(
+      tpModAfterMultiplier,
+      specialAbilitySpecialManeuvre.toString(),
+      true,
+    );
   }
-
-  // Roll all dice and add their results to the result variable
-  for (var dice in damageDice) {
-    result += dice.roll(random);
-  }
-  // Apply modifiers and multipliers
-  result = ((result + tpFlat + tpMod) * tpMult).round() + tpModAfterMultiplier;
-
   return DamageRollResult(damageDice, result);
 }
 

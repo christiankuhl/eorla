@@ -55,7 +55,7 @@ class SpecialAbilityImpact {
   final int paMod;
   final int awMod;
   final int tpMod; // flat tp modifier, applied before multiplier
-  final double tpMult; // tp multiplyer
+  final double tpMult; // tp multiplier
   final int tpModAfterMultiplier; // flat tp modifier, applied after multiplier
   final List<Dice> additionalDice;
   final bool additionalDiceReplaceOriginal;

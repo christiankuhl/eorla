@@ -303,7 +303,7 @@ TextStyle? tgtValueColour(ExplainedValue value) {
   int totalMod = value.explanation
       .where((comp) => comp.isMod)
       .map((comp) => comp.value)
-      .fold(0, (x, y) => x + y);
+      .fold(0, (x, y) => x + y.round());
 
   TextStyle? style;
   if (totalMod > 0) {

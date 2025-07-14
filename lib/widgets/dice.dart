@@ -40,7 +40,7 @@ Widget damageText(DamageRollResult result, BuildContext context) {
       children: [
         const TextSpan(text: "Dein Angriff verursacht "),
         TextSpan(
-          text: result.combinedResult.toString(),
+          text: result.combinedResult.value.toString(),
           style: Theme.of(
             context,
           ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
