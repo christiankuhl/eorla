@@ -471,7 +471,7 @@ AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
   }
   int fw = target.value - roll;
   if (roll == 1) {
-    int roll2 = Dice.create(20).roll(random);
+    int roll2 = Dice.create(20, event: RollEvent.critical).roll(random);
     int fw2 = target.value - roll2;
     if (fw2 >= 0) {
       return AttributeRollResult(
@@ -487,7 +487,7 @@ AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
       );
     }
   } else if (roll == 20) {
-    int roll2 = Dice.create(20).roll(random);
+    int roll2 = Dice.create(20, event: RollEvent.botch).roll(random);
     int fw2 = target.value - roll2;
     if (fw2 >= 0 && roll2 != 20) {
       return AttributeRollResult(
