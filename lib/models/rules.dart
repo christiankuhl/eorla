@@ -141,21 +141,21 @@ class SkillRoll<T extends Trial> {
     return ExplainedValue.base(
       attrValue1,
       "${attr1.short} Basis",
-    ).add(modifier, "Modifikator", true).andThen(characterState.explain());
+    ).add(modifier, "Modifikator").andThen(characterState.explain());
   }
 
   ExplainedValue get tgtValue2 {
     return ExplainedValue.base(
       attrValue2,
       "${attr2.short} Basis",
-    ).add(modifier, "Modifikator", true).andThen(characterState.explain());
+    ).add(modifier, "Modifikator").andThen(characterState.explain());
   }
 
   ExplainedValue get tgtValue3 {
     return ExplainedValue.base(
       attrValue3,
       "${attr3.short} Basis",
-    ).add(modifier, "Modifikator", true).andThen(characterState.explain());
+    ).add(modifier, "Modifikator").andThen(characterState.explain());
   }
 
   int modifier;
@@ -366,12 +366,12 @@ class CombatRoll {
       case CombatActionType.attack:
         int at = ctValue + (max(attackPrimary - 8, 0) / 3).toInt();
         tgt = ExplainedValue.base(at, "AT ${ct.name}");
-        tgt = tgt.add(weapon?.at ?? 0, "AT Mod ${weapon?.name}", false);
+        tgt = tgt.add(weapon?.at ?? 0, "AT Mod ${weapon?.name}", isMod: false);
         break;
       case CombatActionType.parry:
         int pa = (ctValue / 2).ceil() + (max(parryPrimary - 8, 0) / 3).toInt();
         tgt = ExplainedValue.base(pa, "PA Basis");
-        tgt = tgt.add(weapon?.pa ?? 0, "PA Mod ${weapon?.name}", false);
+        tgt = tgt.add(weapon?.pa ?? 0, "PA Mod ${weapon?.name}", isMod: false);
         break;
       case CombatActionType.dodge:
         tgt = ExplainedValue.base(dodge, "AW Basis");
@@ -388,7 +388,6 @@ class CombatRoll {
       tgt = tgt.add(
         modifierBaseManeuvre,
         specialAbilityBaseManeuvre!.toString(),
-        true,
       );
     }
     if (specialAbilitySpecialManeuvre != null) {
@@ -402,18 +401,15 @@ class CombatRoll {
       tgt = tgt.add(
         modifierSpecialManeuvre,
         specialAbilitySpecialManeuvre!.toString(),
-        true,
       );
     }
-    tgt = tgt
-        .andThen(character.state.explain())
-        .add(modifier, "Modifikator", true);
+    tgt = tgt.andThen(character.state.explain()).add(modifier, "Modifikator");
     return tgt;
   }
 
   /// Rolls for an attribute check based on the given [CombatActionType] [action].
   /// Returns a list of [AttributeRollResult] representing the roll outcomes.
-  List<AttributeRollResult> roll(CombatActionType action) {
+  List<AttributeRollResult> roll(CombatActionType action, {Random? random}) {
     ExplainedValue target = targetValue(action);
 
     if (specialAbilityBaseManeuvre != null) {
@@ -439,7 +435,7 @@ class CombatRoll {
       }
     }
 
-    return [attributeRoll(target)];
+    return [attributeRoll(target, random: random)];
   }
 }
 
@@ -451,7 +447,7 @@ ExplainedValue attributeTargetValue(
   return ExplainedValue.base(
     character.getAttribute(attribute),
     "${attribute.name} Basis",
-  ).add(modifier, "Modifikator", true).andThen(character.state.explain());
+  ).add(modifier, "Modifikator").andThen(character.state.explain());
 }
 
 AttributeRollResult attributeRoll(ExplainedValue target, {Random? random}) {
@@ -532,20 +528,20 @@ DamageRollResult damageRoll(
 
   random ??= Random();
   ExplainedValue result = ExplainedValue.empty();
-  int tpMod = 0;
-  double tpMult = 1;
-  int tpModAfterMultiplier = 0;
   List<Dice> damageDice = [];
   for (var i = 0; i < weapon.damageDice; i++) {
     Dice die = Dice.create(weapon.damageDiceSides);
     damageDice.add(die);
-    result = result.add(die.roll(random), "${weapon.name} Würfel${weapon.damageDice > 1 ? i + 1 : ''}", false);
+    result = result.add(
+      die.roll(random),
+      "${weapon.name} Würfel${weapon.damageDice > 1 ? i + 1 : ''}",
+      isMod: false,
+    );
   }
-  result = result.add(weapon.damageFlat, "${weapon.name} Basis", false);
+  result = result.add(weapon.damageFlat, "${weapon.name} Basis", isMod: false);
   result = result.add(
     max(primary - weapon.primaryThreshold, 0).toInt(),
     "Schadensbonus",
-    true,
   );
 
   // Check impact from base maneuvre
@@ -557,30 +553,26 @@ DamageRollResult damageRoll(
       0,
     );
     if (impact.tpcallback != null) {
-      tpMod += impact.tpcallback!(character);
+      result = result.add(impact.tpcallback!(character), specialAbilityBaseManeuvre.toString());
     }
-    tpMod += impact.tpMod;
-    tpMult *= impact.tpMult;
-    tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
       result = ExplainedValue.empty();
       damageDice = impact.additionalDice;
     } else {
       damageDice.addAll(impact.additionalDice);
     }
-    for (var die in impact.additionalDice) {
+    for (var (i, die) in impact.additionalDice.indexed) {
       result = result.add(
         die.roll(random),
-        specialAbilityBaseManeuvre.toString(),
-        false,
+        "${specialAbilityBaseManeuvre.toString()} Würfel${impact.additionalDice.length > 1 ? i + 1 : ''}",
+        isMod: false,
       );
     }
-    result = result.add(tpMod, specialAbilityBaseManeuvre.toString(), true);
-    result = result.mul(tpMult, specialAbilityBaseManeuvre.toString());
+    result = result.add(impact.tpMod, specialAbilityBaseManeuvre.toString());
+    result = result.mul(impact.tpMult, specialAbilityBaseManeuvre.toString());
     result = result.add(
-      tpModAfterMultiplier,
+      impact.tpModAfterMultiplier,
       specialAbilityBaseManeuvre.toString(),
-      true,
     );
   }
   // Check impact from special maneuvre
@@ -592,30 +584,26 @@ DamageRollResult damageRoll(
       0,
     );
     if (impact.tpcallback != null) {
-      tpMod += impact.tpcallback!(character);
+      result = result.add(impact.tpcallback!(character), specialAbilitySpecialManeuvre.toString());
     }
-    tpMod += impact.tpMod;
-    tpMult *= impact.tpMult;
-    tpModAfterMultiplier += impact.tpModAfterMultiplier;
     if (impact.additionalDiceReplaceOriginal) {
       result = ExplainedValue.empty();
       damageDice = impact.additionalDice;
     } else {
       damageDice.addAll(impact.additionalDice);
     }
-    for (var die in impact.additionalDice) {
+    for (var (i, die) in impact.additionalDice.indexed) {
       result = result.add(
         die.roll(random),
-        specialAbilityBaseManeuvre.toString(),
-        false,
+        "${specialAbilitySpecialManeuvre.toString()} Würfel${impact.additionalDice.length > 1 ? i + 1 : ''}",
+        isMod: false,
       );
     }
-    result = result.add(tpMod, specialAbilitySpecialManeuvre.toString(), true);
-    result = result.mul(tpMult, specialAbilitySpecialManeuvre.toString());
+    result = result.add(impact.tpMod, specialAbilitySpecialManeuvre.toString());
+    result = result.mul(impact.tpMult, specialAbilitySpecialManeuvre.toString());
     result = result.add(
-      tpModAfterMultiplier,
+      impact.tpModAfterMultiplier,
       specialAbilitySpecialManeuvre.toString(),
-      true,
     );
   }
   return DamageRollResult(damageDice, result);

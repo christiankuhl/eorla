@@ -86,7 +86,7 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
                       character.getAttribute(widget.attribute),
                       "${widget.attribute.short} Basis",
                     )
-                    .add(modifier, "Modifikator", true)
+                    .add(modifier, "Modifikator")
                     .andThen(character.state.explain()),
                 Provider.of<AppSettings>(context).nerdMode,
               ),
