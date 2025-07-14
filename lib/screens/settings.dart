@@ -24,6 +24,15 @@ class SettingsScreen extends StatelessWidget {
             },
             secondary: const Icon(Icons.psychology),
           ),
+          SwitchListTile(
+            title: const Text('Animationen'),
+            subtitle: const Text('Würfelanimationen verwenden'),
+            value: settings.useAnimations,
+            onChanged: (value) {
+              settings.toggleAnimations();
+            },
+            secondary: const Icon(Icons.animation),
+          ),
         ],
       ),
     );

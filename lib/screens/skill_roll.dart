@@ -11,10 +11,7 @@ import 'dice_rolls.dart';
 class RollScreen<T extends Trial> extends StatefulWidget {
   final T skillOrSpell;
 
-  const RollScreen({
-    required this.skillOrSpell,
-    super.key,
-  });
+  const RollScreen({required this.skillOrSpell, super.key});
 
   @override
   RollScreenState createState() => RollScreenState();
@@ -23,12 +20,12 @@ class RollScreen<T extends Trial> extends StatefulWidget {
 class RollScreenState extends State<RollScreen> {
   int modifier = 0;
 
-  void performRoll(Character character, int modifier) async {
-    SkillRoll engine = SkillRoll.from(
-      character,
-      widget.skillOrSpell,
-      modifier,
-    );
+  void performRoll(
+    Character character,
+    int modifier, {
+    bool useAnimations = true,
+  }) async {
+    SkillRoll engine = SkillRoll.from(character, widget.skillOrSpell, modifier);
     SkillRollResult rollResults = engine.roll();
 
     List<AttributeRollResult> results = rollResults.rolls;
@@ -41,7 +38,9 @@ class RollScreenState extends State<RollScreen> {
         })
         .join("\n\n");
 
-    await fadeDice(context, DiceAnimation.d20);
+    if (useAnimations) {
+      await fadeDice(context, DiceAnimation.d20);
+    }
 
     if (!mounted) {
       return;
@@ -60,11 +59,8 @@ class RollScreenState extends State<RollScreen> {
   @override
   Widget build(BuildContext context) {
     final character = Provider.of<CharacterManager>(context).activeCharacter!;
-    SkillRoll stats = SkillRoll.from(
-      character,
-      widget.skillOrSpell,
-      modifier,
-    );
+    bool useAnimations = Provider.of<AppSettings>(context).useAnimations;
+    SkillRoll stats = SkillRoll.from(character, widget.skillOrSpell, modifier);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -117,7 +113,7 @@ class RollScreenState extends State<RollScreen> {
               SizedBox(height: 24),
               ElevatedButton(
                 key: const Key("skill_roll_button"),
-                onPressed: () => performRoll(character, modifier),
+                onPressed: () => performRoll(character, modifier, useAnimations: useAnimations),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                 ),
