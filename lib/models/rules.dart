@@ -194,6 +194,31 @@ class SkillRoll<T extends Trial> {
     );
   }
 
+  bool isRoutine() {
+    if (modifier < -3 ||
+        attrValue1 < 13 ||
+        attrValue2 < 13 ||
+        attrValue3 < 13) {
+      return false;
+    }
+    final fwMin = 10 - 3 * min(modifier, 3);
+    return talentValue >= fwMin;
+  }
+
+  SkillRollResult routine() {
+    final fp = (talentValue / 2).round();
+    final qs = _qs(fp);
+    return SkillRollResult([], Quality(RollEvent.success, qs));
+  }
+
+  int _qs(int fw) {
+    int qs = max(min((fw - 1) ~/ 3 + 1, 6), 0);
+    if (fw == 0) {
+      qs = 1;
+    }
+    return qs;
+  }
+
   SkillRollResult roll({Random? random, bool ignoreBotch = false}) {
     List<ExplainedValue> explanations = [];
     bool illegal = false;
@@ -255,10 +280,7 @@ class SkillRoll<T extends Trial> {
     } else {
       event = RollEvent.success;
     }
-    int qs = max(min((fw - 1) ~/ 3 + 1, 6), 0);
-    if (fw == 0) {
-      qs = 1;
-    }
+    final qs = _qs(fw);
     return SkillRollResult([
       AttributeRollResult(
         DiceValue(roll1),
@@ -553,7 +575,10 @@ DamageRollResult damageRoll(
       0,
     );
     if (impact.tpcallback != null) {
-      result = result.add(impact.tpcallback!(character), specialAbilityBaseManeuvre.toString());
+      result = result.add(
+        impact.tpcallback!(character),
+        specialAbilityBaseManeuvre.toString(),
+      );
     }
     if (impact.additionalDiceReplaceOriginal) {
       result = ExplainedValue.empty();
@@ -584,7 +609,10 @@ DamageRollResult damageRoll(
       0,
     );
     if (impact.tpcallback != null) {
-      result = result.add(impact.tpcallback!(character), specialAbilitySpecialManeuvre.toString());
+      result = result.add(
+        impact.tpcallback!(character),
+        specialAbilitySpecialManeuvre.toString(),
+      );
     }
     if (impact.additionalDiceReplaceOriginal) {
       result = ExplainedValue.empty();
@@ -600,7 +628,10 @@ DamageRollResult damageRoll(
       );
     }
     result = result.add(impact.tpMod, specialAbilitySpecialManeuvre.toString());
-    result = result.mul(impact.tpMult, specialAbilitySpecialManeuvre.toString());
+    result = result.mul(
+      impact.tpMult,
+      specialAbilitySpecialManeuvre.toString(),
+    );
     result = result.add(
       impact.tpModAfterMultiplier,
       specialAbilitySpecialManeuvre.toString(),
