@@ -47,7 +47,7 @@ class Dice {
 
   Dice(this.sides, this.display);
 
-  setDisplay(DisplayValue? event) {
+  setDisplay(RollEvent? event) {
     switch (sides) {
       case 20:
         switch (event ?? RollEvent.success) {
