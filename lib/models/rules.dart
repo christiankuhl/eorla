@@ -47,14 +47,17 @@ class AttributeRollResult {
   }
 
   List<Dice> get dice {
+    // Confirmation throw => 1. die normal, 2. die event die
+    if (roll?.confirmationThrow != null) {
+      return [
+        Dice.create(20, value: roll),
+        Dice.create(20, value: roll, event: event),
+      ];
+    }
+    // Otherwise just return the only die with the event (?)
+    // TODO: Confirm if wanted behaviour
     return [
-      Dice.create(20, event: event, value: roll),
-      if (roll?.confirmationThrow != null)
-        Dice.create(
-          20,
-          event: event,
-          value: DiceValue(roll!.confirmationThrow!),
-        ),
+      Dice.create(20, value: roll, event: event),
     ];
   }
 
@@ -68,6 +71,8 @@ class AttributeRollResult {
         return "Kritischer Erfolg!";
       case RollEvent.botch:
         return "Kritischer Fehlschlag!";
+      case RollEvent.none:
+        return "Kein Ergebis definiert.";
     }
   }
 }
@@ -88,6 +93,8 @@ class SkillRollResult {
         return "Kritischer Erfolg!";
       case RollEvent.botch:
         return "Kritischer Fehlschlag!";
+      case RollEvent.none:
+        return "Kein Ergebis definiert.";
     }
   }
 
@@ -107,6 +114,8 @@ class SkillRollResult {
           return skill.critical;
         case RollEvent.botch:
           return skill.botch;
+        case RollEvent.none:
+          return null;
       }
     } else if (skillOrSpell is SpellWrapper) {
       Spell spell = skillOrSpell.spell;
@@ -284,19 +293,19 @@ class SkillRoll<T extends Trial> {
     return SkillRollResult([
       AttributeRollResult(
         DiceValue(roll1),
-        event,
+        roll1 == 1 ? RollEvent.critical : (roll1 == 20 ? RollEvent.botch : RollEvent.none),
         tgtValue1,
         resultContext: attr1.name,
       ),
       AttributeRollResult(
         DiceValue(roll2),
-        event,
+        roll2 == 1 ? RollEvent.critical : (roll2 == 20 ? RollEvent.botch : RollEvent.none),
         tgtValue2,
         resultContext: attr2.name,
       ),
       AttributeRollResult(
         DiceValue(roll3),
-        event,
+        roll3 == 1 ? RollEvent.critical : (roll3 == 20 ? RollEvent.botch : RollEvent.none),
         tgtValue3,
         resultContext: attr3.name,
       ),
@@ -304,7 +313,7 @@ class SkillRoll<T extends Trial> {
   }
 }
 
-enum RollEvent { success, failure, critical, botch }
+enum RollEvent { success, failure, critical, botch, none }
 
 class Quality {
   RollEvent type;
