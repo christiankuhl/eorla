@@ -71,6 +71,8 @@ class AttributeRollResult {
         return "Kritischer Erfolg!";
       case RollEvent.botch:
         return "Kritischer Fehlschlag!";
+      case RollEvent.none:
+        return "Kein Ergebis definiert.";
     }
   }
 }
@@ -91,6 +93,8 @@ class SkillRollResult {
         return "Kritischer Erfolg!";
       case RollEvent.botch:
         return "Kritischer Fehlschlag!";
+      case RollEvent.none:
+        return "Kein Ergebis definiert.";
     }
   }
 
@@ -110,6 +114,8 @@ class SkillRollResult {
           return skill.critical;
         case RollEvent.botch:
           return skill.botch;
+        case RollEvent.none:
+          return null;
       }
     } else if (skillOrSpell is SpellWrapper) {
       Spell spell = skillOrSpell.spell;
@@ -262,22 +268,23 @@ class SkillRoll<T extends Trial> {
     if (fw == 0) {
       qs = 1;
     }
+    // event of indiwidual dice is depenend on its own value
     return SkillRollResult([
       AttributeRollResult(
         DiceValue(roll1),
-        event,
+        roll1 == 1 ? RollEvent.critical : (roll1 == 20 ? RollEvent.botch : RollEvent.none),
         tgtValue1,
         resultContext: attr1.name,
       ),
       AttributeRollResult(
         DiceValue(roll2),
-        event,
+        roll2 == 1 ? RollEvent.critical : (roll2 == 20 ? RollEvent.botch : RollEvent.none),
         tgtValue2,
         resultContext: attr2.name,
       ),
       AttributeRollResult(
         DiceValue(roll3),
-        event,
+        roll3 == 1 ? RollEvent.critical : (roll3 == 20 ? RollEvent.botch : RollEvent.none),
         tgtValue3,
         resultContext: attr3.name,
       ),
@@ -285,7 +292,7 @@ class SkillRoll<T extends Trial> {
   }
 }
 
-enum RollEvent { success, failure, critical, botch }
+enum RollEvent { success, failure, critical, botch, none }
 
 class Quality {
   RollEvent type;
