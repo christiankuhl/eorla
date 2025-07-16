@@ -129,7 +129,7 @@ class RollScreenState extends State<RollScreen> {
               if (isRoutine)
                 ElevatedButton(
                   key: const Key("routine_button"),
-                  onPressed: () => performRoutineTrial(),
+                  onPressed: () => performRoutineTrial(character),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                   ),
@@ -143,5 +143,16 @@ class RollScreenState extends State<RollScreen> {
     );
   }
 
-  void performRoutineTrial() {}
+  void performRoutineTrial(Character character) {
+    SkillRoll engine = SkillRoll.from(character, widget.skillOrSpell, modifier);
+    SkillRollResult result = engine.routine();
+    showDetailDialog(
+      "${widget.skillOrSpell.name} (FW ${engine.talentValue})",
+      SizedBox.shrink(),
+      result.resultText(context),
+      "${(engine.talentValue / 2).round()} FP = FW / 2 für Routineprobe",
+      result.addText(widget.skillOrSpell),
+      context,
+    );
+  }
 }
