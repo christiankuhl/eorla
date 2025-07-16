@@ -135,6 +135,7 @@ Widget skillRollResultText(SkillRollResult result, BuildContext context) {
     case RollEvent.failure:
     case RollEvent.critical:
     case RollEvent.botch:
+    case RollEvent.none:
       return RichText(
         text: TextSpan(
           style: Theme.of(context).textTheme.bodyMedium,
