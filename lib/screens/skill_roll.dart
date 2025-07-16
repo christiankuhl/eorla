@@ -6,6 +6,7 @@ import '../managers/settings.dart';
 import '../managers/character_manager.dart';
 import '../models/rules.dart';
 import '../models/character.dart';
+import '../models/skill.dart';
 import 'dice_rolls.dart';
 
 class RollScreen<T extends Trial> extends StatefulWidget {
@@ -61,6 +62,7 @@ class RollScreenState extends State<RollScreen> {
     final character = Provider.of<CharacterManager>(context).activeCharacter!;
     bool useAnimations = Provider.of<AppSettings>(context).useAnimations;
     SkillRoll stats = SkillRoll.from(character, widget.skillOrSpell, modifier);
+    bool isRoutine = widget.skillOrSpell is SkillWrapper && stats.isRoutine();
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -113,18 +115,44 @@ class RollScreenState extends State<RollScreen> {
               SizedBox(height: 24),
               ElevatedButton(
                 key: const Key("skill_roll_button"),
-                onPressed: () => performRoll(character, modifier, useAnimations: useAnimations),
+                onPressed: () => performRoll(
+                  character,
+                  modifier,
+                  useAnimations: useAnimations,
+                ),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                 ),
                 child: Text('WÜRFELN', style: TextStyle(fontSize: 32)),
               ),
-
+              if (isRoutine) SizedBox(height: 24),
+              if (isRoutine)
+                ElevatedButton(
+                  key: const Key("routine_button"),
+                  onPressed: () => performRoutineTrial(character),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
+                  ),
+                  child: Text('ROUTINE', style: TextStyle(fontSize: 32)),
+                ),
               SizedBox(height: 24),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void performRoutineTrial(Character character) {
+    SkillRoll engine = SkillRoll.from(character, widget.skillOrSpell, modifier);
+    SkillRollResult result = engine.routine();
+    showDetailDialog(
+      "${widget.skillOrSpell.name} (FW ${engine.talentValue})",
+      SizedBox.shrink(),
+      result.resultText(context),
+      "${(engine.talentValue / 2).round()} FP = FW / 2 für Routineprobe",
+      result.addText(widget.skillOrSpell),
+      context,
     );
   }
 }
