@@ -21,7 +21,7 @@ class ExplainedValue {
     return ExplainedValue(newValue, newExplain);
   }
 
-  ExplainedValue add(int mod, String expl, bool isMod) {
+  ExplainedValue add(int mod, String expl, {bool isMod = true}) {
     if (mod != 0) {
       return addUnconditional(mod, expl, isMod);
     } else {
@@ -47,7 +47,9 @@ class ExplainedValue {
     List<ComponentWithExplanation> newExplain = explanation;
     for (var comp in components) {
       if (comp.op != Operator.add) {
-        throw UnimplementedError("Multiplicative entries not supported in ExplainedValue.andThen()");
+        throw UnimplementedError(
+          "Multiplicative entries not supported in ExplainedValue.andThen()",
+        );
       }
       newValue += comp.value.round();
       newExplain.add(comp);
@@ -85,6 +87,18 @@ class ComponentWithExplanation {
     }
     return "$signOrOp$value\t$explanation";
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ComponentWithExplanation &&
+          runtimeType == other.runtimeType &&
+          value == other.value &&
+          op == other.op &&
+          explanation == other.explanation;
+
+  @override
+  int get hashCode => value.hashCode ^ op.hashCode ^ explanation.hashCode;
 }
 
 class DiceValue {

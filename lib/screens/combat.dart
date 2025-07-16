@@ -1,11 +1,12 @@
-import 'package:eorla/models/rules.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../managers/character_manager.dart';
+import '../managers/settings.dart';
 import '../models/weapons.dart';
 import '../models/special_abilities.dart';
 import '../models/audit.dart';
 import '../models/character.dart';
+import '../models/rules.dart';
 import '../widgets/character_card.dart';
 import '../widgets/widget_helpers.dart';
 import '../widgets/weapon_card.dart';
@@ -31,8 +32,9 @@ class _CombatScreenState extends State<CombatScreen> {
     CombatActionType action,
     Weapon weapon,
     SpecialAbility? specialAbilityBaseManeuvre,
-    SpecialAbility? specialAbilitySpecialManeuvre,
-  ) async {
+    SpecialAbility? specialAbilitySpecialManeuvre, {
+    bool useAnimations = true,
+  }) async {
     final engine = CombatRoll.fromWeapon(
       character,
       weapon,
@@ -66,7 +68,9 @@ class _CombatScreenState extends State<CombatScreen> {
           .join("\n\n");
     }
 
-    await fadeDice(context, DiceAnimation.d20);
+    if (useAnimations) {
+      await fadeDice(context, DiceAnimation.d20);
+    }
 
     if (!mounted) {
       return;
@@ -99,8 +103,9 @@ class _CombatScreenState extends State<CombatScreen> {
     Character character,
     Weapon weapon,
     SpecialAbility? selectedSpecialBaseManeuvre,
-    SpecialAbility? selectedSpecialSpecialManeuvre,
-  ) async {
+    SpecialAbility? selectedSpecialSpecialManeuvre, {
+    bool useAnimations = true,
+  }) async {
     final damage = damageRoll(
       weapon,
       character,
@@ -108,15 +113,17 @@ class _CombatScreenState extends State<CombatScreen> {
       selectedSpecialSpecialManeuvre,
     );
 
-    // await fadeDice(context, DiceAnimation.d6);
+    if (useAnimations) {
+      await fadeDice(context, DiceAnimation.d6);
+    }
 
     if (!mounted) {
       return;
     }
 
     String detail = damage.combinedResult.explanation
-          .map((c) => c.toString())
-          .join("\n");
+        .map((c) => c.toString())
+        .join("\n");
 
     showDetailDialog(
       "${weapon.name} - Schaden",
@@ -131,6 +138,7 @@ class _CombatScreenState extends State<CombatScreen> {
   @override
   Widget build(BuildContext context) {
     final character = Provider.of<CharacterManager>(context).activeCharacter!;
+    bool useAnimations = Provider.of<AppSettings>(context).useAnimations;
     final List<SpecialAbility> specialOptionsBaseManeuvre =
         (character.abilities ?? [])
             .where((a) => a.value.type == SpecialAbilityType.baseManeuvre)
@@ -177,6 +185,7 @@ class _CombatScreenState extends State<CombatScreen> {
               genericWeapons[CombatTechnique.raufen]!,
               selectedSpecialBaseManeuvre,
               selectedSpecialSpecialManeuvre,
+              useAnimations: useAnimations,
             ),
           ),
         ),
@@ -197,6 +206,7 @@ class _CombatScreenState extends State<CombatScreen> {
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
+            useAnimations: useAnimations,
           ),
           onParry: () => rollCombat(
             character,
@@ -204,12 +214,14 @@ class _CombatScreenState extends State<CombatScreen> {
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
+            useAnimations: useAnimations,
           ),
           onDamage: () => rollDamage(
             character,
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
+            useAnimations: useAnimations,
           ),
         ),
       );
@@ -243,6 +255,7 @@ class _CombatScreenState extends State<CombatScreen> {
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,
+                      useAnimations: useAnimations,
                     ),
                     onParry: () => rollCombat(
                       character,
@@ -250,12 +263,14 @@ class _CombatScreenState extends State<CombatScreen> {
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,
+                      useAnimations: useAnimations,
                     ),
                     onDamage: () => rollDamage(
                       character,
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,
+                      useAnimations: useAnimations,
                     ),
                     onDelete: () => setState(() {
                       genericAttack = null;

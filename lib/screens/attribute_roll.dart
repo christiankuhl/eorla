@@ -13,10 +13,7 @@ import 'dice_rolls.dart';
 class AttributeRollScreen extends StatefulWidget {
   final Attribute attribute;
 
-  const AttributeRollScreen({
-    required this.attribute,
-    super.key,
-  });
+  const AttributeRollScreen({required this.attribute, super.key});
 
   @override
   AttributeRollScreenState createState() => AttributeRollScreenState();
@@ -25,7 +22,11 @@ class AttributeRollScreen extends StatefulWidget {
 class AttributeRollScreenState extends State<AttributeRollScreen> {
   int modifier = 0;
 
-  Future<void> performRoll(Character character, int modifier) async {
+  Future<void> performRoll(
+    Character character,
+    int modifier, {
+    bool useAnimations = true,
+  }) async {
     ExplainedValue attrValue = attributeTargetValue(
       character,
       widget.attribute,
@@ -37,7 +38,9 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
         .map((c) => "${c.value}\t\t${c.explanation}")
         .join("\n");
 
-    await fadeDice(context, DiceAnimation.d20);
+    if (useAnimations) {
+      await fadeDice(context, DiceAnimation.d20);
+    }
 
     if (!mounted) {
       return;
@@ -56,6 +59,7 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
   @override
   Widget build(BuildContext context) {
     final character = Provider.of<CharacterManager>(context).activeCharacter!;
+    bool useAnimations = Provider.of<AppSettings>(context).useAnimations;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -82,12 +86,11 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
                       character.getAttribute(widget.attribute),
                       "${widget.attribute.short} Basis",
                     )
-                    .add(modifier, "Modifikator", true)
+                    .add(modifier, "Modifikator")
                     .andThen(character.state.explain()),
                 Provider.of<AppSettings>(context).nerdMode,
               ),
-              if (character.state.value() > 0)
-                statesCard(character.state),
+              if (character.state.value() > 0) statesCard(character.state),
 
               Card(
                 margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -114,7 +117,11 @@ class AttributeRollScreenState extends State<AttributeRollScreen> {
               SizedBox(height: 24),
               ElevatedButton(
                 key: const Key("attribute_roll_button"),
-                onPressed: () => performRoll(character, modifier),
+                onPressed: () => performRoll(
+                  character,
+                  modifier,
+                  useAnimations: useAnimations,
+                ),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                 ),
