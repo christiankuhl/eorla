@@ -47,14 +47,17 @@ class AttributeRollResult {
   }
 
   List<Dice> get dice {
+    // Confirmation throw => 1. die normal, 2. die event die
+    if (roll?.confirmationThrow != null) {
+      return [
+        Dice.create(20, value: roll),
+        Dice.create(20, value: roll, event: event),
+      ];
+    }
+    // Otherwise just return the only die with the event (?)
+    // TODO: Confirm if wanted behaviour
     return [
-      Dice.create(20, event: event, value: roll),
-      if (roll?.confirmationThrow != null)
-        Dice.create(
-          20,
-          event: event,
-          value: DiceValue(roll!.confirmationThrow!),
-        ),
+      Dice.create(20, value: roll, event: event),
     ];
   }
 
