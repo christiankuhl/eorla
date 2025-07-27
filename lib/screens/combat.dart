@@ -33,7 +33,7 @@ class _CombatScreenState extends State<CombatScreen> {
     Weapon weapon,
     SpecialAbility? specialAbilityBaseManeuvre,
     SpecialAbility? specialAbilitySpecialManeuvre, {
-    bool useAnimations = true,
+    AppSettings? settings,
   }) async {
     final engine = CombatRoll.fromWeapon(
       character,
@@ -44,6 +44,7 @@ class _CombatScreenState extends State<CombatScreen> {
     );
     final result = engine.roll(action);
     String title;
+    CombatTechnique technique = weapon.ct;
     switch (action) {
       case CombatActionType.attack:
         title = "${weapon.name} - Attacke";
@@ -53,10 +54,12 @@ class _CombatScreenState extends State<CombatScreen> {
         title = "Ausweichen";
     }
     String detail;
+    String? ruleText;
     if (result.length == 1) {
       detail = result[0].targetValue.explanation
           .map((c) => c.toString())
           .join("\n");
+      ruleText = getRuleText(result[0], action, technique, weapon, settings!);
     } else {
       detail = result
           .map((r) {
@@ -66,9 +69,19 @@ class _CombatScreenState extends State<CombatScreen> {
             return "${r.resultContext}:\n$expl";
           })
           .join("\n\n");
+      ruleText = result
+          .map(
+            (r) => (
+              r.resultContext,
+              getRuleText(r, action, technique, weapon, settings!),
+            ),
+          )
+          .where((e) => e.$2 != null)
+          .map((c) => "${c.$1}: ${c.$2}")
+          .join("\n\n");
     }
 
-    if (useAnimations) {
+    if (settings?.useAnimations ?? false) {
       await fadeDice(context, DiceAnimation.d20);
     }
 
@@ -82,7 +95,7 @@ class _CombatScreenState extends State<CombatScreen> {
         result[0].widget(context),
         result[0].resultText(context),
         detail,
-        null,
+        ruleText,
         context,
       );
     } else {
@@ -93,7 +106,7 @@ class _CombatScreenState extends State<CombatScreen> {
           context,
         ), // FIXME: this is not technically correct, since for multiple attacks, individual attack rolls may fail
         detail,
-        null,
+        ruleText,
         context,
       );
     }
@@ -138,7 +151,7 @@ class _CombatScreenState extends State<CombatScreen> {
   @override
   Widget build(BuildContext context) {
     final character = Provider.of<CharacterManager>(context).activeCharacter!;
-    bool useAnimations = Provider.of<AppSettings>(context).useAnimations;
+    AppSettings settings = Provider.of<AppSettings>(context);
     final List<SpecialAbility> specialOptionsBaseManeuvre =
         (character.abilities ?? [])
             .where((a) => a.value.type == SpecialAbilityType.baseManeuvre)
@@ -185,7 +198,7 @@ class _CombatScreenState extends State<CombatScreen> {
               genericWeapons[CombatTechnique.raufen]!,
               selectedSpecialBaseManeuvre,
               selectedSpecialSpecialManeuvre,
-              useAnimations: useAnimations,
+              settings: settings,
             ),
           ),
         ),
@@ -206,7 +219,7 @@ class _CombatScreenState extends State<CombatScreen> {
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
-            useAnimations: useAnimations,
+            settings: settings,
           ),
           onParry: () => rollCombat(
             character,
@@ -214,14 +227,14 @@ class _CombatScreenState extends State<CombatScreen> {
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
-            useAnimations: useAnimations,
+            settings: settings,
           ),
           onDamage: () => rollDamage(
             character,
             weapon,
             selectedSpecialBaseManeuvre,
             selectedSpecialSpecialManeuvre,
-            useAnimations: useAnimations,
+            useAnimations: settings.useAnimations,
           ),
         ),
       );
@@ -255,7 +268,7 @@ class _CombatScreenState extends State<CombatScreen> {
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,
-                      useAnimations: useAnimations,
+                      settings: settings,
                     ),
                     onParry: () => rollCombat(
                       character,
@@ -263,14 +276,14 @@ class _CombatScreenState extends State<CombatScreen> {
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,
-                      useAnimations: useAnimations,
+                      settings: settings,
                     ),
                     onDamage: () => rollDamage(
                       character,
                       weapon,
                       selectedSpecialBaseManeuvre,
                       selectedSpecialSpecialManeuvre,
-                      useAnimations: useAnimations,
+                      useAnimations: settings.useAnimations,
                     ),
                     onDelete: () => setState(() {
                       genericAttack = null;

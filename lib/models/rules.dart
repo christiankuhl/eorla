@@ -1,3 +1,4 @@
+import 'package:eorla/managers/settings.dart';
 import 'package:eorla/models/spells.dart';
 import 'package:flutter/material.dart';
 import 'character.dart';
@@ -10,6 +11,7 @@ import 'dart:math';
 import 'dice.dart';
 import 'audit.dart';
 import '../widgets/dice.dart';
+import 'optional_rules.dart';
 
 class DamageRollResult {
   List<Dice> dice;
@@ -56,9 +58,7 @@ class AttributeRollResult {
     }
     // Otherwise just return the only die with the event (?)
     // TODO: Confirm if wanted behaviour
-    return [
-      Dice.create(20, value: roll, event: event),
-    ];
+    return [Dice.create(20, value: roll, event: event)];
   }
 
   String text() {
@@ -293,19 +293,25 @@ class SkillRoll<T extends Trial> {
     return SkillRollResult([
       AttributeRollResult(
         DiceValue(roll1),
-        roll1 == 1 ? RollEvent.critical : (roll1 == 20 ? RollEvent.botch : RollEvent.none),
+        roll1 == 1
+            ? RollEvent.critical
+            : (roll1 == 20 ? RollEvent.botch : RollEvent.none),
         tgtValue1,
         resultContext: attr1.name,
       ),
       AttributeRollResult(
         DiceValue(roll2),
-        roll2 == 1 ? RollEvent.critical : (roll2 == 20 ? RollEvent.botch : RollEvent.none),
+        roll2 == 1
+            ? RollEvent.critical
+            : (roll2 == 20 ? RollEvent.botch : RollEvent.none),
         tgtValue2,
         resultContext: attr2.name,
       ),
       AttributeRollResult(
         DiceValue(roll3),
-        roll3 == 1 ? RollEvent.critical : (roll3 == 20 ? RollEvent.botch : RollEvent.none),
+        roll3 == 1
+            ? RollEvent.critical
+            : (roll3 == 20 ? RollEvent.botch : RollEvent.none),
         tgtValue3,
         resultContext: attr3.name,
       ),
@@ -807,4 +813,81 @@ String diceCountString(List<Dice> damageDice) {
   }
   // Example output: "2W6 + 1W8"
   return counts.entries.map((e) => "${e.value}W${e.key}").join("+");
+}
+
+String? getRuleText(
+  AttributeRollResult result,
+  CombatActionType action,
+  CombatTechnique technique,
+  Weapon? weapon,
+  AppSettings settings, {
+  Random? random,
+}) {
+  RuleMixin ruleEnum;
+  CombatRuleType ruleType;
+  random ??= Random();
+  int w6() => random!.nextInt(6) + 1;
+  int twoW6 = w6() + w6();
+  switch (result.event) {
+    case RollEvent.critical:
+      ruleType = settings.critRules;
+      switch (action) {
+        case CombatActionType.attack:
+          ruleEnum = CriticalAttack.from(twoW6);
+          break;
+        case CombatActionType.dodge:
+        case CombatActionType.parry:
+          if (technique.group == CombatType.range) {
+            ruleEnum = CriticalDefenseRanged.from(twoW6);
+          } else {
+            ruleEnum = CriticalDefenseMelee.from(twoW6);
+          }
+          break;
+      }
+      break;
+    case RollEvent.botch:
+      ruleType = settings.botchRules;
+      switch (action) {
+        case CombatActionType.attack:
+          if (technique.group == CombatType.range) {
+            ruleEnum = BotchedAttackRanged.from(twoW6);
+          } else {
+            if ((weapon == null || technique == CombatTechnique.raufen) &&
+                twoW6 < 7) {
+              twoW6 += 5;
+            }
+            ruleEnum = BotchedAttackMelee.from(twoW6);
+          }
+          break;
+        case CombatActionType.dodge:
+        case CombatActionType.parry:
+          if (technique == CombatTechnique.schilde) {
+            if (action == CombatActionType.dodge && twoW6 < 7) {
+              twoW6 += 5;
+            }
+            ruleEnum = BotchedDefenseShield.from(twoW6);
+          } else {
+            if ((weapon == null || technique == CombatTechnique.raufen) &&
+                twoW6 < 7) {
+              twoW6 += 5;
+            }
+            ruleEnum = BotchedDefenseNoShield.from(twoW6);
+          }
+          break;
+      }
+      break;
+    default:
+      return null;
+  }
+
+  switch (ruleType) {
+    case CombatRuleType.normal:
+      final (title, effect) = ruleEnum.normalRule();
+      return "$title\n\n$effect";
+    case CombatRuleType.table:
+      return "${ruleEnum.title}\n\n${ruleEnum.effect}";
+    case CombatRuleType.focus:
+      final (title, effect) = ruleEnum.focusRule(random.nextInt(20) + 1);
+      return "$title\n\n$effect";
+  }
 }

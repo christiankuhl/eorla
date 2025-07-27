@@ -1,4 +1,16 @@
-enum CriticalDefenseRanged {
+abstract interface class RuleMixin {
+  static RuleMixin from(int twoW6) {
+    throw UnimplementedError();
+  }
+
+  (String, String) normalRule();
+  (String, String) focusRule(int w20);
+
+  String get title;
+  String get effect;
+}
+
+enum CriticalDefenseRanged implements RuleMixin {
   sehrGuteGelegenheitZumAngriff(
     "Sehr gute Gelegenheit zum Angriff",
     "Der Held kann bis zum Ende der nächsten KR Erschwernisse auf AT und FK um 2 senken (bis zu einem Maximum von +/–0).",
@@ -44,11 +56,13 @@ enum CriticalDefenseRanged {
     "Bis zum Ende der nächsten KR sind Verteidigungen des Gegners um 1 erschwert, außerdem sind alle Proben auf AT und FK gegen ihn um 1 erleichtert, gleich ob durch den Helden oder seine Gefährten.",
   );
 
+  @override
   final String title;
+  @override
   final String effect;
   const CriticalDefenseRanged(this.title, this.effect);
 
-  factory CriticalDefenseRanged.from(int twoW6) {
+  static CriticalDefenseRanged from(int twoW6) {
     switch (twoW6) {
       case 2:
         return CriticalDefenseRanged.sehrGuteGelegenheitZumAngriff;
@@ -89,6 +103,15 @@ enum CriticalDefenseRanged {
     }
   }
 
+  @override
+  (String, String) normalRule() {
+    return (
+      "Kritischer Erfolg!",
+      "Die nächste Verteidigung in dieser Kampfrunde ist nicht um 3 erschwert.",
+    );
+  }
+
+  @override
   (String, String) focusRule(int w20) {
     switch (this) {
       case CriticalDefenseRanged.sehrGuteGelegenheitZumAngriff:
@@ -434,7 +457,7 @@ enum CriticalDefenseRanged {
   }
 }
 
-enum CriticalDefenseMelee {
+enum CriticalDefenseMelee implements RuleMixin {
   geschickterAngriff(
     "Geschickter Angriff",
     "Der Held verfügt bis zum Ende der nächsten KR über einen Bonus von +2 auf AT gegen seinen Gegner.",
@@ -480,11 +503,13 @@ enum CriticalDefenseMelee {
     "Der Held kann sofort einen Passierschlag gegen seinen Gegner ausführen. Dieser ist um 2 erleichtert. Danach kann er einen weiteren durchführen, der nicht modifiziert ist.",
   );
 
+  @override
   final String title;
+  @override
   final String effect;
   const CriticalDefenseMelee(this.title, this.effect);
 
-  factory CriticalDefenseMelee.from(int twoW6) {
+  static CriticalDefenseMelee from(int twoW6) {
     switch (twoW6) {
       case 2:
         return CriticalDefenseMelee.geschickterAngriff;
@@ -525,6 +550,12 @@ enum CriticalDefenseMelee {
     }
   }
 
+  @override
+  (String, String) normalRule() {
+    return ("Kritischer Erfolg!", "Der Held erhält einen Passierschlag!");
+  }
+
+  @override
   (String, String) focusRule(int w20) {
     switch (this) {
       case CriticalDefenseMelee.geschickterAngriff:
@@ -870,7 +901,7 @@ enum CriticalDefenseMelee {
   }
 }
 
-enum BotchedAttackMelee {
+enum BotchedAttackMelee implements RuleMixin {
   waffeZerstoert(
     "Waffe zerstört",
     "Die Waffe ist unwiederbringlich zerstört. Bei unzerstörbaren Waffen ist die Waffe zu Boden gefallen.",
@@ -913,11 +944,13 @@ enum BotchedAttackMelee {
     "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
   );
 
+  @override
   final String title;
+  @override
   final String effect;
   const BotchedAttackMelee(this.title, this.effect);
 
-  factory BotchedAttackMelee.from(int twoW6) {
+  static BotchedAttackMelee from(int twoW6) {
     switch (twoW6) {
       case 2:
         return BotchedAttackMelee.waffeZerstoert;
@@ -958,6 +991,12 @@ enum BotchedAttackMelee {
     }
   }
 
+  @override
+  (String, String) normalRule() {
+    return ("Patzer beim Angriff!", "Der Held erhält 2W6 + 2 Schadenspunkte!");
+  }
+
+  @override
   (String, String) focusRule(int w20) {
     switch (this) {
       case BotchedAttackMelee.waffeZerstoert:
@@ -1285,7 +1324,7 @@ enum BotchedAttackMelee {
   }
 }
 
-enum BotchedAttackRanged {
+enum BotchedAttackRanged implements RuleMixin {
   waffeZerstoert(
     "Waffe zerstört",
     "Die Waffe ist unwiederbringlich zerstört. Bei unzerstörbaren Waffen gilt die Waffe als zu Boden gefallen.",
@@ -1328,11 +1367,13 @@ enum BotchedAttackRanged {
     "Ein schwerer Eigentreffer. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt.",
   );
 
+  @override
   final String title;
+  @override
   final String effect;
   const BotchedAttackRanged(this.title, this.effect);
 
-  factory BotchedAttackRanged.from(int twoW6) {
+  static BotchedAttackRanged from(int twoW6) {
     switch (twoW6) {
       case 2:
         return BotchedAttackRanged.waffeZerstoert;
@@ -1374,6 +1415,12 @@ enum BotchedAttackRanged {
     }
   }
 
+  @override
+  (String, String) normalRule() {
+    return ("Patzer beim Angriff!", "Der Held erhält 2W6 + 2 Schadenspunkte!");
+  }
+
+  @override
   (String, String) focusRule(int w20) {
     switch (this) {
       case BotchedAttackRanged.waffeZerstoert:
@@ -1711,7 +1758,7 @@ enum BotchedAttackRanged {
   }
 }
 
-enum CriticalAttack {
+enum CriticalAttack implements RuleMixin {
   leichterTreffer("Leichter Treffer", "Die Trefferpunkte werden um 2 erhöht."),
   leichtBetaeubenderTreffer(
     "Leicht betäubender Treffer",
@@ -1754,11 +1801,13 @@ enum CriticalAttack {
     "Die Trefferpunkte samt Modifikatoren werden verdreifacht.",
   );
 
+  @override
   final String title;
+  @override
   final String effect;
   const CriticalAttack(this.title, this.effect);
 
-  factory CriticalAttack.from(int twoW6) {
+  static CriticalAttack from(int twoW6) {
     switch (twoW6) {
       case 2:
         return CriticalAttack.leichterTreffer;
@@ -1799,6 +1848,12 @@ enum CriticalAttack {
     }
   }
 
+  @override
+  (String, String) normalRule() {
+    return ("Kritischer Erfolg!", "Die erwürfelten TP werden verdoppelt!");
+  }
+
+  @override
   (String, String) focusRule(int w20) {
     switch (this) {
       case CriticalAttack.leichterTreffer:
@@ -2138,7 +2193,7 @@ enum CriticalAttack {
   }
 }
 
-enum BotchedDefenseNoShield {
+enum BotchedDefenseNoShield implements RuleMixin {
   waffeZerstoert(
     "Waffe zerstört",
     "Die Waffe ist unwiederbringlich zerstört. Bei unzerstörbaren Waffen wird das Ergebnis wie bei 5 behandelt.",
@@ -2181,11 +2236,13 @@ enum BotchedDefenseNoShield {
     "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
   );
 
+  @override
   final String title;
+  @override
   final String effect;
   const BotchedDefenseNoShield(this.title, this.effect);
 
-  factory BotchedDefenseNoShield.from(int twoW6) {
+  static BotchedDefenseNoShield from(int twoW6) {
     switch (twoW6) {
       case 2:
         return BotchedDefenseNoShield.waffeZerstoert;
@@ -2226,6 +2283,15 @@ enum BotchedDefenseNoShield {
     }
   }
 
+  @override
+  (String, String) normalRule() {
+    return (
+      "Patzer bei der Verteidigung!",
+      "Der Held erhält 2W6 + 2 Schadenspunkte!",
+    );
+  }
+
+  @override
   (String, String) focusRule(int w20) {
     switch (this) {
       case BotchedDefenseNoShield.waffeZerstoert:
@@ -2554,7 +2620,7 @@ enum BotchedDefenseNoShield {
   }
 }
 
-enum BotchedDefenseShield {
+enum BotchedDefenseShield implements RuleMixin {
   schildZerstoert(
     "Schild zerstört",
     "Der Schild ist unwiederbringlich zerstört. Bei unzerstörbaren Schilden wird das Ergebnis wie bei 5 behandelt.",
@@ -2597,11 +2663,13 @@ enum BotchedDefenseShield {
     "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
   );
 
+  @override
   final String title;
+  @override
   final String effect;
   const BotchedDefenseShield(this.title, this.effect);
 
-  factory BotchedDefenseShield.from(int twoW6) {
+  static BotchedDefenseShield from(int twoW6) {
     switch (twoW6) {
       case 2:
         return BotchedDefenseShield.schildZerstoert;
@@ -2642,6 +2710,15 @@ enum BotchedDefenseShield {
     }
   }
 
+  @override
+  (String, String) normalRule() {
+    return (
+      "Patzer bei der Verteidigung!",
+      "Der Held erhält 2W6 + 2 Schadenspunkte!",
+    );
+  }
+
+  @override
   (String, String) focusRule(int w20) {
     switch (this) {
       case BotchedDefenseShield.schildZerstoert:
