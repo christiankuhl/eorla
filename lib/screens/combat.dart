@@ -89,6 +89,10 @@ class _CombatScreenState extends State<CombatScreen> {
       return;
     }
 
+    bool expand = result.any(
+      (r) => r.event == RollEvent.critical || r.event == RollEvent.botch,
+    );
+
     if (result.length == 1) {
       showDetailDialog(
         title,
@@ -97,6 +101,7 @@ class _CombatScreenState extends State<CombatScreen> {
         detail,
         ruleText,
         context,
+        startExpanded: expand,
       );
     } else {
       showDetailDialog(
@@ -108,6 +113,7 @@ class _CombatScreenState extends State<CombatScreen> {
         detail,
         ruleText,
         context,
+        startExpanded: expand,
       );
     }
   }
