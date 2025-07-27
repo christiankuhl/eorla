@@ -10,9 +10,7 @@ class SettingsScreen extends StatelessWidget {
     final settings = Provider.of<AppSettings>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Einstellungen'), 
-      ),
+      appBar: AppBar(title: const Text('Einstellungen')),
       body: ListView(
         children: [
           SwitchListTile(
@@ -32,6 +30,64 @@ class SettingsScreen extends StatelessWidget {
               settings.toggleAnimations();
             },
             secondary: const Icon(Icons.animation),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SwitchListTile(
+                title: const Text('Kritische Erfolge'),
+                subtitle: const Text(
+                  'Tabelle für kritische Kampferfolge verwenden',
+                ),
+                value: settings.useCritTable,
+                onChanged: (value) {
+                  settings.toggleCritTable();
+                },
+                secondary: const Icon(Icons.military_tech),
+              ),
+              if (settings.useCritTable)
+                Padding(
+                  padding: const EdgeInsets.only(left: 32.0),
+                  child: SwitchListTile(
+                    title: const Text('Fokusregeln verwenden'),
+                    subtitle: const Text(
+                      'Fokusregeln für kritische Kampferfolge verwenden',
+                    ),
+                    value: settings.useFocusRulesCrit,
+                    onChanged: (value) {
+                      settings.toggleFocusRulesCrit();
+                    },
+                    secondary: const Icon(Icons.filter_center_focus),
+                  ),
+                ),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SwitchListTile(
+                title: const Text('Patzertabelle'),
+                subtitle: const Text('Patzertabelle verwenden'),
+                value: settings.useBotchTable,
+                onChanged: (value) {
+                  settings.toggleBotchTable();
+                },
+                secondary: const Icon(Icons.report_problem),
+              ),
+              if (settings.useBotchTable)
+                Padding(
+                  padding: const EdgeInsets.only(left: 32.0),
+                  child: SwitchListTile(
+                    title: const Text('Fokusregeln verwenden'),
+                    subtitle: const Text('Fokusregeln für Patzer verwenden'),
+                    value: settings.useFocusRulesBotch,
+                    onChanged: (value) {
+                      settings.toggleFocusRulesBotch();
+                    },
+                    secondary: const Icon(Icons.filter_center_focus),
+                  ),
+                ),
+            ],
           ),
         ],
       ),
