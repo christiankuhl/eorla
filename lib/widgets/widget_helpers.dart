@@ -11,22 +11,35 @@ final styleBad = TextStyle(color: const Color.fromARGB(255, 218, 100, 100));
 Widget modifierRow(
   String label,
   dynamic value,
-  VoidCallback onIncrement,
-  VoidCallback onDecrement,
-) {
+  VoidCallback? onIncrement,
+  VoidCallback? onDecrement, {
+  bool active = true,
+}) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Text(label),
       Row(
         children: [
-          IconButton(icon: Icon(Icons.remove), onPressed: onDecrement),
+          Opacity(
+            opacity: active ? 1 : 0.5,
+            child: IconButton(
+              icon: Icon(Icons.remove),
+              onPressed: active ? onDecrement : null,
+            ),
+          ),
           Container(
             width: 17,
             alignment: Alignment.center,
             child: Text(value.toString()),
           ),
-          IconButton(icon: Icon(Icons.add), onPressed: onIncrement),
+          Opacity(
+            opacity: active ? 1 : 0.5,
+            child: IconButton(
+              icon: Icon(Icons.add),
+              onPressed: active ? onIncrement : null,
+            ),
+          ),
         ],
       ),
     ],
