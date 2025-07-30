@@ -22,6 +22,7 @@ class Character {
   int ko;
   int kk;
   int lp;
+  int ap;
   Race race;
   CharacterState state;
   Map<Skill, int>? talents;
@@ -45,6 +46,7 @@ class Character {
     this.ko = 8,
     this.kk = 8,
     this.lp = 0,
+    this.ap = 0,
     this.race = Race.menschen,
     required this.state,
     this.talents,
@@ -122,7 +124,16 @@ class Character {
       };
     }
     character.lp = character.getHealthMax();
+    character.ap = character.getAP();
     return character;
+  }
+
+  int getAP() {
+    // TODO: Optolith only stores total AP, which may include AP not used up yet. Until we're able to accurately calculate this,
+    // we opt for the conservative route: the number that Optolith stores here is the *exact* amount it took to construct the
+    // character, and store AP given out by ourselves in "ap" > "eorla", which Optolith thankfully ignores, as well as by
+    // incrementing "total", thus allowing for halfways decent compatibility.
+    return optolith.data["ap"]?["eorla"] ?? 0;
   }
 
   Map<dynamic, dynamic> toJson() {
@@ -138,9 +149,11 @@ class Character {
     ];
     var belongings = {};
     var abilitiesOut = {};
+    int totalAP = optolith.data["ap"]["total"];
     var result = {
       "name": name,
       "avatar": avatar.toJson(),
+      "ap": {"total": totalAP + ap, "eorla": ap},
       "talents": <String, int>{
         for (var v in talents!.entries) v.key.id: v.value,
       },
@@ -226,10 +239,15 @@ class Character {
     Map<String, dynamic> activatables = optolith.data["activatable"];
     final incLP = activatables["ADV_25"] ?? [];
     final decLP = activatables["DISADV_28"] ?? [];
-    final int lostLP = (optolith.data["attr"]["permanentLP"] ?? {"lost": 0})["lost"];
+    final int lostLP =
+        (optolith.data["attr"]["permanentLP"] ?? {"lost": 0})["lost"];
     base -= lostLP;
-    if (incLP.length == 1) base += (activatables["ADV_25"][0]["tier"] ?? 0) as int;
-    if (decLP.length == 1) base -= (activatables["DISADV_28"][0]["tier"] ?? 0) as int;
+    if (incLP.length == 1) {
+      base += (activatables["ADV_25"][0]["tier"] ?? 0) as int;
+    }
+    if (decLP.length == 1) {
+      base -= (activatables["DISADV_28"][0]["tier"] ?? 0) as int;
+    }
     final int addedLP = optolith.data["attr"]["lp"];
     base += addedLP;
     return base;
@@ -333,25 +351,67 @@ class CharacterState {
   List<ComponentWithExplanation> explain() {
     List<ComponentWithExplanation> states = [];
     if (belastung > 0) {
-      states.add(ComponentWithExplanation(-belastung, "Belastung Stufe ${roman(belastung)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -belastung,
+          "Belastung Stufe ${roman(belastung)}",
+          true,
+        ),
+      );
     }
     if (betaeubung > 0) {
-      states.add(ComponentWithExplanation(-betaeubung, "Betäubung Stufe ${roman(betaeubung)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -betaeubung,
+          "Betäubung Stufe ${roman(betaeubung)}",
+          true,
+        ),
+      );
     }
     if (entrueckung > 0) {
-      states.add(ComponentWithExplanation(-entrueckung, "Entrückung Stufe ${roman(entrueckung)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -entrueckung,
+          "Entrückung Stufe ${roman(entrueckung)}",
+          true,
+        ),
+      );
     }
     if (furcht > 0) {
-      states.add(ComponentWithExplanation(-furcht, "Furcht Stufe ${roman(furcht)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -furcht,
+          "Furcht Stufe ${roman(furcht)}",
+          true,
+        ),
+      );
     }
     if (paralyse > 0) {
-      states.add(ComponentWithExplanation(-paralyse, "Paralyse Stufe ${roman(paralyse)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -paralyse,
+          "Paralyse Stufe ${roman(paralyse)}",
+          true,
+        ),
+      );
     }
     if (schmerz > 0) {
-      states.add(ComponentWithExplanation(-schmerz, "Schmerz Stufe ${roman(schmerz)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -schmerz,
+          "Schmerz Stufe ${roman(schmerz)}",
+          true,
+        ),
+      );
     }
     if (verwirrung > 0) {
-      states.add(ComponentWithExplanation(-verwirrung, "Verwirrung Stufe ${roman(verwirrung)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -verwirrung,
+          "Verwirrung Stufe ${roman(verwirrung)}",
+          true,
+        ),
+      );
     }
     return states;
   }
@@ -359,7 +419,13 @@ class CharacterState {
 
 int painLevel(Character c) {
   final m = c.getHealthMax();
-  final lvls = [(0.75*m).round(), (0.5*m).round(), (0.25*m).round(), 5, -1];
+  final lvls = [
+    (0.75 * m).round(),
+    (0.5 * m).round(),
+    (0.25 * m).round(),
+    5,
+    -1,
+  ];
   final lvl = lvls.indexWhere((l) => l < c.lp);
   return lvl;
 }
