@@ -57,8 +57,23 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             SizedBox(height: 12),
             Text(c.name, style: Theme.of(context).textTheme.headlineSmall),
             SizedBox(height: 4),
-            Text('${c.gender} • ${c.race} (${c.culture}) • ${c.profession}'),
-            Text('${c.experiencelevel} • ${c.ap} / ${c.totalAP} AP'),
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 320),
+              child: Text(
+                '${c.gender} • ${c.race} (${c.culture}) • ${c.profession}',
+                textAlign: TextAlign.center,
+                softWrap: true,
+              ),
+            ),
+            SizedBox(height: 2),
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 320),
+              child: Text(
+                '${c.experiencelevel} • ${c.ap} / ${c.totalAP} AP',
+                textAlign: TextAlign.center,
+                softWrap: true,
+              ),
+            ),
             SizedBox(height: 12),
             Wrap(
               spacing: 8,
