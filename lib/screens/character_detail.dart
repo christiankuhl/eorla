@@ -17,19 +17,84 @@ class CharacterDetailScreen extends StatefulWidget {
 
 class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   bool isEditMode = false;
+  Widget _sectionTitle(String title) => Padding(
+    padding: const EdgeInsets.only(top: 24, bottom: 8),
+    child: Text(
+      title,
+      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    ),
+  );
+
+  Widget _infoRow(String? label, String value) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (label != null)
+          SizedBox(
+            width: 140,
+            child: Text(label, style: TextStyle(fontWeight: FontWeight.w500)),
+          ),
+        Expanded(child: Text(value)),
+      ],
+    ),
+  );
+
   Widget profileTab(Character c) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            backgroundImage: c.avatar.image,
-            radius: 60,
-            child: c.avatar.image == null ? Icon(Icons.person, size: 72) : null,
-          ),
-          SizedBox(height: 16),
-          Text('Profilinformationen folgen ...'),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 16),
+            CircleAvatar(
+              backgroundImage: c.avatar.image,
+              radius: 60,
+              child: c.avatar.image == null
+                  ? Icon(Icons.person, size: 72)
+                  : null,
+            ),
+            SizedBox(height: 12),
+            Text(c.name, style: Theme.of(context).textTheme.headlineSmall),
+            SizedBox(height: 4),
+            Text('${c.gender} • ${c.race} (${c.culture}) • ${c.profession}'),
+            Text('${c.experiencelevel} • ${c.ap} / ${c.totalAP} AP'),
+            SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              children: [
+                OutlinedButton(onPressed: () {}, child: Text('AP HINZUFÜGEN')),
+                OutlinedButton(onPressed: () {}, child: Text('EXPORTIEREN')),
+              ],
+            ),
+
+            _sectionTitle('Persönliche Daten'),
+            _infoRow('Familie', c.family),
+            _infoRow('Geburtsort', c.placeOfBirth),
+            _infoRow('Geburtsdatum', c.dateOfBirth),
+            _infoRow('Alter', c.age),
+            _infoRow('Haarfarbe', c.hairColour),
+            _infoRow('Augenfarbe', c.eyeColour),
+            _infoRow('Körpergröße', c.size),
+            _infoRow('Gewicht', c.weight),
+            _infoRow('Titel', c.title),
+            _infoRow('Sozialstatus', c.socialStatus),
+            _infoRow('Charakteristika', c.characteristics),
+            _infoRow('Sonstiges', c.otherInfo),
+
+            _sectionTitle('Vorteile'),
+            _infoRow(
+              null,
+              'Gutaussehend I, Herausragende Kampftechnik (Schilde, Schwerter), Hohe Lebenskraft IV',
+            ),
+
+            _sectionTitle('Nachteile'),
+            _infoRow(
+              null,
+              'Prinzipientreu II (Ehrenkodex der Krieger), Schlechte Eigenschaft (Neugier)',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -284,4 +349,3 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     );
   }
 }
-

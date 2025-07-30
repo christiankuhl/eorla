@@ -10,6 +10,7 @@ import 'special_abilities.dart';
 import 'avatar.dart';
 import 'races.dart';
 import 'audit.dart';
+import 'personal.dart';
 
 class Character {
   final String name;
@@ -128,6 +129,34 @@ class Character {
     return character;
   }
 
+  int get totalAP => optolith.data["ap"]?["total"] + ap ?? ap;
+  String get family => optolith.data["pers"]?["family"] ?? "";
+  String get placeOfBirth => optolith.data["pers"]?["placeofbirth"] ?? "";
+  String get dateOfBirth => optolith.data["pers"]?["dateofbirth"] ?? "";
+  String get age => optolith.data["pers"]?["age"] ?? "";
+  String get size => optolith.data["pers"]?["size"] ?? "";
+  String get weight => optolith.data["pers"]?["weight"] ?? "";
+  String get title => optolith.data["pers"]?["title"] ?? "";
+  String get otherInfo => optolith.data["pers"]?["otherinfo"] ?? "";
+  String get eyeColour =>
+      eyeColourById[optolith.data["pers"]?["eyecolor"]]?.toString() ?? "";
+  String get hairColour =>
+      hairColourById[optolith.data["pers"]?["haircolor"]]?.toString() ?? "";
+  String get gender => optolith.data["sex"] == "m"
+      ? "männlich"
+      : optolith.data["sex"] == "f"
+      ? "weiblich"
+      : "";
+  String get culture => culturesById[optolith.data["c"]]?.toString() ?? "";
+  String get experiencelevel =>
+      levelById[optolith.data["el"]]?.toString() ?? "";
+  String get profession =>
+      professionsById[optolith.data["p"]]?.description(gender) ?? "";
+  String get socialStatus =>
+      socialStatusById[optolith.data["pers"]?["socialstatus"]]?.toString() ??
+      "";
+  String get characteristics => "";
+
   int getAP() {
     // TODO: Optolith only stores total AP, which may include AP not used up yet. Until we're able to accurately calculate this,
     // we opt for the conservative route: the number that Optolith stores here is the *exact* amount it took to construct the
@@ -149,11 +178,10 @@ class Character {
     ];
     var belongings = {};
     var abilitiesOut = {};
-    int totalAP = optolith.data["ap"]["total"];
     var result = {
       "name": name,
       "avatar": avatar.toJson(),
-      "ap": {"total": totalAP + ap, "eorla": ap},
+      "ap": {"total": totalAP, "eorla": ap},
       "talents": <String, int>{
         for (var v in talents!.entries) v.key.id: v.value,
       },
