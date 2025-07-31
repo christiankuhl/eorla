@@ -1,16 +1,17 @@
-import 'package:eorla/models/optolith.dart';
+import 'package:eorla/models/activatable.dart';
 import 'package:flutter/material.dart';
 import '../widgets/widget_helpers.dart';
-import 'rules.dart';
 import 'attributes.dart';
-import 'skill.dart';
-import 'weapons.dart';
-import 'spells.dart';
-import 'special_abilities.dart';
-import 'avatar.dart';
-import 'races.dart';
 import 'audit.dart';
+import 'avatar.dart';
+import 'optolith.dart';
 import 'personal.dart';
+import 'races.dart';
+import 'rules.dart';
+import 'skill.dart';
+import 'special_abilities.dart';
+import 'spells.dart';
+import 'weapons.dart';
 
 class Character {
   final String name;
@@ -33,6 +34,8 @@ class Character {
   Map<CombatTechnique, int>? combatTechniques;
   Map<Spell, int>? spells;
   Optolith optolith;
+  List<Activatable>? advantages;
+  List<Activatable>? disadvantages;
 
   Character({
     required this.name,
@@ -57,6 +60,8 @@ class Character {
     this.combatTechniques,
     this.spells,
     required this.optolith,
+    this.advantages,
+    this.disadvantages,
   }) {
     talents ??= {};
     spells ??= {};
@@ -126,6 +131,7 @@ class Character {
     }
     character.lp = character.getHealthMax();
     character.ap = character.getAP();
+    character.loadAdvantagesAndDisadvantages();
     return character;
   }
 
@@ -281,6 +287,38 @@ class Character {
     final int addedLP = optolith.data["attr"]["lp"];
     base += addedLP;
     return base;
+  }
+
+  void loadAdvantagesAndDisadvantages() {
+    advantages = [];
+    disadvantages = [];
+    for (var entry in optolith.data["activatable"].entries) {
+      String key = entry.key;
+      List<dynamic> value = entry.value;
+      if (key.startsWith("ADV_") || key.startsWith("DISADV_")) {
+        ActivatableBase? type = activatableById[key];
+        if (type != null) {
+          if (value.isNotEmpty) {
+            for (Map<String, dynamic> row in value) {
+              String? option;
+              var sid = row["sid"];
+              if (type.selectOptions.containsKey(sid)) {
+                option = type.selectOptions[sid];
+              } else if (sid.toString().startsWith("CT_")) {
+                option = combatTechniquesByID[sid.toString()]?.name;
+              } else if (sid != null) {
+                option = sid.toString();
+              }
+              if (key.startsWith("ADV_")) {
+                advantages!.add(Activatable(type, row["tier"], option));
+              } else {
+                disadvantages!.add(Activatable(type, row["tier"], option));
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
 

@@ -109,13 +109,13 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             _sectionTitle('Vorteile'),
             _infoRow(
               null,
-              'Gutaussehend I, Herausragende Kampftechnik (Schilde, Schwerter), Hohe Lebenskraft IV',
+              (c.advantages ?? []).map((a) => a.toString()).join(", "),
             ),
 
             _sectionTitle('Nachteile'),
             _infoRow(
               null,
-              'Prinzipientreu II (Ehrenkodex der Krieger), Schlechte Eigenschaft (Neugier)',
+              (c.disadvantages ?? []).map((a) => a.toString()).join(", "),
             ),
           ],
         ),
