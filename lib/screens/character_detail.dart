@@ -60,7 +60,16 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 320),
               child: Text(
-                '${c.gender} • ${c.race} (${c.culture}) • ${c.profession}',
+                '${c.gender} • ${c.raceVariant == "" ? c.race : '${c.race} (${c.raceVariant})'}',
+                textAlign: TextAlign.center,
+                softWrap: true,
+              ),
+            ),
+            SizedBox(height: 2),
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 320),
+              child: Text(
+                '${c.culture} • ${c.profession}',
                 textAlign: TextAlign.center,
                 softWrap: true,
               ),

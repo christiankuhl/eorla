@@ -155,6 +155,8 @@ class Character {
   String get socialStatus =>
       socialStatusById[optolith.data["pers"]?["socialstatus"]]?.toString() ??
       "";
+  String get raceVariant =>
+      raceVariantsById[optolith.data["rv"]]?.toString() ?? "";
   String get characteristics => "";
 
   int getAP() {

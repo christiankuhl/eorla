@@ -107,3 +107,38 @@ const Map<String, Culture> culturesById = {
   "C_32": Culture.trollzacker,
   "C_33": Culture.wildzwerge,
 };
+
+enum RaceVariant {
+  mittellaender("RV_1", "Mittelländer"),
+  nivesen("RV_2", "Nivesen"),
+  norbarden("RV_3", "Norbarden"),
+  thorwaler("RV_4", "Thorwaler"),
+  tulamiden("RV_5", "Tulamiden"),
+  waldmenschen("RV_6", "Waldmenschen"),
+  utulus("RV_7", "Utulus"),
+  auelfen("RV_8", "Auelfen"),
+  firnelfen("RV_9", "Firnelfen"),
+  waldelfen("RV_10", "Waldelfen");
+
+  final String id;
+  final String name;
+  const RaceVariant(this.id, this.name);
+
+  @override
+  String toString() {
+    return name;
+  }
+}
+
+const Map<String, RaceVariant> raceVariantsById = {
+  "RV_1": RaceVariant.mittellaender,
+  "RV_2": RaceVariant.nivesen,
+  "RV_3": RaceVariant.norbarden,
+  "RV_4": RaceVariant.thorwaler,
+  "RV_5": RaceVariant.tulamiden,
+  "RV_6": RaceVariant.waldmenschen,
+  "RV_7": RaceVariant.utulus,
+  "RV_8": RaceVariant.auelfen,
+  "RV_9": RaceVariant.firnelfen,
+  "RV_10": RaceVariant.waldelfen,
+};
