@@ -78,7 +78,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 320),
               child: Text(
-                '${c.experiencelevel} • ${c.ap} / ${c.totalAP} AP',
+                '${c.experiencelevel} • ${c.totalAP} AP / ${c.ap} AP verfügbar',
                 textAlign: TextAlign.center,
                 softWrap: true,
               ),
@@ -87,7 +87,26 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             Wrap(
               spacing: 8,
               children: [
-                OutlinedButton(onPressed: () {}, child: Text('AP HINZUFÜGEN')),
+                OutlinedButton(
+                  onPressed: () async {
+                    final addedAp = await showDialog<int>(
+                      context: context,
+                      builder: (_) => const AddApDialog(),
+                    );
+                    if (!mounted) {
+                      return;
+                    }
+                    if (addedAp != null) {
+                      setState(() {
+                        c.ap += addedAp;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('$addedAp AP hinzugefügt')),
+                      );
+                    }
+                  },
+                  child: Text('AP HINZUFÜGEN'),
+                ),
                 OutlinedButton(onPressed: () {}, child: Text('EXPORTIEREN')),
               ],
             ),
@@ -310,66 +329,145 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     return Center(child: Text('Inventar folgt ...'));
   }
 
+  Widget _apBadge(Character c) {
+    return Positioned(
+      right: 16,
+      top: 16,
+      child: AnimatedOpacity(
+        opacity: isEditMode ? 1.0 : 0.0,
+        duration: Duration(milliseconds: 200),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.amber),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.flash_on, size: 18, color: Colors.amber),
+              SizedBox(width: 6),
+              Text(
+                '${c.ap} AP',
+                style: TextStyle(
+                  color: Colors.amber,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.character;
 
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(c.name),
-          centerTitle: true,
-          actions: [
-            actionButton(Icons.people_alt, () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => CharacterSelectionScreen()),
-              );
-            }, true),
-            actionButton(Icons.settings, () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => SettingsScreen()),
-              );
-            }, true),
-          ],
-          bottom: TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.person), text: 'Profil'),
-              Tab(icon: Icon(Icons.bar_chart), text: 'Eigenschaften'),
-              Tab(icon: Icon(Icons.auto_fix_high), text: 'Fertigkeiten'),
-              Tab(icon: Icon(Symbols.money_bag), text: 'Besitz'),
+    return SafeArea(
+      child: DefaultTabController(
+        length: 4,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(c.name),
+            centerTitle: true,
+            actions: [
+              actionButton(Icons.people_alt, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => CharacterSelectionScreen()),
+                );
+              }, true),
+              actionButton(Icons.settings, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => SettingsScreen()),
+                );
+              }, true),
             ],
-            labelStyle: TextStyle(fontSize: 11),
+            bottom: TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.person), text: 'Profil'),
+                Tab(icon: Icon(Icons.bar_chart), text: 'Eigenschaften'),
+                Tab(icon: Icon(Icons.auto_fix_high), text: 'Fertigkeiten'),
+                Tab(icon: Icon(Symbols.money_bag), text: 'Besitz'),
+              ],
+              labelStyle: TextStyle(fontSize: 11),
+            ),
+          ),
+          body: Stack(
+            children: [
+              TabBarView(
+                children: [
+                  profileTab(c),
+                  attributesTab(c),
+                  skillTab(c),
+                  inventoryTab(c),
+                ],
+              ),
+              _apBadge(c),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              setState(() => isEditMode = !isEditMode);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    isEditMode
+                        ? 'Bearbeitungsmodus aktiviert'
+                        : 'Änderungen gespeichert',
+                  ),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+            tooltip: isEditMode ? 'Speichern' : 'Bearbeiten',
+            child: Icon(isEditMode ? Icons.check : Icons.edit),
           ),
         ),
-        body: TabBarView(
-          children: [
-            profileTab(c),
-            attributesTab(c),
-            skillTab(c),
-            inventoryTab(c),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() => isEditMode = !isEditMode);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  isEditMode
-                      ? 'Bearbeitungsmodus aktiviert'
-                      : 'Änderungen gespeichert',
-                ),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          },
-          tooltip: isEditMode ? 'Speichern' : 'Bearbeiten',
-          child: Icon(isEditMode ? Icons.check : Icons.edit),
+      ),
+    );
+  }
+}
+
+class AddApDialog extends StatefulWidget {
+  const AddApDialog({super.key});
+
+  @override
+  State<AddApDialog> createState() => _AddApDialogState();
+}
+
+class _AddApDialogState extends State<AddApDialog> {
+  final TextEditingController _controller = TextEditingController(text: '0');
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('AP hinzufügen'),
+      content: TextField(
+        controller: _controller,
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          labelText: 'AP',
+          border: OutlineInputBorder(),
         ),
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(), // cancel
+          child: Text('Abbrechen'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final value = int.tryParse(_controller.text);
+            Navigator.of(context).pop(value ?? 0);
+          },
+          child: Text('Hinzufügen'),
+        ),
+      ],
     );
   }
 }
