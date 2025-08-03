@@ -1,5 +1,6 @@
 import 'package:eorla/models/skill_groups.dart';
 import 'package:eorla/models/attributes.dart';
+import 'package:eorla/models/upgrades.dart';
 
 enum Skill {
   // <db-replace-token>
@@ -14,6 +15,7 @@ enum Skill {
     Attribute.mut,
     Attribute.intuition,
     Attribute.gewandtheit,
+    Cost.b,
   ),
   gaukeleien(
     "TAL_2",
@@ -26,6 +28,7 @@ enum Skill {
     Attribute.mut,
     Attribute.charisma,
     Attribute.fingerfertigkeit,
+    Cost.a,
   ),
   klettern(
     "TAL_3",
@@ -38,6 +41,7 @@ enum Skill {
     Attribute.mut,
     Attribute.gewandtheit,
     Attribute.koerperkraft,
+    Cost.b,
   ),
   koerperbeherrschung(
     "TAL_4",
@@ -50,6 +54,7 @@ enum Skill {
     Attribute.gewandtheit,
     Attribute.gewandtheit,
     Attribute.konstitution,
+    Cost.d,
   ),
   kraftakt(
     "TAL_5",
@@ -62,6 +67,7 @@ enum Skill {
     Attribute.konstitution,
     Attribute.koerperkraft,
     Attribute.koerperkraft,
+    Cost.b,
   ),
   reiten(
     "TAL_6",
@@ -74,6 +80,7 @@ enum Skill {
     Attribute.charisma,
     Attribute.gewandtheit,
     Attribute.koerperkraft,
+    Cost.b,
   ),
   schwimmen(
     "TAL_7",
@@ -86,6 +93,7 @@ enum Skill {
     Attribute.gewandtheit,
     Attribute.konstitution,
     Attribute.koerperkraft,
+    Cost.b,
   ),
   selbstbeherrschung(
     "TAL_8",
@@ -98,6 +106,7 @@ enum Skill {
     Attribute.mut,
     Attribute.mut,
     Attribute.konstitution,
+    Cost.d,
   ),
   singen(
     "TAL_9",
@@ -110,6 +119,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.charisma,
     Attribute.konstitution,
+    Cost.a,
   ),
   sinnesschaerfe(
     "TAL_10",
@@ -122,6 +132,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.intuition,
     Attribute.intuition,
+    Cost.d,
   ),
   tanzen(
     "TAL_11",
@@ -134,6 +145,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.charisma,
     Attribute.gewandtheit,
+    Cost.a,
   ),
   taschendiebstahl(
     "TAL_12",
@@ -146,6 +158,7 @@ enum Skill {
     Attribute.mut,
     Attribute.fingerfertigkeit,
     Attribute.gewandtheit,
+    Cost.b,
   ),
   verbergen(
     "TAL_13",
@@ -158,6 +171,7 @@ enum Skill {
     Attribute.mut,
     Attribute.intuition,
     Attribute.gewandtheit,
+    Cost.c,
   ),
   zechen(
     "TAL_14",
@@ -170,6 +184,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.konstitution,
     Attribute.koerperkraft,
+    Cost.a,
   ),
   bekehrenUndUeberzeugen(
     "TAL_15",
@@ -182,6 +197,7 @@ enum Skill {
     Attribute.mut,
     Attribute.klugheit,
     Attribute.charisma,
+    Cost.b,
   ),
   betoeren(
     "TAL_16",
@@ -194,6 +210,7 @@ enum Skill {
     Attribute.mut,
     Attribute.charisma,
     Attribute.charisma,
+    Cost.b,
   ),
   einschuechtern(
     "TAL_17",
@@ -206,6 +223,7 @@ enum Skill {
     Attribute.mut,
     Attribute.intuition,
     Attribute.charisma,
+    Cost.b,
   ),
   etikette(
     "TAL_18",
@@ -218,6 +236,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.intuition,
     Attribute.charisma,
+    Cost.b,
   ),
   gassenwissen(
     "TAL_19",
@@ -230,6 +249,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.intuition,
     Attribute.charisma,
+    Cost.c,
   ),
   menschenkenntnis(
     "TAL_20",
@@ -242,6 +262,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.intuition,
     Attribute.charisma,
+    Cost.c,
   ),
   ueberreden(
     "TAL_21",
@@ -254,6 +275,7 @@ enum Skill {
     Attribute.mut,
     Attribute.intuition,
     Attribute.charisma,
+    Cost.c,
   ),
   verkleiden(
     "TAL_22",
@@ -266,6 +288,7 @@ enum Skill {
     Attribute.intuition,
     Attribute.charisma,
     Attribute.gewandtheit,
+    Cost.b,
   ),
   willenskraft(
     "TAL_23",
@@ -278,6 +301,7 @@ enum Skill {
     Attribute.mut,
     Attribute.intuition,
     Attribute.charisma,
+    Cost.d,
   ),
   faehrtensuchen(
     "TAL_24",
@@ -290,6 +314,7 @@ enum Skill {
     Attribute.mut,
     Attribute.intuition,
     Attribute.gewandtheit,
+    Cost.c,
   ),
   fesseln(
     "TAL_25",
@@ -302,6 +327,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.fingerfertigkeit,
     Attribute.koerperkraft,
+    Cost.a,
   ),
   fischenUndAngeln(
     "TAL_26",
@@ -314,6 +340,7 @@ enum Skill {
     Attribute.fingerfertigkeit,
     Attribute.gewandtheit,
     Attribute.konstitution,
+    Cost.a,
   ),
   orientierung(
     "TAL_27",
@@ -326,6 +353,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.intuition,
     Attribute.intuition,
+    Cost.b,
   ),
   pflanzenkunde(
     "TAL_28",
@@ -338,6 +366,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.fingerfertigkeit,
     Attribute.konstitution,
+    Cost.c,
   ),
   tierkunde(
     "TAL_29",
@@ -350,6 +379,7 @@ enum Skill {
     Attribute.mut,
     Attribute.mut,
     Attribute.charisma,
+    Cost.c,
   ),
   wildnisleben(
     "TAL_30",
@@ -362,6 +392,7 @@ enum Skill {
     Attribute.mut,
     Attribute.gewandtheit,
     Attribute.konstitution,
+    Cost.c,
   ),
   brettUndGluecksspiel(
     "TAL_31",
@@ -374,6 +405,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.a,
   ),
   geographie(
     "TAL_32",
@@ -386,6 +418,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.b,
   ),
   geschichtswissen(
     "TAL_33",
@@ -398,6 +431,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.b,
   ),
   goetterUndKulte(
     "TAL_34",
@@ -410,6 +444,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.b,
   ),
   kriegskunst(
     "TAL_35",
@@ -422,6 +457,7 @@ enum Skill {
     Attribute.mut,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.b,
   ),
   magiekunde(
     "TAL_36",
@@ -434,6 +470,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.c,
   ),
   mechanik(
     "TAL_37",
@@ -446,6 +483,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.klugheit,
     Attribute.fingerfertigkeit,
+    Cost.b,
   ),
   rechnen(
     "TAL_38",
@@ -458,6 +496,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.a,
   ),
   rechtskunde(
     "TAL_39",
@@ -470,6 +509,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.a,
   ),
   sagenUndLegenden(
     "TAL_40",
@@ -482,6 +522,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.b,
   ),
   sphaerenkunde(
     "TAL_41",
@@ -494,6 +535,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.b,
   ),
   sternkunde(
     "TAL_42",
@@ -506,6 +548,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.a,
   ),
   alchimie(
     "TAL_43",
@@ -518,6 +561,7 @@ enum Skill {
     Attribute.mut,
     Attribute.klugheit,
     Attribute.fingerfertigkeit,
+    Cost.c,
   ),
   booteUndSchiffe(
     "TAL_44",
@@ -530,6 +574,7 @@ enum Skill {
     Attribute.fingerfertigkeit,
     Attribute.gewandtheit,
     Attribute.koerperkraft,
+    Cost.b,
   ),
   fahrzeuge(
     "TAL_45",
@@ -542,6 +587,7 @@ enum Skill {
     Attribute.charisma,
     Attribute.fingerfertigkeit,
     Attribute.konstitution,
+    Cost.a,
   ),
   handel(
     "TAL_46",
@@ -554,6 +600,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.intuition,
     Attribute.charisma,
+    Cost.b,
   ),
   heilkundeGift(
     "TAL_47",
@@ -566,6 +613,7 @@ enum Skill {
     Attribute.mut,
     Attribute.klugheit,
     Attribute.intuition,
+    Cost.b,
   ),
   heilkundeKrankheiten(
     "TAL_48",
@@ -578,6 +626,7 @@ enum Skill {
     Attribute.mut,
     Attribute.intuition,
     Attribute.konstitution,
+    Cost.b,
   ),
   heilkundeSeele(
     "TAL_49",
@@ -590,6 +639,7 @@ enum Skill {
     Attribute.intuition,
     Attribute.charisma,
     Attribute.konstitution,
+    Cost.b,
   ),
   heilkundeWunden(
     "TAL_50",
@@ -602,6 +652,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.fingerfertigkeit,
     Attribute.fingerfertigkeit,
+    Cost.d,
   ),
   holzbearbeitung(
     "TAL_51",
@@ -614,6 +665,7 @@ enum Skill {
     Attribute.fingerfertigkeit,
     Attribute.gewandtheit,
     Attribute.koerperkraft,
+    Cost.b,
   ),
   lebensmittelbearbeitung(
     "TAL_52",
@@ -626,6 +678,7 @@ enum Skill {
     Attribute.intuition,
     Attribute.fingerfertigkeit,
     Attribute.fingerfertigkeit,
+    Cost.a,
   ),
   lederbearbeitung(
     "TAL_53",
@@ -638,6 +691,7 @@ enum Skill {
     Attribute.fingerfertigkeit,
     Attribute.gewandtheit,
     Attribute.konstitution,
+    Cost.b,
   ),
   malenUndZeichnen(
     "TAL_54",
@@ -650,6 +704,7 @@ enum Skill {
     Attribute.intuition,
     Attribute.fingerfertigkeit,
     Attribute.fingerfertigkeit,
+    Cost.a,
   ),
   metallbearbeitung(
     "TAL_55",
@@ -662,6 +717,7 @@ enum Skill {
     Attribute.fingerfertigkeit,
     Attribute.konstitution,
     Attribute.koerperkraft,
+    Cost.c,
   ),
   musizieren(
     "TAL_56",
@@ -674,6 +730,7 @@ enum Skill {
     Attribute.charisma,
     Attribute.fingerfertigkeit,
     Attribute.konstitution,
+    Cost.a,
   ),
   schloesserknacken(
     "TAL_57",
@@ -686,6 +743,7 @@ enum Skill {
     Attribute.intuition,
     Attribute.fingerfertigkeit,
     Attribute.fingerfertigkeit,
+    Cost.c,
   ),
   steinbearbeitung(
     "TAL_58",
@@ -698,6 +756,7 @@ enum Skill {
     Attribute.fingerfertigkeit,
     Attribute.fingerfertigkeit,
     Attribute.koerperkraft,
+    Cost.a,
   ),
   stoffbearbeitung(
     "TAL_59",
@@ -710,6 +769,7 @@ enum Skill {
     Attribute.klugheit,
     Attribute.fingerfertigkeit,
     Attribute.fingerfertigkeit,
+    Cost.a,
   );
   // </db-replace-token>
 
@@ -723,6 +783,7 @@ enum Skill {
   final Attribute attr1;
   final Attribute attr2;
   final Attribute attr3;
+  final Cost upgradeCost;
 
   const Skill(
     this.id,
@@ -735,6 +796,7 @@ enum Skill {
     this.attr1,
     this.attr2,
     this.attr3,
+    this.upgradeCost,
   );
 
   @override

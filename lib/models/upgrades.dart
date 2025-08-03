@@ -1,6 +1,5 @@
 import 'package:eorla/models/attributes.dart';
 import 'package:eorla/models/spells.dart';
-
 import 'character.dart';
 import 'skill.dart';
 import 'weapons.dart';
@@ -119,13 +118,13 @@ int calculateUpgradeCost(
   }
   switch (type) {
     case Upgrade.skill:
-      // TODO: implement cost determination
-      break;
+      final category = skillKeys[id]!.upgradeCost;
+      return simpleUpgradeCost(tgtValue, category);
     case Upgrade.spell:
       // TODO: implement cost determination
       break;
     case Upgrade.liturgy:
-      // TODO: implement cost determination
+      // TODO: implement liturgies
       break;
     case Upgrade.combatTechnique:
       final category = combatTechniquesByID[id]!.upgradeCost;
