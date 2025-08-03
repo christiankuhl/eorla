@@ -121,8 +121,8 @@ int calculateUpgradeCost(
       final category = skillKeys[id]!.upgradeCost;
       return simpleUpgradeCost(tgtValue, category);
     case Upgrade.spell:
-      // TODO: implement cost determination
-      break;
+      final category = spellsById[id]!.upgradeCost;
+      return simpleUpgradeCost(tgtValue, category);
     case Upgrade.liturgy:
       // TODO: implement liturgies
       break;

@@ -1,5 +1,6 @@
 import 'package:eorla/models/attributes.dart';
 import 'package:eorla/models/spells.dart';
+import 'package:eorla/models/upgrades.dart';
 
 enum Spell {
   // <db-replace-token>
@@ -22,6 +23,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   analysArkanstruktur(
     "SPELL_2",
@@ -42,6 +44,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   armatrutz(
     "SPELL_3",
@@ -62,6 +65,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   axxeleratus(
     "SPELL_4",
@@ -82,6 +86,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   balsamSalabunde(
     "SPELL_5",
@@ -102,6 +107,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   bannbaladin(
     "SPELL_6",
@@ -122,6 +128,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   blickInDieGedanken(
     "SPELL_7",
@@ -142,6 +149,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   blitzDichFind(
     "SPELL_8",
@@ -162,6 +170,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   corpofesso(
     "SPELL_9",
@@ -182,6 +191,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   disruptivo(
     "SPELL_10",
@@ -202,6 +212,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   duplicatus(
     "SPELL_11",
@@ -222,6 +233,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   falkenauge(
     "SPELL_12",
@@ -242,6 +254,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   flimFlam(
     "SPELL_13",
@@ -262,6 +275,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   fulminictus(
     "SPELL_14",
@@ -282,6 +296,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   gardianum(
     "SPELL_15",
@@ -302,6 +317,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   grosseGier(
     "SPELL_16",
@@ -322,6 +338,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   harmloseGestalt(
     "SPELL_17",
@@ -342,6 +359,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   hexengalle(
     "SPELL_18",
@@ -362,6 +380,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   hexenkrallen(
     "SPELL_19",
@@ -382,6 +401,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   horriphobus(
     "SPELL_20",
@@ -402,6 +422,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   ignifaxius(
     "SPELL_21",
@@ -422,6 +443,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   invocatioMinima(
     "SPELL_22",
@@ -442,6 +464,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   katzenaugen(
     "SPELL_23",
@@ -462,6 +485,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   kroetensprung(
     "SPELL_24",
@@ -482,6 +506,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   manifesto(
     "SPELL_25",
@@ -502,6 +527,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   manusMiracula(
     "SPELL_26",
@@ -522,6 +548,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   motoricus(
     "SPELL_27",
@@ -542,6 +569,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   nebelwand(
     "SPELL_28",
@@ -562,6 +590,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   oculusIllusionis(
     "SPELL_29",
@@ -582,6 +611,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   odemArcanum(
     "SPELL_30",
@@ -602,6 +632,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   paralysis(
     "SPELL_31",
@@ -622,6 +653,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   penetrizzel(
     "SPELL_32",
@@ -642,6 +674,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   psychostabilis(
     "SPELL_33",
@@ -662,6 +695,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   radau(
     "SPELL_34",
@@ -682,6 +716,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   respondami(
     "SPELL_35",
@@ -702,6 +737,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   salander(
     "SPELL_36",
@@ -722,6 +758,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   sanftmut(
     "SPELL_37",
@@ -742,6 +779,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   satuariasHerrlichkeit(
     "SPELL_38",
@@ -762,6 +800,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   silentium(
     "SPELL_39",
@@ -782,6 +821,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   somnigravis(
     "SPELL_40",
@@ -802,6 +842,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   spinnenlauf(
     "SPELL_41",
@@ -822,6 +863,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   spurlos(
     "SPELL_42",
@@ -842,6 +884,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   transversalis(
     "SPELL_43",
@@ -862,6 +905,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   visibili(
     "SPELL_44",
@@ -882,6 +926,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   wasseratem(
     "SPELL_45",
@@ -902,6 +947,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   arcanovi(
     "SPELL_46",
@@ -922,6 +968,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   dschinnenruf(
     "SPELL_47",
@@ -942,6 +989,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   elementarerDiener(
     "SPELL_48",
@@ -962,6 +1010,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   invocatioMaior(
     "SPELL_49",
@@ -982,6 +1031,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   invocatioMinor(
     "SPELL_50",
@@ -1002,6 +1052,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   zauberklingeGeisterspeer(
     "SPELL_51",
@@ -1022,6 +1073,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   aengsteLindern(
     "SPELL_68",
@@ -1042,6 +1094,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   atemnot(
     "SPELL_69",
@@ -1062,6 +1115,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   attributoKoerperkraft(
     "SPELL_70",
@@ -1082,6 +1136,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   claudibus(
     "SPELL_71",
@@ -1102,6 +1157,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   corpofrigo(
     "SPELL_72",
@@ -1122,6 +1178,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   dunkelheit(
     "SPELL_73",
@@ -1142,6 +1199,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   ecliptifactus(
     "SPELL_74",
@@ -1162,6 +1220,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   grosseVerwirrung(
     "SPELL_75",
@@ -1182,6 +1241,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   herrUeberDasTierreich(
     "SPELL_76",
@@ -1202,6 +1262,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   hexenholz(
     "SPELL_77",
@@ -1222,6 +1283,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   hexenknoten(
     "SPELL_78",
@@ -1242,6 +1304,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   hoellenpein(
     "SPELL_79",
@@ -1262,6 +1325,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   ignisphaero(
     "SPELL_80",
@@ -1282,6 +1346,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   klarumPurum(
     "SPELL_81",
@@ -1302,6 +1367,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   pestilenzErspueren(
     "SPELL_82",
@@ -1322,6 +1388,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   schlangenruf(
     "SPELL_83",
@@ -1342,6 +1409,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   sensibar(
     "SPELL_84",
@@ -1362,6 +1430,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   sumusElixiere(
     "SPELL_85",
@@ -1382,6 +1451,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   vipernblick(
     "SPELL_86",
@@ -1402,6 +1472,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   zungeBetaeuben(
     "SPELL_87",
@@ -1422,6 +1493,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   zwingtanz(
     "SPELL_88",
@@ -1442,6 +1514,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   ablativum(
     "SPELL_89",
@@ -1462,6 +1535,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   abvenenum(
     "SPELL_90",
@@ -1482,6 +1556,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   adlerschwinge(
     "SPELL_91",
@@ -1502,6 +1577,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   aeolito(
     "SPELL_92",
@@ -1522,6 +1598,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   alpgestalt(
     "SPELL_93",
@@ -1542,6 +1619,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   altisonus(
     "SPELL_94",
@@ -1562,6 +1640,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   angstAusloesen(
     "SPELL_95",
@@ -1582,6 +1661,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   archofaxius(
     "SPELL_96",
@@ -1602,6 +1682,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   archosphaero(
     "SPELL_97",
@@ -1622,6 +1703,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   aromatisIllusionis(
     "SPELL_98",
@@ -1642,6 +1724,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   attributoCharisma(
     "SPELL_99",
@@ -1662,6 +1745,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   attributoFingerfertigkeit(
     "SPELL_100",
@@ -1682,6 +1766,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   attributoKlugheit(
     "SPELL_101",
@@ -1702,6 +1787,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   aufwecken(
     "SPELL_102",
@@ -1722,6 +1808,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   augeDesLimbus(
     "SPELL_103",
@@ -1742,6 +1829,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   aureolus(
     "SPELL_104",
@@ -1762,6 +1850,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   aurisIllusionis(
     "SPELL_105",
@@ -1782,6 +1871,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   bandUndFessel(
     "SPELL_106",
@@ -1802,6 +1892,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   blickAufsWesen(
     "SPELL_107",
@@ -1822,6 +1913,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   blindheit(
     "SPELL_108",
@@ -1842,6 +1934,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   chamaelioni(
     "SPELL_109",
@@ -1862,6 +1955,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   daemonenbann(
     "SPELL_110",
@@ -1882,6 +1976,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   daemonenschild(
     "SPELL_111",
@@ -1902,6 +1997,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   debilitatio(
     "SPELL_112",
@@ -1922,6 +2018,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   desintegratus(
     "SPELL_113",
@@ -1942,6 +2039,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   einflussbann(
     "SPELL_114",
@@ -1962,6 +2060,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   eisenrost(
     "SPELL_115",
@@ -1982,6 +2081,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   elementarbann(
     "SPELL_116",
@@ -2002,6 +2102,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   elfenstimme(
     "SPELL_117",
@@ -2022,6 +2123,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   erinnerungVerlasseDich(
     "SPELL_118",
@@ -2042,6 +2144,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   exposami(
     "SPELL_119",
@@ -2062,6 +2165,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   favilludo(
     "SPELL_120",
@@ -2082,6 +2186,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   fischflosse(
     "SPELL_121",
@@ -2102,6 +2207,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   foramen(
     "SPELL_122",
@@ -2122,6 +2228,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   fortifex(
     "SPELL_123",
@@ -2142,6 +2249,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   gedankenbilder(
     "SPELL_124",
@@ -2162,6 +2270,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   gefunden(
     "SPELL_125",
@@ -2182,6 +2291,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   haselbusch(
     "SPELL_126",
@@ -2202,6 +2312,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   heilungsbann(
     "SPELL_127",
@@ -2222,6 +2333,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   hellsichtbann(
     "SPELL_128",
@@ -2242,6 +2354,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   heptagramma(
     "SPELL_129",
@@ -2262,6 +2375,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   herzschlagRuhe(
     "SPELL_130",
@@ -2282,6 +2396,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   hexagramma(
     "SPELL_131",
@@ -2302,6 +2417,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   ignorantia(
     "SPELL_132",
@@ -2322,6 +2438,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   illusionsbann(
     "SPELL_133",
@@ -2342,6 +2459,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   imperavi(
     "SPELL_134",
@@ -2362,6 +2480,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   impersona(
     "SPELL_135",
@@ -2382,6 +2501,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   incendio(
     "SPELL_136",
@@ -2402,6 +2522,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   invercano(
     "SPELL_137",
@@ -2422,6 +2543,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   karnifilo(
     "SPELL_138",
@@ -2442,6 +2564,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   kusch(
     "SPELL_139",
@@ -2462,6 +2585,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   lastDesAlters(
     "SPELL_140",
@@ -2482,6 +2606,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   lungeDesLeviatan(
     "SPELL_141",
@@ -2502,6 +2627,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   manusIllusionis(
     "SPELL_142",
@@ -2522,6 +2648,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   memorans(
     "SPELL_143",
@@ -2542,6 +2669,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   menetekel(
     "SPELL_144",
@@ -2562,6 +2690,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   nuntiovolo(
     "SPELL_145",
@@ -2582,6 +2711,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   objectobscuro(
     "SPELL_146",
@@ -2602,6 +2732,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   objectofixo(
     "SPELL_147",
@@ -2622,6 +2753,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   objektbann(
     "SPELL_148",
@@ -2642,6 +2774,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   oculusAstralis(
     "SPELL_149",
@@ -2662,6 +2795,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   orcanofaxius(
     "SPELL_150",
@@ -2682,6 +2816,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   orcanosphaero(
     "SPELL_151",
@@ -2702,6 +2837,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   pentagramma(
     "SPELL_152",
@@ -2722,6 +2858,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   physiostabilis(
     "SPELL_153",
@@ -2742,6 +2879,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   plumbumbarum(
     "SPELL_154",
@@ -2762,6 +2900,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   projectimago(
     "SPELL_155",
@@ -2782,6 +2921,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   reflectimago(
     "SPELL_156",
@@ -2802,6 +2942,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   regeneratio(
     "SPELL_157",
@@ -2822,6 +2963,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   sapefacta(
     "SPELL_158",
@@ -2842,6 +2984,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   schmerzenLindern(
     "SPELL_159",
@@ -2862,6 +3005,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   schwarzUndRot(
     "SPELL_160",
@@ -2882,6 +3026,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   schwarzerSchrecken(
     "SPELL_161",
@@ -2902,6 +3047,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   skelettarius(
     "SPELL_162",
@@ -2922,6 +3068,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   solidirid(
     "SPELL_163",
@@ -2942,6 +3089,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   taubheit(
     "SPELL_164",
@@ -2962,6 +3110,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   telekinesebann(
     "SPELL_165",
@@ -2982,6 +3131,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   tiergedanken(
     "SPELL_166",
@@ -3002,6 +3152,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   verwandlungsbann(
     "SPELL_167",
@@ -3022,6 +3173,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   vogelzwitschern(
     "SPELL_168",
@@ -3042,6 +3194,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   wolfstatze(
     "SPELL_169",
@@ -3062,6 +3215,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   caldofrigo(
     "SPELL_170",
@@ -3082,6 +3236,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   nihilogravo(
     "SPELL_171",
@@ -3102,6 +3257,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   accuratum(
     "SPELL_172",
@@ -3122,6 +3278,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   hagelschlagUndSturmgebruell(
     "SPELL_173",
@@ -3142,6 +3299,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   hartesSchmelze(
     "SPELL_174",
@@ -3162,6 +3320,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   leidensbund(
     "SPELL_175",
@@ -3182,6 +3341,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   magischerRaub(
     "SPELL_176",
@@ -3202,6 +3362,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   memorabiaFalsifir(
     "SPELL_177",
@@ -3222,6 +3383,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   movimento(
     "SPELL_178",
@@ -3242,6 +3404,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   ruheKoerper(
     "SPELL_179",
@@ -3262,6 +3425,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   unberuehrtVonSatinav(
     "SPELL_180",
@@ -3282,6 +3446,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   widerwille(
     "SPELL_181",
@@ -3302,6 +3467,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   wirbelform(
     "SPELL_182",
@@ -3322,6 +3488,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   xenographus(
     "SPELL_183",
@@ -3342,6 +3509,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   affenarme(
     "SPELL_234",
@@ -3362,6 +3530,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   affenruf(
     "SPELL_235",
@@ -3382,6 +3551,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   arachnea(
     "SPELL_236",
@@ -3402,6 +3572,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   attributoGewandheit(
     "SPELL_237",
@@ -3422,6 +3593,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   attributoIntuition(
     "SPELL_238",
@@ -3442,6 +3614,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   attributoMut(
     "SPELL_239",
@@ -3462,6 +3635,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   attributoKonstitution(
     "SPELL_240",
@@ -3482,6 +3656,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   avilea(
     "SPELL_241",
@@ -3502,6 +3677,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   basaltleib(
     "SPELL_242",
@@ -3522,6 +3698,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   brandungsleib(
     "SPELL_243",
@@ -3542,6 +3719,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   brennenderHass(
     "SPELL_244",
@@ -3562,6 +3740,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   daemonischesVergessen(
     "SPELL_245",
@@ -3582,6 +3761,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   drachenleib(
     "SPELL_246",
@@ -3602,6 +3782,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   eichenleib(
     "SPELL_247",
@@ -3622,6 +3803,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   eigeneAengste(
     "SPELL_248",
@@ -3642,6 +3824,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   eigeneDummheit(
     "SPELL_249",
@@ -3662,6 +3845,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   eispfeil(
     "SPELL_250",
@@ -3682,6 +3866,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   erzpfeil(
     "SPELL_251",
@@ -3702,6 +3887,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   eulenruf(
     "SPELL_252",
@@ -3722,6 +3908,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   federleib(
     "SPELL_253",
@@ -3742,6 +3929,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   feenstaub(
     "SPELL_254",
@@ -3762,6 +3950,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   feuerpfeil(
     "SPELL_255",
@@ -3782,6 +3971,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   firnlauf(
     "SPELL_256",
@@ -3802,6 +3992,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   flammenwand(
     "SPELL_257",
@@ -3822,6 +4013,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   fledermausruf(
     "SPELL_258",
@@ -3842,6 +4034,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   frostleib(
     "SPELL_259",
@@ -3862,6 +4055,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   geisteressenz(
     "SPELL_260",
@@ -3882,6 +4076,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   gifthaut(
     "SPELL_261",
@@ -3902,6 +4097,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   glutlauf(
     "SPELL_262",
@@ -3922,6 +4118,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   hexenspeichel(
     "SPELL_263",
@@ -3942,6 +4139,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   hilfreichePfote(
     "SPELL_264",
@@ -3962,6 +4160,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   hilfreicheSchwinge(
     "SPELL_265",
@@ -3982,6 +4181,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   hilfreicheTatze(
     "SPELL_266",
@@ -4002,6 +4202,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   himmelslauf(
     "SPELL_267",
@@ -4022,6 +4223,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   hornissenruf(
     "SPELL_268",
@@ -4042,6 +4244,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   humuspfeil(
     "SPELL_269",
@@ -4062,6 +4265,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   katzenruf(
     "SPELL_270",
@@ -4082,6 +4286,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   krabbelnderSchrecken(
     "SPELL_271",
@@ -4102,6 +4307,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   kraehenruf(
     "SPELL_272",
@@ -4122,6 +4328,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   kraftDesTieres(
     "SPELL_273",
@@ -4142,6 +4349,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   kulminatio(
     "SPELL_274",
@@ -4162,6 +4370,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   levthansFeuer(
     "SPELL_275",
@@ -4182,6 +4391,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   luftpfeil(
     "SPELL_276",
@@ -4202,6 +4412,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   malDerErschoepfung(
     "SPELL_277",
@@ -4222,6 +4433,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   malDerSchwaeche(
     "SPELL_278",
@@ -4242,6 +4454,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   objectovoco(
     "SPELL_279",
@@ -4262,6 +4475,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   pandaemonium(
     "SPELL_280",
@@ -4282,6 +4496,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   pestodem(
     "SPELL_281",
@@ -4302,6 +4517,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   reptilea(
     "SPELL_282",
@@ -4322,6 +4538,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   sanfterFall(
     "SPELL_283",
@@ -4342,6 +4559,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   schlechteAusstrahlung(
     "SPELL_284",
@@ -4362,6 +4580,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   schleierDerUnwissenheit(
     "SPELL_285",
@@ -4382,6 +4601,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   seelentierErkennen(
     "SPELL_286",
@@ -4402,6 +4622,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   seidenzunge(
     "SPELL_287",
@@ -4422,6 +4643,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   serpentialis(
     "SPELL_288",
@@ -4442,6 +4664,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   spinnenruf(
     "SPELL_289",
@@ -4462,6 +4685,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   standfest(
     "SPELL_290",
@@ -4482,6 +4706,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   steinwand(
     "SPELL_291",
@@ -4502,6 +4727,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   tiereBesprechen(
     "SPELL_292",
@@ -4522,6 +4748,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   unentflammbarkeit(
     "SPELL_293",
@@ -4542,6 +4769,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   ungeschickt(
     "SPELL_294",
@@ -4562,6 +4790,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   verunsicherung(
     "SPELL_295",
@@ -4582,6 +4811,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   wasserpfeil(
     "SPELL_296",
@@ -4602,6 +4832,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   weichesErstarre(
     "SPELL_297",
@@ -4622,6 +4853,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   welleDerReinigung(
     "SPELL_298",
@@ -4642,6 +4874,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   welleDesSchmerzes(
     "SPELL_299",
@@ -4662,6 +4895,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   wellenlauf(
     "SPELL_300",
@@ -4682,6 +4916,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   wipfellauf(
     "SPELL_301",
@@ -4702,6 +4937,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   wuestenlauf(
     "SPELL_302",
@@ -4722,6 +4958,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   zauberpferdHerbeirufen(
     "SPELL_303",
@@ -4742,6 +4979,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   adamantium(
     "SPELL_304",
@@ -4762,6 +5000,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   animatio(
     "SPELL_305",
@@ -4782,6 +5021,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   bandDerFreundschaft(
     "SPELL_306",
@@ -4802,6 +5042,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   baerenruhe(
     "SPELL_307",
@@ -4822,6 +5063,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   blickInDieVergangenheit(
     "SPELL_308",
@@ -4842,6 +5084,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   brandform(
     "SPELL_309",
@@ -4862,6 +5105,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   custodosigil(
     "SPELL_310",
@@ -4882,6 +5126,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   destructibo(
     "SPELL_311",
@@ -4902,6 +5147,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   einsMitDerNatur(
     "SPELL_312",
@@ -4922,6 +5168,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   ergebenheitDerWogen(
     "SPELL_313",
@@ -4942,6 +5189,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   erhabenheitDesMarmors(
     "SPELL_314",
@@ -4962,6 +5210,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   felsenform(
     "SPELL_315",
@@ -4982,6 +5231,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   freiheitDerWolken(
     "SPELL_316",
@@ -5002,6 +5252,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   geisterruf(
     "SPELL_317",
@@ -5022,6 +5273,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   geisterbeschwoerung(
     "SPELL_318",
@@ -5042,6 +5294,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   gletscherform(
     "SPELL_319",
@@ -5062,6 +5315,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   klarheitDesEises(
     "SPELL_320",
@@ -5082,6 +5336,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   koerperloseReise(
     "SPELL_321",
@@ -5102,6 +5357,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   madasSpiegel(
     "SPELL_322",
@@ -5122,6 +5378,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   nekropathia(
     "SPELL_323",
@@ -5142,6 +5399,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   pflanzenform(
     "SPELL_324",
@@ -5162,6 +5420,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   reinheitDerLohe(
     "SPELL_325",
@@ -5182,6 +5441,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   rufDerFeenwesen(
     "SPELL_326",
@@ -5202,6 +5462,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   seelenwanderung(
     "SPELL_327",
@@ -5222,6 +5483,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   standhafterWaechter(
     "SPELL_328",
@@ -5242,6 +5504,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   transmutare(
     "SPELL_329",
@@ -5262,6 +5525,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   traumgestalt(
     "SPELL_330",
@@ -5282,6 +5546,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   ueberlegenerKrieger(
     "SPELL_331",
@@ -5302,6 +5567,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   weisheitDerBaeume(
     "SPELL_332",
@@ -5322,6 +5588,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   wogenform(
     "SPELL_334",
@@ -5342,6 +5609,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   zaubernahrung(
     "SPELL_335",
@@ -5362,6 +5630,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   zauberschnurren(
     "SPELL_336",
@@ -5382,6 +5651,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   zauberwesenDerNatur(
     "SPELL_337",
@@ -5402,6 +5672,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   zauberzwang(
     "SPELL_338",
@@ -5422,6 +5693,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   begehrenErzeugen(
     "SPELL_386",
@@ -5442,6 +5714,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   brustformung(
     "SPELL_387",
@@ -5462,6 +5735,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   erregungSpueren(
     "SPELL_388",
@@ -5482,6 +5756,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   feuchteErregung(
     "SPELL_389",
@@ -5502,6 +5777,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   penisformung(
     "SPELL_391",
@@ -5522,6 +5798,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   spielzeugDerLust(
     "SPELL_392",
@@ -5542,6 +5819,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   vaginaformung(
     "SPELL_393",
@@ -5562,6 +5840,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   verlangenKontrollieren(
     "SPELL_394",
@@ -5582,6 +5861,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   abneigungenUndVorliebenErzeugen(
     "SPELL_395",
@@ -5602,6 +5882,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   begierdeAusloesen(
     "SPELL_396",
@@ -5622,6 +5903,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   uebertragungDerLiebeskuenste(
     "SPELL_397",
@@ -5642,6 +5924,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   daemonenpaktBeenden(
     "SPELL_402",
@@ -5662,6 +5945,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   aquafaxius(
     "SPELL_403",
@@ -5682,6 +5966,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   aquasphaero(
     "SPELL_404",
@@ -5702,6 +5987,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   auraDerErschoepfung(
     "SPELL_405",
@@ -5722,6 +6008,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   blitzball(
     "SPELL_406",
@@ -5742,6 +6029,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   boeserBlick(
     "SPELL_407",
@@ -5762,6 +6050,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   dornenwand(
     "SPELL_408",
@@ -5782,6 +6071,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   eiswand(
     "SPELL_409",
@@ -5802,6 +6092,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   erschoepfungenLindern(
     "SPELL_410",
@@ -5822,6 +6113,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   fesselfeld(
     "SPELL_411",
@@ -5842,6 +6134,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   frigifaxius(
     "SPELL_412",
@@ -5862,6 +6155,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   frigisphaero(
     "SPELL_413",
@@ -5882,6 +6176,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   halluzination(
     "SPELL_414",
@@ -5902,6 +6197,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   humofaxius(
     "SPELL_415",
@@ -5922,6 +6218,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   humosphaero(
     "SPELL_416",
@@ -5942,6 +6239,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   invinculo(
     "SPELL_417",
@@ -5962,6 +6260,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   nebelform(
     "SPELL_418",
@@ -5982,6 +6281,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   oktagramma(
     "SPELL_419",
@@ -6002,6 +6302,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   panikUeberkommeEuch(
     "SPELL_420",
@@ -6022,6 +6323,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   schimmernderSchild(
     "SPELL_421",
@@ -6042,6 +6344,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   schuppenhaut(
     "SPELL_422",
@@ -6062,6 +6365,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   sphaerenbann(
     "SPELL_423",
@@ -6082,6 +6386,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   sinesigil(
     "SPELL_424",
@@ -6102,6 +6407,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.a,
   ),
   sensattacco(
     "SPELL_425",
@@ -6122,6 +6428,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   stillstand(
     "SPELL_426",
@@ -6142,6 +6449,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   sturmDerVerunsicherung(
     "SPELL_427",
@@ -6162,6 +6470,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   sturmwand(
     "SPELL_428",
@@ -6182,6 +6491,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   temporalbann(
     "SPELL_429",
@@ -6202,6 +6512,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   tempusStasis(
     "SPELL_430",
@@ -6222,6 +6533,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   wellenwand(
     "SPELL_431",
@@ -6242,6 +6554,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   wogeDerVersteinerung(
     "SPELL_432",
@@ -6262,6 +6575,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   zornDerElemente(
     "SPELL_433",
@@ -6282,6 +6596,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   zweifelSchueren(
     "SPELL_434",
@@ -6302,6 +6617,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   applicatus(
     "SPELL_435",
@@ -6322,6 +6638,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   ),
   blickDurchFremdeAugen(
     "SPELL_436",
@@ -6342,6 +6659,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   chimaeroform(
     "SPELL_437",
@@ -6362,6 +6680,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   chronoklassis(
     "SPELL_438",
@@ -6382,6 +6701,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   chrononautos(
     "SPELL_439",
@@ -6402,6 +6722,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   gefaessDerJahre(
     "SPELL_440",
@@ -6422,6 +6743,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   immortalisLebenszeit(
     "SPELL_441",
@@ -6442,6 +6764,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   invocatioMaxima(
     "SPELL_442",
@@ -6462,6 +6785,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   infinitumImmerdar(
     "SPELL_443",
@@ -6482,6 +6806,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   meisterDerElemente(
     "SPELL_444",
@@ -6502,6 +6827,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   lawinenfallUndTruemmerfeld(
     "SPELL_445",
@@ -6522,6 +6848,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   planastrale(
     "SPELL_446",
@@ -6542,6 +6869,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.d,
   ),
   steinWandle(
     "SPELL_447",
@@ -6562,6 +6890,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   totesHandle(
     "SPELL_448",
@@ -6582,6 +6911,7 @@ enum Spell {
     "",
     "",
     "",
+    Cost.c,
   ),
   zitterfinger(
     "SPELL_483",
@@ -6602,9 +6932,10 @@ enum Spell {
     "",
     "",
     "",
+    Cost.b,
   );
   // </db-replace-token>
-  
+
   final String id;
   final Attribute check1;
   final Attribute check2;
@@ -6623,6 +6954,7 @@ enum Spell {
   final String range;
   final String duration;
   final String target;
+  final Cost upgradeCost;
 
   String ruleText() {
     return "$effect\n\nKosten: $aeCost\nZauberdauer: $castingTime\nReichweite: $range\nWirkungsdauer: $duration\nZiele: $target";
@@ -6647,5 +6979,6 @@ enum Spell {
     this.range,
     this.duration,
     this.target,
+    this.upgradeCost,
   );
 }
