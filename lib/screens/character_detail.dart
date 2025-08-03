@@ -17,7 +17,7 @@ class CharacterDetailScreen extends StatefulWidget {
 }
 
 class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
-  ValueNotifier<bool> isEditMode = ValueNotifier(false);
+  bool isEditMode = false;
   Widget _sectionTitle(String title) => Padding(
     padding: const EdgeInsets.only(top: 24, bottom: 8),
     child: Text(
@@ -89,22 +89,8 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
               spacing: 8,
               children: [
                 OutlinedButton(
-                  onPressed: () async {
-                    final addedAp = await showDialog<int>(
-                      context: context,
-                      builder: (_) => const AddApDialog(),
-                    );
-                    if (!mounted) {
-                      return;
-                    }
-                    if (addedAp != null) {
-                      setState(() {
-                        c.ap += addedAp;
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('$addedAp AP hinzugefügt')),
-                      );
-                    }
+                  onPressed: () {
+                    _addAP(c);
                   },
                   child: Text('AP HINZUFÜGEN'),
                 ),
@@ -156,56 +142,26 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          modifierRow('Mut (MU)', c.mu, null, null, active: isEditMode.value),
-          modifierRow(
-            'Klugheit (KL)',
-            c.kl,
-            null,
-            null,
-            active: isEditMode.value,
-          ),
-          modifierRow(
-            'Intuition (IN)',
-            c.in_,
-            null,
-            null,
-            active: isEditMode.value,
-          ),
-          modifierRow(
-            'Charisma (CH)',
-            c.ch,
-            null,
-            null,
-            active: isEditMode.value,
-          ),
+          modifierRow('Mut (MU)', c.mu, null, null, active: isEditMode),
+          modifierRow('Klugheit (KL)', c.kl, null, null, active: isEditMode),
+          modifierRow('Intuition (IN)', c.in_, null, null, active: isEditMode),
+          modifierRow('Charisma (CH)', c.ch, null, null, active: isEditMode),
           modifierRow(
             'Fingerfertigkeit (FF)',
             c.ff,
             null,
             null,
-            active: isEditMode.value,
+            active: isEditMode,
           ),
-          modifierRow(
-            'Gewandheit (GE)',
-            c.ge,
-            null,
-            null,
-            active: isEditMode.value,
-          ),
+          modifierRow('Gewandheit (GE)', c.ge, null, null, active: isEditMode),
           modifierRow(
             'Konstitution (KO)',
             c.ko,
             null,
             null,
-            active: isEditMode.value,
+            active: isEditMode,
           ),
-          modifierRow(
-            'Körperkraft (KK)',
-            c.kk,
-            null,
-            null,
-            active: isEditMode.value,
-          ),
+          modifierRow('Körperkraft (KK)', c.kk, null, null, active: isEditMode),
           modifierRow(
             'Lebensenergie (LE)',
             c.lp,
@@ -221,7 +177,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                 c.state.schmerz = painLevel(c);
               }
             }),
-            active: !isEditMode.value,
+            active: !isEditMode,
           ),
           SizedBox(height: 16),
           Text(
@@ -240,7 +196,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             () => setState(
               () => c.state.belastung = (c.state.belastung - 1).clamp(0, 4),
             ),
-            active: !isEditMode.value,
+            active: !isEditMode,
           ),
           modifierRow(
             'Betäubung',
@@ -251,7 +207,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             () => setState(
               () => c.state.betaeubung = (c.state.betaeubung - 1).clamp(0, 4),
             ),
-            active: !isEditMode.value,
+            active: !isEditMode,
           ),
           modifierRow(
             'Entrückung',
@@ -262,7 +218,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             () => setState(
               () => c.state.entrueckung = (c.state.entrueckung - 1).clamp(0, 4),
             ),
-            active: !isEditMode.value,
+            active: !isEditMode,
           ),
           modifierRow(
             'Furcht',
@@ -273,7 +229,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             () => setState(
               () => c.state.furcht = (c.state.furcht - 1).clamp(0, 4),
             ),
-            active: !isEditMode.value,
+            active: !isEditMode,
           ),
           modifierRow(
             'Paralyse',
@@ -284,7 +240,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             () => setState(
               () => c.state.paralyse = (c.state.paralyse - 1).clamp(0, 4),
             ),
-            active: !isEditMode.value,
+            active: !isEditMode,
           ),
           modifierRow(
             'Schmerz',
@@ -295,7 +251,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             () => setState(() {
               if (c.state.schmerz > painLevel(c)) c.state.schmerz--;
             }),
-            active: !isEditMode.value,
+            active: !isEditMode,
           ),
           modifierRow(
             'Verwirrung',
@@ -306,7 +262,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             () => setState(
               () => c.state.verwirrung = (c.state.verwirrung - 1).clamp(0, 4),
             ),
-            active: !isEditMode.value,
+            active: !isEditMode,
           ),
         ],
       ),
@@ -341,7 +297,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                           () => setState(
                             () => c.talents![skill] = value > 0 ? value - 1 : 0,
                           ),
-                          active: isEditMode.value,
+                          active: isEditMode,
                         );
                       }).toList(),
                     );
@@ -360,29 +316,32 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     return Center(child: Text('Inventar folgt ...'));
   }
 
-  Widget _editMenu() {
+  Widget _editMenu(Character c) {
     return SpeedDial(
       icon: Icons.edit,
       activeIcon: Icons.check,
-      openCloseDial: isEditMode,
-      onPress: () {
+      onClose: () {
+        setState(() {
+          isEditMode = false;
+        });
+        c.save();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              isEditMode.value
-                  ? 'Bearbeitungsmodus aktiviert'
-                  : 'Änderungen gespeichert',
-            ),
+            content: Text('Änderungen gespeichert'),
             duration: Duration(seconds: 2),
           ),
         );
       },
+      onOpen: () {
+        setState(() {
+          isEditMode = true;
+        });
+      },
+      renderOverlay: false,
+      closeManually: true,
       children: [
-        SpeedDialChild(
-          onTap: null,
-          //            tooltip: isEditMode ? 'Speichern' : 'Bearbeiten',
-          child: Icon(isEditMode.value ? Icons.check : Icons.edit),
-        ),
+        SpeedDialChild(onTap: () => _addAP(c), child: Icon(Icons.add_circle)),
+        SpeedDialChild(onTap: () => c.undo(), child: Icon(Icons.undo)),
       ],
     );
   }
@@ -392,7 +351,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
       right: 16,
       top: 16,
       child: AnimatedOpacity(
-        opacity: isEditMode.value ? 1.0 : 0.0,
+        opacity: isEditMode ? 1.0 : 0.0,
         duration: Duration(milliseconds: 200),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -420,26 +379,22 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     );
   }
 
-  Widget _undoButton() {
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    final double snackBarHeight = ScaffoldMessenger.of(context).mounted
-        ? bottomInset
-        : 0;
-    return Positioned(
-      right: 16,
-      bottom: 88 + snackBarHeight,
-      child: AnimatedOpacity(
-        opacity: isEditMode.value ? 1.0 : 0.0,
-        duration: Duration(milliseconds: 200),
-        child: FloatingActionButton.small(
-          onPressed: null,
-          tooltip: 'Änderungen rückgängig',
-          heroTag: 'undoBtn',
-          backgroundColor: Colors.grey[800],
-          child: Icon(Icons.undo),
-        ),
-      ),
+  void _addAP(Character c) async {
+    final addedAp = await showDialog<int>(
+      context: context,
+      builder: (_) => const AddAPDialog(),
     );
+    if (!mounted) {
+      return;
+    }
+    if (addedAp != null) {
+      setState(() {
+        c.ap += addedAp;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('$addedAp AP hinzugefügt')));
+    }
   }
 
   @override
@@ -490,38 +445,21 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
               _apBadge(c),
             ],
           ),
-          floatingActionButton: _editMenu(),
-          //          floatingActionButton: FloatingActionButton(
-          //            onPressed: () {
-          //              setState(() => isEditMode = !isEditMode);
-          //              ScaffoldMessenger.of(context).showSnackBar(
-          //                SnackBar(
-          //                  content: Text(
-          //                    isEditMode
-          //                        ? 'Bearbeitungsmodus aktiviert'
-          //                        : 'Änderungen gespeichert',
-          //                  ),
-          //                  duration: Duration(seconds: 2),
-          //                ),
-          //              );
-          //            },
-          //            tooltip: isEditMode ? 'Speichern' : 'Bearbeiten',
-          //            child: Icon(isEditMode ? Icons.check : Icons.edit),
-          //          ),
+          floatingActionButton: _editMenu(c),
         ),
       ),
     );
   }
 }
 
-class AddApDialog extends StatefulWidget {
-  const AddApDialog({super.key});
+class AddAPDialog extends StatefulWidget {
+  const AddAPDialog({super.key});
 
   @override
-  State<AddApDialog> createState() => _AddApDialogState();
+  State<AddAPDialog> createState() => _AddAPDialogState();
 }
 
-class _AddApDialogState extends State<AddApDialog> {
+class _AddAPDialogState extends State<AddAPDialog> {
   final TextEditingController _controller = TextEditingController(text: '0');
 
   @override

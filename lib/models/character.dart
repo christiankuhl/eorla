@@ -320,6 +320,9 @@ class Character {
       }
     }
   }
+
+  void save() {}
+  void undo() {}
 }
 
 void setCharacterField(Character character, String fieldName, int value) {
