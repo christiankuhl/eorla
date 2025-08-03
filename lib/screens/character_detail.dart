@@ -416,9 +416,13 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                         return modifierRow(
                           skill.name,
                           value,
-                          () => setState(() => c.talents![skill] = value + 1),
-                          () => setState(
-                            () => c.talents![skill] = value > 0 ? value - 1 : 0,
+                          upgradeHandler(Upgrade.skill, skill.id, c, setState),
+                          upgradeHandler(
+                            Upgrade.skill,
+                            skill.id,
+                            c,
+                            setState,
+                            sign: Sign.decrement,
                           ),
                           active: isEditMode,
                         );

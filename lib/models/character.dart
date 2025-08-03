@@ -85,10 +85,7 @@ class Character {
     for (var item in json['attr']['values']) {
       String id = item['id'];
       int value = item['value'];
-      String? fieldName = attributeKeys[id]?.short;
-      if (fieldName != null) {
-        setCharacterField(character, fieldName, value);
-      }
+      setCharacterField(character, id, value);
     }
     json['talents'].forEach((key, value) {
       var skill = skillKeys[key]!;
@@ -327,28 +324,28 @@ class Character {
 
 void setCharacterField(Character character, String fieldName, int value) {
   switch (fieldName) {
-    case "MU":
+    case "ATTR_1":
       character.mu = value;
       break;
-    case "KL":
+    case "ATTR_2":
       character.kl = value;
       break;
-    case "IN":
+    case "ATTR_3":
       character.in_ = value;
       break;
-    case "CH":
+    case "ATTR_4":
       character.ch = value;
       break;
-    case "FF":
+    case "ATTR_5":
       character.ff = value;
       break;
-    case "GE":
+    case "ATTR_6":
       character.ge = value;
       break;
-    case "KO":
+    case "ATTR_7":
       character.ko = value;
       break;
-    case "KK":
+    case "ATTR_8":
       character.kk = value;
       break;
     default:

@@ -1,25 +1,28 @@
+import 'package:eorla/models/activatable.dart';
 import 'package:eorla/models/attributes.dart';
 import 'package:eorla/models/spells.dart';
 import 'character.dart';
 import 'skill.dart';
 import 'weapons.dart';
+import 'special_abilities.dart';
 
 typedef UpgradeHandler = void Function()?;
 typedef StateCallback = Function(void Function());
 
 enum Upgrade {
-  // TODO: This is missing cantrips, blessings, advantages, disadvantages, and special abilities
-  attribute(Cost.e),
-  skill(null),
-  spell(null),
-  combatTechnique(null),
-  healthPoints(Cost.d),
-  astralPoints(Cost.d),
-  karmicPoints(Cost.d),
-  liturgy(null);
-
-  final Cost? cost;
-  const Upgrade(this.cost);
+  attribute,
+  skill,
+  spell,
+  combatTechnique,
+  healthPoints,
+  astralPoints,
+  karmicPoints,
+  liturgy,
+  cantrip,
+  blessing,
+  advantage,
+  disadvantage,
+  ability,
 }
 
 enum Sign {
@@ -79,6 +82,21 @@ UpgradeHandler upgradeHandler(
     case Upgrade.karmicPoints:
       handler = upgradeKarmicPoints(id, character, sign, cost);
       break;
+    case Upgrade.blessing:
+      handler = upgradeBlessing(id, character, sign, cost);
+      break;
+    case Upgrade.cantrip:
+      handler = upgradeCantrip(id, character, sign, cost);
+      break;
+    case Upgrade.advantage:
+      handler = upgradeAdvantage(id, character, sign, cost);
+      break;
+    case Upgrade.disadvantage:
+      handler = upgradeDisadvantage(id, character, sign, cost);
+      break;
+    case Upgrade.ability:
+      handler = upgradeAbility(id, character, sign, cost);
+      break;
   }
   return () {
     setState(handler!);
@@ -102,8 +120,25 @@ int getCurrentValue(Upgrade type, String id, Character character) {
       return character.getHealthMax();
     case Upgrade.astralPoints:
     case Upgrade.karmicPoints:
-      // TODO: Implement karmic/astral points
+    case Upgrade.blessing:
+    case Upgrade.cantrip:
+      // TODO: Implement karmic/astral points/cantrips/blessings
       return -1;
+    case Upgrade.ability:
+      final SpecialAbility? ability = character.abilities!
+          .map<SpecialAbility?>((a) => a)
+          .firstWhere((a) => a!.value.id == id, orElse: () => null);
+      return ability != null ? ability.tier ?? 1 : -1;
+    case Upgrade.advantage:
+      final activatable = character.advantages!
+          .map<Activatable?>((a) => a)
+          .firstWhere((a) => a!.type.id == id, orElse: () => null);
+      return activatable != null ? activatable.tier ?? 1 : -1;
+    case Upgrade.disadvantage:
+      final activatable = character.disadvantages!
+          .map<Activatable?>((a) => a)
+          .firstWhere((a) => a!.type.id == id, orElse: () => null);
+      return activatable != null ? activatable.tier ?? 1 : -1;
   }
 }
 
@@ -113,29 +148,38 @@ int calculateUpgradeCost(
   Character character,
   int tgtValue,
 ) {
-  if (type.cost != null) {
-    return simpleUpgradeCost(tgtValue, type.cost!);
-  }
+  Cost category;
   switch (type) {
     case Upgrade.skill:
-      final category = skillKeys[id]!.upgradeCost;
-      return simpleUpgradeCost(tgtValue, category);
+      category = skillKeys[id]!.upgradeCost;
+      break;
     case Upgrade.spell:
-      final category = spellsById[id]!.upgradeCost;
-      return simpleUpgradeCost(tgtValue, category);
+      category = spellsById[id]!.upgradeCost;
+      break;
     case Upgrade.liturgy:
       // TODO: implement liturgies
-      break;
+      return -1;
     case Upgrade.combatTechnique:
-      final category = combatTechniquesByID[id]!.upgradeCost;
-      return simpleUpgradeCost(tgtValue, category);
+      category = combatTechniquesByID[id]!.upgradeCost;
+      break;
     case Upgrade.attribute:
+      category = Cost.e;
+      break;
     case Upgrade.healthPoints:
     case Upgrade.astralPoints:
     case Upgrade.karmicPoints:
-      assert(false, "This should not occur!");
+      category = Cost.d;
+      break;
+    case Upgrade.blessing:
+    case Upgrade.cantrip:
+      return 1;
+    case Upgrade.advantage:
+    case Upgrade.disadvantage:
+    case Upgrade.ability:
+      // TODO: Implement advantage/disadvantage/ability
+      return -1;
   }
-  return -1;
+  return simpleUpgradeCost(tgtValue, category);
 }
 
 bool upgradeAllowed(
@@ -162,7 +206,11 @@ UpgradeHandler upgradeAttribute(
   Sign sign,
   int cost,
 ) {
-  return () {};
+  return () {
+    final value = getCurrentValue(Upgrade.attribute, id, character);
+    setCharacterField(character, id, value + sign.value);
+    character.ap -= sign.value * cost;
+  };
 }
 
 UpgradeHandler upgradeSkill(
@@ -171,7 +219,11 @@ UpgradeHandler upgradeSkill(
   Sign sign,
   int cost,
 ) {
-  return () {};
+  return () {
+    final skill = skillKeys[id]!;
+    character.talents![skill] = (character.talents![skill] ?? 0) + sign.value;
+    character.ap -= sign.value * cost;
+  };
 }
 
 UpgradeHandler upgradeSpell(
@@ -228,21 +280,56 @@ UpgradeHandler upgradeCombat(
   return () {};
 }
 
+UpgradeHandler upgradeBlessing(
+  String id,
+  Character character,
+  Sign sign,
+  int cost,
+) {
+  return () {};
+}
+
+UpgradeHandler upgradeCantrip(
+  String id,
+  Character character,
+  Sign sign,
+  int cost,
+) {
+  return () {};
+}
+
+UpgradeHandler upgradeAdvantage(
+  String id,
+  Character character,
+  Sign sign,
+  int cost,
+) {
+  return () {};
+}
+
+UpgradeHandler upgradeDisadvantage(
+  String id,
+  Character character,
+  Sign sign,
+  int cost,
+) {
+  return () {};
+}
+
+UpgradeHandler upgradeAbility(
+  String id,
+  Character character,
+  Sign sign,
+  int cost,
+) {
+  return () {};
+}
+
 const Map<int, List<int>> _costTable = {
   //Stufe: A B C D E
   // 0 = Aktivierung
   0: [1, 2, 3, 4, 0],
-  1: [1, 2, 3, 4, 15],
-  2: [1, 2, 3, 4, 15],
-  3: [1, 2, 3, 4, 15],
-  4: [1, 2, 3, 4, 15],
-  5: [1, 2, 3, 4, 15],
-  6: [1, 2, 3, 4, 15],
-  7: [1, 2, 3, 4, 15],
-  8: [1, 2, 3, 4, 15],
-  9: [1, 2, 3, 4, 15],
-  10: [1, 2, 3, 4, 15],
-  11: [1, 2, 3, 4, 15],
+  // 1-11 as 12...
   12: [1, 2, 3, 4, 15],
   13: [2, 4, 6, 8, 15],
   14: [3, 6, 9, 12, 15],
@@ -261,8 +348,10 @@ const Map<int, List<int>> _costTable = {
 };
 
 int simpleUpgradeCost(int tgtLvl, Cost category) {
-  if (tgtLvl < 0) {
+  if (tgtLvl <= 0) {
     tgtLvl = 0;
+  } else if (tgtLvl < 12) {
+    tgtLvl = 12;
   }
   if (tgtLvl > 25) {
     tgtLvl = 25;
@@ -300,8 +389,14 @@ bool limitReached(Upgrade type, String id, int tgtValue, Character character) {
     case Upgrade.astralPoints:
     // Astralenergiepunkte Leiteigenschaft
     case Upgrade.karmicPoints:
-      // Karmaenergiepunkte Leiteigenschaft
-      break;
+    // Karmaenergiepunkte Leiteigenschaft
+    case Upgrade.cantrip:
+    case Upgrade.blessing:
+    case Upgrade.advantage:
+    case Upgrade.disadvantage:
+      return false;
+    case Upgrade.ability:
+      // TODO: implement per ability check
+      return true;
   }
-  return true;
 }
