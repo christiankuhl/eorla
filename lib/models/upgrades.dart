@@ -128,8 +128,8 @@ int calculateUpgradeCost(
       // TODO: implement cost determination
       break;
     case Upgrade.combatTechnique:
-      // TODO: implement cost determination
-      break;
+      final category = combatTechniquesByID[id]!.upgradeCost;
+      return simpleUpgradeCost(tgtValue, category);
     case Upgrade.attribute:
     case Upgrade.healthPoints:
     case Upgrade.astralPoints:

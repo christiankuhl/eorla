@@ -1,4 +1,5 @@
-import '../models/attributes.dart';
+import 'attributes.dart';
+import 'upgrades.dart';
 
 class Weapon {
   final String id;
@@ -60,15 +61,36 @@ class Weapon {
   }
 }
 
-const List<String> oneHandedCTs = ["CT_3", "CT_4", "CT_5", "CT_6", "CT_8", "CT_10", "CT_12", "CT_20"];
+const List<String> oneHandedCTs = [
+  "CT_3",
+  "CT_4",
+  "CT_5",
+  "CT_6",
+  "CT_8",
+  "CT_10",
+  "CT_12",
+  "CT_20",
+];
 
 enum CombatTechnique {
-  armbrueste("CT_1", "Armbrüste", "", CombatType.range, [
-    Attribute.fingerfertigkeit,
-  ], true),
-  boegen("CT_2", "Bögen", "", CombatType.range, [
-    Attribute.fingerfertigkeit,
-  ], true),
+  armbrueste(
+    "CT_1",
+    "Armbrüste",
+    "",
+    CombatType.range,
+    [Attribute.fingerfertigkeit],
+    true,
+    Cost.b,
+  ),
+  boegen(
+    "CT_2",
+    "Bögen",
+    "",
+    CombatType.range,
+    [Attribute.fingerfertigkeit],
+    true,
+    Cost.c,
+  ),
   dolche(
     "CT_3",
     "Dolche",
@@ -76,6 +98,7 @@ enum CombatTechnique {
     CombatType.melee,
     [Attribute.gewandtheit],
     false,
+    Cost.b,
   ),
   fechtwaffen(
     "CT_4",
@@ -84,10 +107,17 @@ enum CombatTechnique {
     CombatType.melee,
     [Attribute.gewandtheit],
     false,
+    Cost.c,
   ),
-  hiebwaffen("CT_5", "Hiebwaffen", "", CombatType.melee, [
-    Attribute.koerperkraft,
-  ], false),
+  hiebwaffen(
+    "CT_5",
+    "Hiebwaffen",
+    "",
+    CombatType.melee,
+    [Attribute.koerperkraft],
+    false,
+    Cost.c,
+  ),
   kettenwaffen(
     "CT_6",
     "Kettenwaffen",
@@ -95,10 +125,17 @@ enum CombatTechnique {
     CombatType.melee,
     [Attribute.koerperkraft],
     true,
+    Cost.c,
   ),
-  lanzen("CT_7", "Lanzen", "", CombatType.melee, [
-    Attribute.koerperkraft,
-  ], false),
+  lanzen(
+    "CT_7",
+    "Lanzen",
+    "",
+    CombatType.melee,
+    [Attribute.koerperkraft],
+    false,
+    Cost.b,
+  ),
   peitschen(
     "CT_8",
     "Peitschen",
@@ -106,6 +143,7 @@ enum CombatTechnique {
     CombatType.melee,
     [Attribute.fingerfertigkeit],
     true,
+    Cost.b,
   ),
   raufen(
     "CT_9",
@@ -114,6 +152,7 @@ enum CombatTechnique {
     CombatType.melee,
     [Attribute.koerperkraft, Attribute.gewandtheit],
     false,
+    Cost.b,
   ),
   schilde(
     "CT_10",
@@ -122,36 +161,89 @@ enum CombatTechnique {
     CombatType.melee,
     [Attribute.koerperkraft],
     false,
+    Cost.c,
   ),
-  schleudern("CT_11", "Schleudern", "", CombatType.range, [
-    Attribute.fingerfertigkeit,
-  ], true),
-  schwerter("CT_12", "Schwerter", "", CombatType.melee, [
-    Attribute.koerperkraft,
-    Attribute.gewandtheit,
-  ], false),
-  stangenwaffen("CT_13", "Stangenwaffen", "", CombatType.melee, [
-    Attribute.koerperkraft,
-    Attribute.gewandtheit,
-  ], false),
-  wurfwaffen("CT_14", "Wurfwaffen", "", CombatType.range, [
-    Attribute.fingerfertigkeit,
-  ], true),
-  zweihandhiebwaffen("CT_15", "Zweihandhiebwaffen", "", CombatType.melee, [
-    Attribute.koerperkraft,
-  ], false),
-  zweihandschwerter("CT_16", "Zweihandschwerter", "", CombatType.melee, [
-    Attribute.koerperkraft,
-  ], false),
-  feuerspeien("CT_17", "Feuerspeien", "", CombatType.range, [
-    Attribute.fingerfertigkeit,
-  ], true),
-  blasrohre("CT_18", "Blasrohre", "", CombatType.range, [
-    Attribute.fingerfertigkeit,
-  ], true),
-  diskusse("CT_19", "Diskusse", "", CombatType.range, [
-    Attribute.fingerfertigkeit,
-  ], true),
+  schleudern(
+    "CT_11",
+    "Schleudern",
+    "",
+    CombatType.range,
+    [Attribute.fingerfertigkeit],
+    true,
+    Cost.b,
+  ),
+  schwerter(
+    "CT_12",
+    "Schwerter",
+    "",
+    CombatType.melee,
+    [Attribute.koerperkraft, Attribute.gewandtheit],
+    false,
+    Cost.c,
+  ),
+  stangenwaffen(
+    "CT_13",
+    "Stangenwaffen",
+    "",
+    CombatType.melee,
+    [Attribute.koerperkraft, Attribute.gewandtheit],
+    false,
+    Cost.c,
+  ),
+  wurfwaffen(
+    "CT_14",
+    "Wurfwaffen",
+    "",
+    CombatType.range,
+    [Attribute.fingerfertigkeit],
+    true,
+    Cost.b,
+  ),
+  zweihandhiebwaffen(
+    "CT_15",
+    "Zweihandhiebwaffen",
+    "",
+    CombatType.melee,
+    [Attribute.koerperkraft],
+    false,
+    Cost.c,
+  ),
+  zweihandschwerter(
+    "CT_16",
+    "Zweihandschwerter",
+    "",
+    CombatType.melee,
+    [Attribute.koerperkraft],
+    false,
+    Cost.c,
+  ),
+  feuerspeien(
+    "CT_17",
+    "Feuerspeien",
+    "",
+    CombatType.range,
+    [Attribute.fingerfertigkeit],
+    true,
+    Cost.b,
+  ),
+  blasrohre(
+    "CT_18",
+    "Blasrohre",
+    "",
+    CombatType.range,
+    [Attribute.fingerfertigkeit],
+    true,
+    Cost.b,
+  ),
+  diskusse(
+    "CT_19",
+    "Diskusse",
+    "",
+    CombatType.range,
+    [Attribute.fingerfertigkeit],
+    true,
+    Cost.c,
+  ),
   faecher(
     "CT_20",
     "Fächer",
@@ -159,6 +251,7 @@ enum CombatTechnique {
     CombatType.melee,
     [Attribute.gewandtheit],
     false,
+    Cost.c,
   ),
   spiesswaffen(
     "CT_21",
@@ -167,6 +260,7 @@ enum CombatTechnique {
     CombatType.melee,
     [Attribute.koerperkraft],
     false,
+    Cost.c,
   );
 
   final String id;
@@ -175,6 +269,7 @@ enum CombatTechnique {
   final CombatType group;
   final List<Attribute> primary;
   final bool hasNoParry;
+  final Cost upgradeCost;
   const CombatTechnique(
     this.id,
     this.name,
@@ -182,6 +277,7 @@ enum CombatTechnique {
     this.group,
     this.primary,
     this.hasNoParry,
+    this.upgradeCost,
   );
 }
 
