@@ -164,6 +164,7 @@ class Character {
   String get raceVariant =>
       raceVariantsById[optolith.data["rv"]]?.toString() ?? "";
   String get characteristics => "";
+  int get boughtHealthPoints => optolith.data["attr"]["lp"];
 
   int getAP() {
     // TODO: Optolith only stores total AP, which may include AP not used up yet. Until we're able to accurately calculate this,
@@ -284,8 +285,7 @@ class Character {
     if (decLP.length == 1) {
       base -= (activatables["DISADV_28"][0]["tier"] ?? 0) as int;
     }
-    final int addedLP = optolith.data["attr"]["lp"];
-    base += addedLP;
+    base += boughtHealthPoints;
     return base;
   }
 

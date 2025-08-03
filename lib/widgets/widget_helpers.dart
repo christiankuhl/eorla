@@ -22,7 +22,7 @@ Widget modifierRow(
       Row(
         children: [
           Opacity(
-            opacity: active ? 1 : 0.5,
+            opacity: active ? 1 : 0,
             child: IconButton(
               icon: Icon(Icons.remove),
               onPressed: active ? onDecrement : null,
@@ -34,7 +34,7 @@ Widget modifierRow(
             child: Text(value.toString()),
           ),
           Opacity(
-            opacity: active ? 1 : 0.5,
+            opacity: active ? 1 : 0,
             child: IconButton(
               icon: Icon(Icons.add),
               onPressed: active ? onIncrement : null,

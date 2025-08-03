@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import '../models/character.dart';
 import '../models/skill_groups.dart';
+import '../models/upgrades.dart';
+import '../models/attributes.dart';
 import '../widgets/widget_helpers.dart';
 import 'character_selection.dart';
 import 'settings.dart';
@@ -142,26 +144,147 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          modifierRow('Mut (MU)', c.mu, null, null, active: isEditMode),
-          modifierRow('Klugheit (KL)', c.kl, null, null, active: isEditMode),
-          modifierRow('Intuition (IN)', c.in_, null, null, active: isEditMode),
-          modifierRow('Charisma (CH)', c.ch, null, null, active: isEditMode),
+          modifierRow(
+            'Mut (MU)',
+            c.mu,
+            upgradeHandler(Upgrade.attribute, Attribute.mut.id, c, setState),
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.mut.id,
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
+            active: isEditMode,
+          ),
+          modifierRow(
+            'Klugheit (KL)',
+            c.kl,
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.klugheit.id,
+              c,
+              setState,
+            ),
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.klugheit.id,
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
+            active: isEditMode,
+          ),
+          modifierRow(
+            'Intuition (IN)',
+            c.in_,
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.intuition.id,
+              c,
+              setState,
+            ),
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.intuition.id,
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
+
+            active: isEditMode,
+          ),
+          modifierRow(
+            'Charisma (CH)',
+            c.ch,
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.charisma.id,
+              c,
+              setState,
+            ),
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.charisma.id,
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
+            active: isEditMode,
+          ),
           modifierRow(
             'Fingerfertigkeit (FF)',
             c.ff,
-            null,
-            null,
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.fingerfertigkeit.id,
+              c,
+              setState,
+            ),
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.fingerfertigkeit.id,
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
             active: isEditMode,
           ),
-          modifierRow('Gewandheit (GE)', c.ge, null, null, active: isEditMode),
+          modifierRow(
+            'Gewandheit (GE)',
+            c.ge,
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.gewandtheit.id,
+              c,
+              setState,
+            ),
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.gewandtheit.id,
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
+            active: isEditMode,
+          ),
           modifierRow(
             'Konstitution (KO)',
             c.ko,
-            null,
-            null,
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.konstitution.id,
+              c,
+              setState,
+            ),
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.konstitution.id,
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
+
             active: isEditMode,
           ),
-          modifierRow('Körperkraft (KK)', c.kk, null, null, active: isEditMode),
+          modifierRow(
+            'Körperkraft (KK)',
+            c.kk,
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.koerperkraft.id,
+              c,
+              setState,
+            ),
+            upgradeHandler(
+              Upgrade.attribute,
+              Attribute.koerperkraft.id,
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
+            active: isEditMode,
+          ),
           modifierRow(
             'Lebensenergie (LE)',
             c.lp,
