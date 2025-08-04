@@ -4,7 +4,7 @@ export 'generated/_advantages.dart';
 
 class Activatable {
   final ActivatableBase type;
-  final int? tier;
+  int? tier;
   final String? selectedOption;
 
   Activatable(this.type, this.tier, this.selectedOption);

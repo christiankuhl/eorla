@@ -1,6 +1,8 @@
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:provider/provider.dart';
+import '../managers/character_manager.dart';
 import '../models/character.dart';
 import '../models/skill_groups.dart';
 import '../models/upgrades.dart';
@@ -447,11 +449,10 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     return SpeedDial(
       icon: Icons.edit,
       activeIcon: Icons.check,
-      onClose: () {
+      onClose: () async {
         setState(() {
           isEditMode = false;
         });
-        c.save();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Änderungen gespeichert'),
@@ -468,7 +469,14 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
       closeManually: true,
       children: [
         SpeedDialChild(onTap: () => _addAP(c), child: Icon(Icons.add_circle)),
-        SpeedDialChild(onTap: () => c.undo(), child: Icon(Icons.undo)),
+        SpeedDialChild(
+          onTap: c.undoStack!.isNotEmpty
+              ? () => setState(() {
+                  c.undo();
+                })
+              : null,
+          child: Icon(Icons.undo),
+        ),
       ],
     );
   }
@@ -507,6 +515,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   }
 
   void _addAP(Character c) async {
+    CharacterManager manager = Provider.of(context, listen: false);
     final addedAp = await showDialog<int>(
       context: context,
       builder: (_) => const AddAPDialog(),
@@ -521,6 +530,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('$addedAp AP hinzugefügt')));
+      await manager.saveCharacters();
     }
   }
 

@@ -1,10 +1,8 @@
-import 'package:eorla/models/activatable.dart';
-import 'package:eorla/models/attributes.dart';
-import 'package:eorla/models/spells.dart';
+import 'attributes.dart';
 import 'character.dart';
 import 'skill.dart';
+import 'spells.dart';
 import 'weapons.dart';
-import 'special_abilities.dart';
 
 typedef UpgradeHandler = void Function()?;
 typedef StateCallback = Function(void Function());
@@ -30,6 +28,7 @@ enum Sign {
   decrement;
 
   int get value => this == Sign.increment ? 1 : -1;
+  Sign get inverse => this == Sign.increment ? Sign.decrement : Sign.increment;
 }
 
 enum Cost {
@@ -50,96 +49,17 @@ UpgradeHandler upgradeHandler(
   StateCallback setState, {
   Sign sign = Sign.increment,
 }) {
-  final int tgtValue = getCurrentValue(type, id, character) + sign.value;
+  final int tgtValue = character.getCurrentValue(type, id) + sign.value;
   final cost = calculateUpgradeCost(type, id, character, tgtValue);
   if (!upgradeAllowed(type, id, character, sign, tgtValue) ||
       cost > character.ap) {
     return null;
   }
-  UpgradeHandler handler;
-  switch (type) {
-    case Upgrade.attribute:
-      handler = upgradeAttribute(id, character, sign, cost);
-      break;
-    case Upgrade.skill:
-      handler = upgradeSkill(id, character, sign, cost);
-      break;
-    case Upgrade.spell:
-      handler = upgradeSpell(id, character, sign, cost);
-      break;
-    case Upgrade.liturgy:
-      handler = upgradeLiturgy(id, character, sign, cost);
-      break;
-    case Upgrade.combatTechnique:
-      handler = upgradeCombat(id, character, sign, cost);
-      break;
-    case Upgrade.healthPoints:
-      handler = upgradeHealthPoints(id, character, sign, cost);
-      break;
-    case Upgrade.astralPoints:
-      handler = upgradeAstralPoints(id, character, sign, cost);
-      break;
-    case Upgrade.karmicPoints:
-      handler = upgradeKarmicPoints(id, character, sign, cost);
-      break;
-    case Upgrade.blessing:
-      handler = upgradeBlessing(id, character, sign, cost);
-      break;
-    case Upgrade.cantrip:
-      handler = upgradeCantrip(id, character, sign, cost);
-      break;
-    case Upgrade.advantage:
-      handler = upgradeAdvantage(id, character, sign, cost);
-      break;
-    case Upgrade.disadvantage:
-      handler = upgradeDisadvantage(id, character, sign, cost);
-      break;
-    case Upgrade.ability:
-      handler = upgradeAbility(id, character, sign, cost);
-      break;
-  }
   return () {
-    setState(handler!);
+    setState(() {
+      character.upgrade(type, id, sign, cost);
+    });
   };
-}
-
-int getCurrentValue(Upgrade type, String id, Character character) {
-  switch (type) {
-    case Upgrade.attribute:
-      return character.getAttribute(attributeKeys[id]!);
-    case Upgrade.skill:
-      return character.getTalentOrSpell(SkillWrapper(skillKeys[id]!));
-    case Upgrade.spell:
-      return character.getTalentOrSpell(SpellWrapper(spellsById[id]!));
-    case Upgrade.liturgy:
-      // TODO: Implement liturgies
-      return -1;
-    case Upgrade.combatTechnique:
-      return character.combatTechniques?[combatTechniquesByID[id]!] ?? -1;
-    case Upgrade.healthPoints:
-      return character.getHealthMax();
-    case Upgrade.astralPoints:
-    case Upgrade.karmicPoints:
-    case Upgrade.blessing:
-    case Upgrade.cantrip:
-      // TODO: Implement karmic/astral points/cantrips/blessings
-      return -1;
-    case Upgrade.ability:
-      final SpecialAbility? ability = character.abilities!
-          .map<SpecialAbility?>((a) => a)
-          .firstWhere((a) => a!.value.id == id, orElse: () => null);
-      return ability != null ? ability.tier ?? 1 : -1;
-    case Upgrade.advantage:
-      final activatable = character.advantages!
-          .map<Activatable?>((a) => a)
-          .firstWhere((a) => a!.type.id == id, orElse: () => null);
-      return activatable != null ? activatable.tier ?? 1 : -1;
-    case Upgrade.disadvantage:
-      final activatable = character.disadvantages!
-          .map<Activatable?>((a) => a)
-          .firstWhere((a) => a!.type.id == id, orElse: () => null);
-      return activatable != null ? activatable.tier ?? 1 : -1;
-  }
 }
 
 int calculateUpgradeCost(
@@ -198,131 +118,6 @@ bool upgradeAllowed(
   } else {
     return !limitReached(type, id, tgtValue, character);
   }
-}
-
-UpgradeHandler upgradeAttribute(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {
-    final value = getCurrentValue(Upgrade.attribute, id, character);
-    setCharacterField(character, id, value + sign.value);
-    character.ap -= sign.value * cost;
-  };
-}
-
-UpgradeHandler upgradeSkill(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {
-    final skill = skillKeys[id]!;
-    character.talents![skill] = (character.talents![skill] ?? 0) + sign.value;
-    character.ap -= sign.value * cost;
-  };
-}
-
-UpgradeHandler upgradeSpell(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {};
-}
-
-UpgradeHandler upgradeLiturgy(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {};
-}
-
-UpgradeHandler upgradeHealthPoints(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {};
-}
-
-UpgradeHandler upgradeKarmicPoints(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {};
-}
-
-UpgradeHandler upgradeAstralPoints(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {};
-}
-
-UpgradeHandler upgradeCombat(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {};
-}
-
-UpgradeHandler upgradeBlessing(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {};
-}
-
-UpgradeHandler upgradeCantrip(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {};
-}
-
-UpgradeHandler upgradeAdvantage(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {};
-}
-
-UpgradeHandler upgradeDisadvantage(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {};
-}
-
-UpgradeHandler upgradeAbility(
-  String id,
-  Character character,
-  Sign sign,
-  int cost,
-) {
-  return () {};
 }
 
 const Map<int, List<int>> _costTable = {
@@ -399,4 +194,13 @@ bool limitReached(Upgrade type, String id, int tgtValue, Character character) {
       // TODO: implement per ability check
       return true;
   }
+}
+
+class UndoItem {
+  final Upgrade type;
+  final String id;
+  final Sign sign;
+  final int cost;
+
+  UndoItem(this.type, this.id, this.sign, this.cost);
 }

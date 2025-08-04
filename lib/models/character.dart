@@ -1,6 +1,6 @@
-import 'package:eorla/models/activatable.dart';
 import 'package:flutter/material.dart';
 import '../widgets/widget_helpers.dart';
+import 'activatable.dart';
 import 'attributes.dart';
 import 'audit.dart';
 import 'avatar.dart';
@@ -11,6 +11,7 @@ import 'rules.dart';
 import 'skill.dart';
 import 'special_abilities.dart';
 import 'spells.dart';
+import 'upgrades.dart';
 import 'weapons.dart';
 
 class Character {
@@ -24,7 +25,6 @@ class Character {
   int ko;
   int kk;
   int lp;
-  int ap;
   Race race;
   CharacterState state;
   Map<Skill, int>? talents;
@@ -36,6 +36,7 @@ class Character {
   Optolith optolith;
   List<Activatable>? advantages;
   List<Activatable>? disadvantages;
+  List<UndoItem>? undoStack;
 
   Character({
     required this.name,
@@ -50,7 +51,6 @@ class Character {
     this.ko = 8,
     this.kk = 8,
     this.lp = 0,
-    this.ap = 0,
     this.race = Race.menschen,
     required this.state,
     this.talents,
@@ -62,11 +62,13 @@ class Character {
     required this.optolith,
     this.advantages,
     this.disadvantages,
+    this.undoStack,
   }) {
     talents ??= {};
     spells ??= {};
     weapons ??= [];
     abilities ??= [];
+    undoStack ??= [];
   }
 
   factory Character.fromJson(Map<String, dynamic> json) {
@@ -127,11 +129,16 @@ class Character {
       };
     }
     character.lp = character.getHealthMax();
-    character.ap = character.getAP();
     character.loadAdvantagesAndDisadvantages();
     return character;
   }
 
+  // TODO: Optolith only stores total AP, which may include AP not used up yet. Until we're able to accurately calculate this,
+  // we opt for the conservative route: the number that Optolith stores here is the *exact* amount it took to construct the
+  // character, and store AP given out by ourselves in "ap" > "eorla", which Optolith thankfully ignores, as well as by
+  // incrementing "total", thus allowing for halfways decent compatibility.
+  int get ap => optolith.data["ap"]["eorla"] ?? 0;
+  set ap(int value) => optolith.data["ap"]["eorla"] = value;
   int get totalAP => optolith.data["ap"]?["total"] + ap ?? ap;
   String get family => optolith.data["pers"]?["family"] ?? "";
   String get placeOfBirth => optolith.data["pers"]?["placeofbirth"] ?? "";
@@ -162,13 +169,8 @@ class Character {
       raceVariantsById[optolith.data["rv"]]?.toString() ?? "";
   String get characteristics => "";
   int get boughtHealthPoints => optolith.data["attr"]["lp"];
-
-  int getAP() {
-    // TODO: Optolith only stores total AP, which may include AP not used up yet. Until we're able to accurately calculate this,
-    // we opt for the conservative route: the number that Optolith stores here is the *exact* amount it took to construct the
-    // character, and store AP given out by ourselves in "ap" > "eorla", which Optolith thankfully ignores, as well as by
-    // incrementing "total", thus allowing for halfways decent compatibility.
-    return optolith.data["ap"]?["eorla"] ?? 0;
+  set boughtHealthPoints(int value) {
+    optolith.data["attr"]["lp"] = value;
   }
 
   Map<dynamic, dynamic> toJson() {
@@ -318,8 +320,121 @@ class Character {
     }
   }
 
-  void save() {}
-  void undo() {}
+  int getCurrentValue(Upgrade type, String id) {
+    switch (type) {
+      case Upgrade.attribute:
+        return getAttribute(attributeKeys[id]!);
+      case Upgrade.skill:
+        return getTalentOrSpell(SkillWrapper(skillKeys[id]!));
+      case Upgrade.spell:
+        return getTalentOrSpell(SpellWrapper(spellsById[id]!));
+      case Upgrade.liturgy:
+        // TODO: Implement liturgies
+        return -1;
+      case Upgrade.combatTechnique:
+        return getCT(combatTechniquesByID[id]!);
+      case Upgrade.healthPoints:
+        return getHealthMax();
+      case Upgrade.astralPoints:
+      case Upgrade.karmicPoints:
+      case Upgrade.blessing:
+      case Upgrade.cantrip:
+        // TODO: Implement karmic/astral points/cantrips/blessings
+        return -1;
+      case Upgrade.ability:
+        final SpecialAbility? ability = abilities!
+            .map<SpecialAbility?>((a) => a)
+            .firstWhere((a) => a!.value.id == id, orElse: () => null);
+        return ability != null ? ability.tier ?? 1 : -1;
+      case Upgrade.advantage:
+        final activatable = advantages!
+            .map<Activatable?>((a) => a)
+            .firstWhere((a) => a!.type.id == id, orElse: () => null);
+        return activatable != null ? activatable.tier ?? 1 : -1;
+      case Upgrade.disadvantage:
+        final activatable = disadvantages!
+            .map<Activatable?>((a) => a)
+            .firstWhere((a) => a!.type.id == id, orElse: () => null);
+        return activatable != null ? activatable.tier ?? 1 : -1;
+    }
+  }
+
+  void undo() {
+    if (undoStack!.isEmpty) {
+      return;
+    }
+    final item = undoStack!.removeLast();
+    upgrade(item.type, item.id, item.sign.inverse, item.cost, track: false);
+  }
+
+  void upgrade(
+    Upgrade type,
+    String id,
+    Sign sign,
+    int cost, {
+    bool track = true,
+  }) {
+    final value = getCurrentValue(type, id) + sign.value;
+    switch (type) {
+      case Upgrade.attribute:
+        setCharacterField(this, id, value);
+        break;
+      case Upgrade.skill:
+        talents![skillKeys[id]!] = value;
+        break;
+      case Upgrade.spell:
+        spells![spellsById[id]!] = value;
+        break;
+      case Upgrade.liturgy:
+        // TODO: Implement liturgies
+        break;
+      case Upgrade.combatTechnique:
+        combatTechniques![combatTechniquesByID[id]!] = value;
+        break;
+      case Upgrade.healthPoints:
+        boughtHealthPoints = value;
+        break;
+      case Upgrade.astralPoints:
+      case Upgrade.karmicPoints:
+      case Upgrade.blessing:
+      case Upgrade.cantrip:
+        // TODO: Implement karmic/astral points/cantrips/blessings
+        break;
+      case Upgrade.ability:
+        abilities!.where((a) => a.value.id == id).forEach((a) {
+          a.lowerTier = true;
+        });
+        final SpecialAbility ability = SpecialAbility(
+          specialCombatAbilities[id]!,
+          value,
+        );
+        abilities!.add(ability);
+        break;
+      case Upgrade.advantage:
+        Activatable? activatable = advantages!
+            .map<Activatable?>((a) => a)
+            .firstWhere((a) => a!.type.id == id, orElse: () => null);
+        if (activatable == null) {
+          return;
+        } // TODO: activate new advantage / ability / disadvantage
+        activatable.tier = value;
+        break;
+      case Upgrade.disadvantage:
+        Activatable? activatable = disadvantages!
+            .map<Activatable?>((a) => a)
+            .firstWhere((a) => a!.type.id == id, orElse: () => null);
+        if (activatable == null) {
+          return;
+        }
+        activatable.tier = value;
+        break;
+    }
+    ap -= sign.value * cost;
+    if (track) {
+      final undoItem = UndoItem(type, id, sign, cost);
+      undoStack!.add(undoItem);
+    }
+  }
 }
 
 void setCharacterField(Character character, String fieldName, int value) {

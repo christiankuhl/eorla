@@ -17,14 +17,18 @@ class CharacterManager extends ChangeNotifier {
     characters.add(character);
   }
 
+  Future<void> saveCharacters() async {
+    await CharacterStorage.saveCharacters(characters);
+    notifyListeners();
+  }
+
   void deleteCharacter(Character character) async {
     characters.remove(character);
 
     if (_activeCharacter == character) {
       _activeCharacter = characters.isNotEmpty ? characters.first : null;
     }
-    await CharacterStorage.saveCharacters(characters);
-    notifyListeners();
+    await saveCharacters();
   }
 
   Character? get activeCharacter => _activeCharacter;

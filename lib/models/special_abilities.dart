@@ -170,7 +170,7 @@ const specialCombatAbilities = {
 class SpecialAbility {
   final SpecialAbilityBase value;
   final int? tier;
-  final bool lowerTier = false;
+  bool lowerTier = false;
 
   SpecialAbility(this.value, this.tier, {lowerTier});
 
