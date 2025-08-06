@@ -1,12 +1,13 @@
+import 'package:eorla/models/weapons.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import '../managers/character_manager.dart';
+import '../models/attributes.dart';
 import '../models/character.dart';
 import '../models/skill_groups.dart';
 import '../models/upgrades.dart';
-import '../models/attributes.dart';
 import '../widgets/widget_helpers.dart';
 import 'character_selection.dart';
 import 'settings.dart';
@@ -22,6 +23,7 @@ class CharacterDetailScreen extends StatefulWidget {
 
 class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   bool isEditMode = false;
+
   Widget _sectionTitle(String title) => Padding(
     padding: const EdgeInsets.only(top: 24, bottom: 8),
     child: Text(
@@ -395,14 +397,16 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   }
 
   Widget skillTab(Character c) {
+    final hasSpells = c.hasSpells();
     return DefaultTabController(
-      length: 2,
+      length: hasSpells ? 3 : 2,
       child: Column(
         children: [
           TabBar(
             tabs: [
               Tab(text: 'Talente'),
               Tab(text: 'Kampftechniken'),
+              if (c.hasSpells()) Tab(text: 'Magie'),
             ],
           ),
           Expanded(
@@ -432,7 +436,52 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                     );
                   }).toList(),
                 ),
-                Center(child: Text('Kampftechniken folgen ...')),
+                ListView(
+                  padding: EdgeInsets.all(16),
+                  children: combatTechniquesByID.entries.map((entry) {
+                    final ct = entry.value;
+                    final value = c.getCT(ct);
+                    return modifierRow(
+                      ct.name,
+                      value,
+                      upgradeHandler(
+                        Upgrade.combatTechnique,
+                        ct.id,
+                        c,
+                        setState,
+                      ),
+                      upgradeHandler(
+                        Upgrade.combatTechnique,
+                        ct.id,
+                        c,
+                        setState,
+                        sign: Sign.decrement,
+                      ),
+                      active: isEditMode,
+                    );
+                  }).toList(),
+                ),
+                if (hasSpells)
+                  ListView(
+                    padding: EdgeInsets.all(16),
+                    children: c.spells!.entries.map((entry) {
+                      final spell = entry.key;
+                      final value = entry.value;
+                      return modifierRow(
+                        spell.name,
+                        value,
+                        upgradeHandler(Upgrade.spell, spell.id, c, setState),
+                        upgradeHandler(
+                          Upgrade.spell,
+                          spell.id,
+                          c,
+                          setState,
+                          sign: Sign.decrement,
+                        ),
+                        active: isEditMode,
+                      );
+                    }).toList(),
+                  ),
               ],
             ),
           ),
@@ -470,11 +519,9 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
       children: [
         SpeedDialChild(onTap: () => _addAP(c), child: Icon(Icons.add_circle)),
         SpeedDialChild(
-          onTap: c.undoStack!.isNotEmpty
-              ? () => setState(() {
-                  c.undo();
-                })
-              : null,
+          onTap: () => setState(() {
+            c.undo();
+          }),
           child: Icon(Icons.undo),
         ),
       ],
@@ -537,7 +584,6 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final c = widget.character;
-
     return SafeArea(
       child: DefaultTabController(
         length: 4,
