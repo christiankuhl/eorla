@@ -20,7 +20,39 @@ enum Upgrade {
   blessing,
   advantage,
   disadvantage,
-  ability,
+  ability;
+
+  @override
+  String toString() {
+    switch (this) {
+      case Upgrade.attribute:
+        return "attr";
+      case Upgrade.skill:
+        return "skill";
+      case Upgrade.spell:
+        return "spell";
+      case Upgrade.combatTechnique:
+        return "ct";
+      case Upgrade.healthPoints:
+        return "health";
+      case Upgrade.astralPoints:
+        return "astral";
+      case Upgrade.karmicPoints:
+        return "karma";
+      case Upgrade.liturgy:
+        return "liturgy";
+      case Upgrade.cantrip:
+        return "cantrip";
+      case Upgrade.blessing:
+        return "blessing";
+      case Upgrade.advantage:
+        return "adv";
+      case Upgrade.disadvantage:
+        return "disadv";
+      case Upgrade.ability:
+        return "ability";
+    }
+  }
 }
 
 enum Sign {
@@ -29,6 +61,8 @@ enum Sign {
 
   int get value => this == Sign.increment ? 1 : -1;
   Sign get inverse => this == Sign.increment ? Sign.decrement : Sign.increment;
+  @override
+  String toString() => this == Sign.increment ? "+1" : "-1";
 }
 
 enum Cost {
@@ -49,15 +83,17 @@ UpgradeHandler upgradeHandler(
   StateCallback setState, {
   Sign sign = Sign.increment,
 }) {
-  final int tgtValue = character.getCurrentValue(type, id) + sign.value;
+  final int tgtValue =
+      character.getCurrentValue(type, id) + (sign.value + 1) ~/ 2;
   final cost = calculateUpgradeCost(type, id, character, tgtValue);
   if (!upgradeAllowed(type, id, character, sign, tgtValue) ||
-      cost > character.ap) {
+      cost * sign.value > character.ap) {
     return null;
   }
   return () {
     setState(() {
       character.upgrade(type, id, sign, cost);
+      character.compressStack();
     });
   };
 }
@@ -110,11 +146,32 @@ bool upgradeAllowed(
   int tgtValue,
 ) {
   if (sign == Sign.decrement) {
-    // TODO: We can allow the decrement of values under two conditions:
+    // We can allow the decrement of values under two conditions:
     // 1) There is track record (i.e. an undo stack element) that we did the upgrade in the first place
     // 2) There is no dependent element above (type, id) in the undo stack
-    // Until we have a solid grasp on this, we simply disallow the button.
-    return false;
+    final lastTouched = character.undoStack!.lastIndexWhere(
+      (item) =>
+          item.type == type && item.id == id && item.sign == Sign.increment,
+    );
+    if (lastTouched == -1) {
+      return false;
+    }
+    if (type == Upgrade.attribute) {
+      for (
+        int idx = lastTouched + 1;
+        idx < character.undoStack!.length;
+        idx++
+      ) {
+        final item = character.undoStack![idx];
+        if ((item.type == Upgrade.skill ||
+                item.type == Upgrade.combatTechnique ||
+                item.type == Upgrade.healthPoints) &&
+            item.sign == Sign.increment) {
+          return false;
+        }
+      }
+    }
+    return true;
   } else {
     return !limitReached(type, id, tgtValue, character);
   }
@@ -203,4 +260,9 @@ class UndoItem {
   final int cost;
 
   UndoItem(this.type, this.id, this.sign, this.cost);
+
+  @override
+  String toString() {
+    return "UndoItem($type, $id, $sign, $cost)";
+  }
 }

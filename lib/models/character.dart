@@ -367,6 +367,20 @@ class Character {
     upgrade(item.type, item.id, item.sign.inverse, item.cost, track: false);
   }
 
+  void compressStack() {
+    if (undoStack!.length < 2) {
+      return;
+    }
+    final penultimate = undoStack![undoStack!.length - 2];
+    final ultimate = undoStack!.last;
+    if (penultimate.type == ultimate.type &&
+        penultimate.id == ultimate.id &&
+        penultimate.sign.value + ultimate.sign.value == 0) {
+      undoStack!.removeLast();
+      undoStack!.removeLast();
+    }
+  }
+
   void upgrade(
     Upgrade type,
     String id,
