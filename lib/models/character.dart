@@ -128,6 +128,12 @@ class Character {
           spellsById[e.key]!: e.value.toInt(),
       };
     }
+    character.undoStack = [];
+    if (json.containsKey("undo")) {
+      json["undo"].forEach((var item) {
+        character.undoStack!.add(UndoItem.fromJSON(item));
+      });
+    }
     character.lp = character.getHealthMax();
     character.loadAdvantagesAndDisadvantages();
     return character;
@@ -213,6 +219,7 @@ class Character {
     if (spells != null) {
       result["spells"] = {for (var s in spells!.entries) s.key.id: s.value};
     }
+    result["undo"] = [for (var item in undoStack!) item.toJSON()];
     return optolith.toJson(result);
   }
 

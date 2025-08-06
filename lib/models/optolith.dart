@@ -1,5 +1,5 @@
 const Map<dynamic, List<String>> _paths = {
-  null: ["attr", "activatable", "belongings"],
+  null: ["attr", "activatable", "belongings", "undo"],
   "attr": ["values"],
   "activatable": [],
   "belongings": ["items"],
@@ -25,7 +25,7 @@ class Optolith {
         }
       }
       for (var item in optr.entries) {
-        if (pathspec.value.contains(item.key)) {
+        if (pathspec.value.contains(item.key) || cptr.containsKey(item.key)) {
           continue;
         }
         cptr[item.key] = item.value;

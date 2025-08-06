@@ -53,6 +53,39 @@ enum Upgrade {
         return "ability";
     }
   }
+
+  factory Upgrade.fromString(String s) {
+    switch (s) {
+      case "attr":
+        return Upgrade.attribute;
+      case "skill":
+        return Upgrade.skill;
+      case "spell":
+        return Upgrade.spell;
+      case "ct":
+        return Upgrade.combatTechnique;
+      case "health":
+        return Upgrade.healthPoints;
+      case "astral":
+        return Upgrade.astralPoints;
+      case "karma":
+        return Upgrade.karmicPoints;
+      case "liturgy":
+        return Upgrade.liturgy;
+      case "cantrip":
+        return Upgrade.cantrip;
+      case "blessing":
+        return Upgrade.blessing;
+      case "adv":
+        return Upgrade.advantage;
+      case "disadv":
+        return Upgrade.disadvantage;
+      case "ability":
+        return Upgrade.ability;
+      default:
+        throw UnsupportedError("Unsupported upgrade type: $s");
+    }
+  }
 }
 
 enum Sign {
@@ -63,6 +96,16 @@ enum Sign {
   Sign get inverse => this == Sign.increment ? Sign.decrement : Sign.increment;
   @override
   String toString() => this == Sign.increment ? "+1" : "-1";
+  factory Sign.fromString(String s) {
+    switch (s) {
+      case "+1":
+        return Sign.increment;
+      case "-1":
+        return Sign.decrement;
+      default:
+        throw UnsupportedError("Unsupported Sign: $s");
+    }
+  }
 }
 
 enum Cost {
@@ -264,5 +307,23 @@ class UndoItem {
   @override
   String toString() {
     return "UndoItem($type, $id, $sign, $cost)";
+  }
+
+  Map<String, dynamic> toJSON() {
+    return {
+      "type": type.toString(),
+      "id": id,
+      "sign": sign.toString(),
+      "cost": cost,
+    };
+  }
+
+  factory UndoItem.fromJSON(Map<String, dynamic> json) {
+    return UndoItem(
+      Upgrade.fromString(json["type"]),
+      json["id"],
+      Sign.fromString(json["sign"]),
+      json["cost"],
+    );
   }
 }

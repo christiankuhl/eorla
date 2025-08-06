@@ -495,6 +495,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   }
 
   Widget _editMenu(Character c) {
+    CharacterManager manager = Provider.of(context, listen: false);
     return SpeedDial(
       icon: Icons.edit,
       activeIcon: Icons.check,
@@ -508,6 +509,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             duration: Duration(seconds: 2),
           ),
         );
+        await manager.saveCharacters();
       },
       onOpen: () {
         setState(() {
