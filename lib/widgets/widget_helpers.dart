@@ -14,6 +14,7 @@ Widget modifierRow(
   VoidCallback? onIncrement,
   VoidCallback? onDecrement, {
   bool active = true,
+  double width = 17,
 }) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -29,7 +30,7 @@ Widget modifierRow(
             ),
           ),
           Container(
-            width: 17,
+            width: width,
             alignment: Alignment.center,
             child: Text(value.toString()),
           ),

@@ -541,6 +541,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
               sign: Sign.decrement,
             ),
             active: isEditMode,
+            width: 32,
           ),
           modifierRow(
             "Silbertaler",
@@ -554,6 +555,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
               sign: Sign.decrement,
             ),
             active: isEditMode,
+            width: 32,
           ),
           modifierRow(
             "Heller",
@@ -567,6 +569,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
               sign: Sign.decrement,
             ),
             active: isEditMode,
+            width: 32,
           ),
           modifierRow(
             "Kreuzer",
@@ -580,6 +583,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
               sign: Sign.decrement,
             ),
             active: isEditMode,
+            width: 32,
           ),
           SizedBox(height: 16),
           Text(
