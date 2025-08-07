@@ -52,13 +52,11 @@ class AttributeRollResult {
     // Confirmation throw => 1. die normal, 2. die event die
     if (roll?.confirmationThrow != null) {
       return [
-        Dice.create(20, value: roll),
-        Dice.create(20, value: roll, event: event),
+        Dice.create(20, value: roll!.value, event: event),
+        Dice.create(20, value: roll!.confirmationThrow!, event: event),
       ];
     }
-    // Otherwise just return the only die with the event (?)
-    // TODO: Confirm if wanted behaviour
-    return [Dice.create(20, value: roll, event: event)];
+    return [Dice.create(20, value: roll!.value, event: event)];
   }
 
   String text() {

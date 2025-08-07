@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import '../models/audit.dart';
 import '../models/rules.dart';
 import '../main.dart';
 
@@ -68,8 +67,7 @@ Widget attributeRollResult(AttributeRollResult result, BuildContext context) {
                     context,
                     displayMode: DisplayMode.fancy,
                     topRight: Text("≤ ${result.targetValue.value}"),
-                    bottomRight:
-                        (d.result?.value ?? 20) <= result.targetValue.value
+                    bottomRight: (d.result ?? 20) <= result.targetValue.value
                         ? Icon(Icons.check, color: Colors.green, size: 20.0)
                         : Icon(Icons.close, color: Colors.red, size: 20.0),
                   ),
@@ -177,11 +175,11 @@ Widget skillRollResultWidget(
                         displayMode: DisplayMode.fancy,
                         topRight: Text("≤ ${roll.targetValue.value}"),
                         bottomRight:
-                            (roll.dice[0].result?.value ?? 20) <=
+                            (roll.dice[0].result ?? 20) <=
                                 roll.targetValue.value
                             ? Icon(Icons.check, color: Colors.green, size: 20.0)
                             : Text(
-                                "- ${roll.dice[0].result!.value - roll.targetValue.value}",
+                                "- ${roll.dice[0].result! - roll.targetValue.value}",
                                 style: TextStyle(
                                   color: Colors.redAccent,
                                   fontWeight: FontWeight.bold,
@@ -212,7 +210,7 @@ class DiceDisplay {
   DiceDisplay({this.fill, this.border, this.size = 40});
 
   Widget fancyDisplay(
-    DiceValue? die,
+    int? die,
     BuildContext context, {
     Gradient? gradient,
     double? drawSize,
@@ -222,20 +220,20 @@ class DiceDisplay {
     return coloredDisplay(die, context);
   }
 
-  Widget coloredDisplay(DiceValue? die, BuildContext context) {
+  Widget coloredDisplay(int? die, BuildContext context) {
     return textDisplay(die, context);
   }
 
-  Widget textDisplay(DiceValue? die, BuildContext context) {
+  Widget textDisplay(int? die, BuildContext context) {
     if (die != null) {
       return Text("[X]");
     } else {
-      return Text("[${die!.value}]");
+      return Text("[${die!}]");
     }
   }
 
   Widget displayWidget(
-    DiceValue? die,
+    int? die,
     BuildContext context, {
     DisplayMode displayMode = DisplayMode.text,
     Gradient? gradient,
@@ -280,7 +278,7 @@ class D20Display extends DiceDisplay {
 
   @override
   Widget fancyDisplay(
-    DiceValue? die,
+    int? die,
     BuildContext context, {
     Gradient? gradient,
     double? drawSize,
@@ -311,7 +309,7 @@ class D20Display extends DiceDisplay {
             ),
             child: Center(
               child: Text(
-                die == null ? "?" : "${die.value}",
+                die == null ? "?" : "$die",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -334,7 +332,7 @@ class D20Display extends DiceDisplay {
 class D20DisplayCritical extends D20Display {
   @override
   Widget fancyDisplay(
-    DiceValue? die,
+    int? die,
     BuildContext context, {
     Gradient? gradient,
     double? drawSize,
@@ -360,7 +358,7 @@ class D20DisplayCritical extends D20Display {
 class D20DisplayBotch extends D20Display {
   @override
   Widget fancyDisplay(
-    DiceValue? die,
+    int? die,
     BuildContext context, {
     Gradient? gradient,
     double? drawSize,
@@ -388,7 +386,7 @@ class D6Display extends DiceDisplay {
 
   @override
   Widget fancyDisplay(
-    DiceValue? die,
+    int? die,
     BuildContext context, {
     Gradient? gradient,
     double? drawSize,
@@ -418,7 +416,7 @@ class D6Display extends DiceDisplay {
             ),
             child: Center(
               child: Text(
-                die == null ? "?" : "${die.value}",
+                die == null ? "?" : "$die",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -443,7 +441,7 @@ class D3Display extends DiceDisplay {
 
   @override
   Widget fancyDisplay(
-    DiceValue? die,
+    int? die,
     BuildContext context, {
     Gradient? gradient,
     double? drawSize,
