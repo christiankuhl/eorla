@@ -120,7 +120,12 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                   },
                   child: Text('AP HINZUFÜGEN'),
                 ),
-                OutlinedButton(onPressed: () {}, child: Text('EXPORTIEREN')),
+                OutlinedButton(
+                  onPressed: () async {
+                    _exportCharacter(c);
+                  },
+                  child: Text('EXPORTIEREN'),
+                ),
               ],
             ),
 
@@ -677,6 +682,11 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
       ).showSnackBar(SnackBar(content: Text('$addedAp AP hinzugefügt')));
       await manager.saveCharacters();
     }
+  }
+
+  void _exportCharacter(Character c) async {
+    final CharacterManager manager = Provider.of(context, listen: false);
+    await manager.shareCharacterJson();
   }
 
   @override
