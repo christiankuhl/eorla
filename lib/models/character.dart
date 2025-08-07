@@ -1,15 +1,19 @@
-import 'package:eorla/models/optolith.dart';
 import 'package:flutter/material.dart';
 import '../widgets/widget_helpers.dart';
-import 'rules.dart';
+import 'activatable.dart';
 import 'attributes.dart';
-import 'skill.dart';
-import 'weapons.dart';
-import 'spells.dart';
-import 'special_abilities.dart';
-import 'avatar.dart';
-import 'races.dart';
 import 'audit.dart';
+import 'avatar.dart';
+import 'inventory.dart';
+import 'optolith.dart';
+import 'personal.dart';
+import 'races.dart';
+import 'rules.dart';
+import 'skill.dart';
+import 'special_abilities.dart';
+import 'spells.dart';
+import 'upgrades.dart';
+import 'weapons.dart';
 
 class Character {
   final String name;
@@ -31,6 +35,10 @@ class Character {
   Map<CombatTechnique, int>? combatTechniques;
   Map<Spell, int>? spells;
   Optolith optolith;
+  List<Activatable>? advantages;
+  List<Activatable>? disadvantages;
+  Purse? purse;
+  List<UndoItem>? undoStack;
 
   Character({
     required this.name,
@@ -54,11 +62,16 @@ class Character {
     this.combatTechniques,
     this.spells,
     required this.optolith,
+    this.advantages,
+    this.disadvantages,
+    this.purse,
+    this.undoStack,
   }) {
     talents ??= {};
     spells ??= {};
     weapons ??= [];
     abilities ??= [];
+    undoStack ??= [];
   }
 
   factory Character.fromJson(Map<String, dynamic> json) {
@@ -73,17 +86,14 @@ class Character {
       spells: null,
       optolith: Optolith(json),
     );
-    character.race = racesById[json["r"]] ?? Race.menschen;
+    character.race = Race.byID[json["r"]] ?? Race.menschen;
     for (var item in json['attr']['values']) {
       String id = item['id'];
       int value = item['value'];
-      String? fieldName = attributeKeys[id]?.short;
-      if (fieldName != null) {
-        setCharacterField(character, fieldName, value);
-      }
+      setCharacterField(character, id, value);
     }
     json['talents'].forEach((key, value) {
-      var skill = skillKeys[key]!;
+      var skill = Skill.byID[key]!;
       character.talents![skill] = value;
     });
     json['belongings']['items'].forEach((key, value) {
@@ -113,16 +123,72 @@ class Character {
       }
     });
     json['ct'].forEach((key, value) {
-      character.combatTechniques?[combatTechniquesByID[key]!] = value;
+      character.combatTechniques?[CombatTechnique.byID[key]!] = value;
     });
     if (json.containsKey("spells")) {
       character.spells = <Spell, int>{
         for (var e in json["spells"].entries)
-          spellsById[e.key]!: e.value.toInt(),
+          Spell.byID[e.key]!: e.value.toInt(),
       };
     }
+    character.undoStack = [];
+    if (json.containsKey("undo")) {
+      json["undo"].forEach((var item) {
+        character.undoStack!.add(UndoItem.fromJSON(item));
+      });
+    }
     character.lp = character.getHealthMax();
+    character.loadAdvantagesAndDisadvantages();
+    character.purse = Purse.fromJson(json["belongings"]["purse"]);
     return character;
+  }
+
+  // TODO: Optolith only stores total AP, which may include AP not used up yet. Until we're able to accurately calculate this,
+  // we opt for the conservative route: the number that Optolith stores here is the *exact* amount it took to construct the
+  // character, and store AP given out by ourselves in "ap" > "eorla", which Optolith thankfully ignores, as well as by
+  // incrementing "total", thus allowing for halfways decent compatibility.
+  int get ap => optolith.data["ap"]["eorla"] ?? 0;
+  set ap(int value) => optolith.data["ap"]["eorla"] = value;
+  int get totalAP => optolith.data["ap"]?["total"] + ap ?? ap;
+  String get family => optolith.data["pers"]?["family"] ?? "";
+  String get placeOfBirth => optolith.data["pers"]?["placeofbirth"] ?? "";
+  String get dateOfBirth => optolith.data["pers"]?["dateofbirth"] ?? "";
+  String get age => optolith.data["pers"]?["age"] ?? "";
+  String get size => optolith.data["pers"]?["size"] ?? "";
+  String get weight => optolith.data["pers"]?["weight"] ?? "";
+  String get title => optolith.data["pers"]?["title"] ?? "";
+  String get otherInfo => optolith.data["pers"]?["otherinfo"] ?? "";
+  String get eyeColour =>
+      EyeColour.byID[optolith.data["pers"]?["eyecolor"]]?.toString() ?? "";
+  String get hairColour =>
+      HairColour.byID[optolith.data["pers"]?["haircolor"]]?.toString() ?? "";
+  String get gender => optolith.data["sex"] == "m"
+      ? "männlich"
+      : optolith.data["sex"] == "f"
+      ? "weiblich"
+      : "";
+  String get culture => Culture.byID[optolith.data["c"]]?.toString() ?? "";
+  String get experiencelevel =>
+      ExperienceLevel.byID[optolith.data["el"]]?.toString() ?? "";
+  String get profession =>
+      Profession.byID[optolith.data["p"]]?.description(gender) ?? "";
+  String get socialStatus =>
+      SocialStatus.byID[optolith.data["pers"]?["socialstatus"]]?.toString() ??
+      "";
+  String get raceVariant =>
+      RaceVariant.byID[optolith.data["rv"]]?.toString() ?? "";
+  String get characteristics => "";
+  int get boughtHealthPoints => optolith.data["attr"]["lp"];
+  set boughtHealthPoints(int value) {
+    optolith.data["attr"]["lp"] = value;
+  }
+
+  List<InventoryItem> get inventory {
+    List<InventoryItem> result = [];
+    optolith.data["belongings"]["items"].forEach((key, value) {
+      result.add(InventoryItem.fromJson(value));
+    });
+    return result;
   }
 
   Map<dynamic, dynamic> toJson() {
@@ -141,19 +207,17 @@ class Character {
     var result = {
       "name": name,
       "avatar": avatar.toJson(),
+      "ap": {"total": totalAP, "eorla": ap},
       "talents": <String, int>{
         for (var v in talents!.entries) v.key.id: v.value,
       },
       "attr": <String, dynamic>{"values": values},
-      "belongings": {"items": belongings},
+      "belongings": {"items": belongings, "purse": purse!.toJson()},
       "activatable": abilitiesOut,
       "ct": <String, int>{
         for (var v in combatTechniques!.entries) v.key.id: v.value,
       },
     };
-    for (Weapon w in weapons ?? []) {
-      belongings[w.id] = w.toJson();
-    }
     for (SpecialAbility a in abilities ?? []) {
       if (a.lowerTier) continue;
       if (!abilitiesOut.containsKey(a.value.id)) {
@@ -164,6 +228,7 @@ class Character {
     if (spells != null) {
       result["spells"] = {for (var s in spells!.entries) s.key.id: s.value};
     }
+    result["undo"] = [for (var item in undoStack!) item.toJSON()];
     return optolith.toJson(result);
   }
 
@@ -226,40 +291,222 @@ class Character {
     Map<String, dynamic> activatables = optolith.data["activatable"];
     final incLP = activatables["ADV_25"] ?? [];
     final decLP = activatables["DISADV_28"] ?? [];
-    final int lostLP = (optolith.data["attr"]["permanentLP"] ?? {"lost": 0})["lost"];
+    final int lostLP =
+        (optolith.data["attr"]["permanentLP"] ?? {"lost": 0})["lost"];
     base -= lostLP;
-    if (incLP.length == 1) base += (activatables["ADV_25"][0]["tier"] ?? 0) as int;
-    if (decLP.length == 1) base -= (activatables["DISADV_28"][0]["tier"] ?? 0) as int;
-    final int addedLP = optolith.data["attr"]["lp"];
-    base += addedLP;
+    if (incLP.length == 1) {
+      base += (activatables["ADV_25"][0]["tier"] ?? 0) as int;
+    }
+    if (decLP.length == 1) {
+      base -= (activatables["DISADV_28"][0]["tier"] ?? 0) as int;
+    }
+    base += boughtHealthPoints;
     return base;
+  }
+
+  void loadAdvantagesAndDisadvantages() {
+    advantages = [];
+    disadvantages = [];
+    for (var entry in optolith.data["activatable"].entries) {
+      String key = entry.key;
+      List<dynamic> value = entry.value;
+      if (key.startsWith("ADV_") || key.startsWith("DISADV_")) {
+        ActivatableBase? type = ActivatableBase.byID[key];
+        if (type != null) {
+          if (value.isNotEmpty) {
+            for (Map<String, dynamic> row in value) {
+              String? option;
+              var sid = row["sid"];
+              if (type.selectOptions.containsKey(sid)) {
+                option = type.selectOptions[sid];
+              } else if (sid.toString().startsWith("CT_")) {
+                option = CombatTechnique.byID[sid.toString()]?.name;
+              } else if (sid != null) {
+                option = sid.toString();
+              }
+              if (key.startsWith("ADV_")) {
+                advantages!.add(Activatable(type, row["tier"], option));
+              } else {
+                disadvantages!.add(Activatable(type, row["tier"], option));
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  int getCurrentValue(Upgrade type, String id) {
+    switch (type) {
+      case Upgrade.attribute:
+        return getAttribute(Attribute.byID[id]!);
+      case Upgrade.skill:
+        return getTalentOrSpell(SkillWrapper(Skill.byID[id]!));
+      case Upgrade.spell:
+        return getTalentOrSpell(SpellWrapper(Spell.byID[id]!));
+      case Upgrade.liturgy:
+        // TODO: Implement liturgies
+        return -1;
+      case Upgrade.combatTechnique:
+        return getCT(CombatTechnique.byID[id]!);
+      case Upgrade.healthPoints:
+        return getHealthMax();
+      case Upgrade.astralPoints:
+      case Upgrade.karmicPoints:
+      case Upgrade.blessing:
+      case Upgrade.cantrip:
+        // TODO: Implement karmic/astral points/cantrips/blessings
+        return -1;
+      case Upgrade.ability:
+        final SpecialAbility? ability = abilities!
+            .map<SpecialAbility?>((a) => a)
+            .firstWhere((a) => a!.value.id == id, orElse: () => null);
+        return ability != null ? ability.tier ?? 1 : -1;
+      case Upgrade.advantage:
+        final activatable = advantages!
+            .map<Activatable?>((a) => a)
+            .firstWhere((a) => a!.type.id == id, orElse: () => null);
+        return activatable != null ? activatable.tier ?? 1 : -1;
+      case Upgrade.disadvantage:
+        final activatable = disadvantages!
+            .map<Activatable?>((a) => a)
+            .firstWhere((a) => a!.type.id == id, orElse: () => null);
+        return activatable != null ? activatable.tier ?? 1 : -1;
+      case Upgrade.purse:
+        return int.tryParse(purse!.toJson()[id] ?? "0") ?? 0;
+    }
+  }
+
+  void undo() {
+    if (undoStack!.isEmpty) {
+      return;
+    }
+    final item = undoStack!.removeLast();
+    upgrade(item.type, item.id, item.sign.inverse, item.cost, track: false);
+  }
+
+  void compressStack() {
+    if (undoStack!.length < 2) {
+      return;
+    }
+    final penultimate = undoStack![undoStack!.length - 2];
+    final ultimate = undoStack!.last;
+    if (penultimate.type == ultimate.type &&
+        penultimate.id == ultimate.id &&
+        penultimate.sign.value + ultimate.sign.value == 0) {
+      undoStack!.removeLast();
+      undoStack!.removeLast();
+    }
+  }
+
+  void upgrade(
+    Upgrade type,
+    String id,
+    Sign sign,
+    int cost, {
+    bool track = true,
+  }) {
+    final value = getCurrentValue(type, id) + sign.value;
+    switch (type) {
+      case Upgrade.attribute:
+        setCharacterField(this, id, value);
+        break;
+      case Upgrade.skill:
+        talents![Skill.byID[id]!] = value;
+        break;
+      case Upgrade.spell:
+        spells![Spell.byID[id]!] = value;
+        break;
+      case Upgrade.liturgy:
+        // TODO: Implement liturgies
+        break;
+      case Upgrade.combatTechnique:
+        combatTechniques![CombatTechnique.byID[id]!] = value;
+        break;
+      case Upgrade.healthPoints:
+        boughtHealthPoints = value;
+        break;
+      case Upgrade.astralPoints:
+      case Upgrade.karmicPoints:
+      case Upgrade.blessing:
+      case Upgrade.cantrip:
+        // TODO: Implement karmic/astral points/cantrips/blessings
+        break;
+      case Upgrade.ability:
+        abilities!.where((a) => a.value.id == id).forEach((a) {
+          a.lowerTier = true;
+        });
+        final SpecialAbility ability = SpecialAbility(
+          specialCombatAbilities[id]!,
+          value,
+        );
+        abilities!.add(ability);
+        break;
+      case Upgrade.advantage:
+        Activatable? activatable = advantages!
+            .map<Activatable?>((a) => a)
+            .firstWhere((a) => a!.type.id == id, orElse: () => null);
+        if (activatable == null) {
+          return;
+        } // TODO: activate new advantage / ability / disadvantage
+        activatable.tier = value;
+        break;
+      case Upgrade.disadvantage:
+        Activatable? activatable = disadvantages!
+            .map<Activatable?>((a) => a)
+            .firstWhere((a) => a!.type.id == id, orElse: () => null);
+        if (activatable == null) {
+          return;
+        }
+        activatable.tier = value;
+        break;
+      case Upgrade.purse:
+        if (!"dshk".contains(id) || id.length > 1) {
+          return;
+        }
+        switch (id) {
+          case "d":
+            purse!.d += sign.value;
+          case "s":
+            purse!.s += sign.value;
+          case "h":
+            purse!.h += sign.value;
+          case "k":
+            purse!.k += sign.value;
+        }
+    }
+    ap -= sign.value * cost;
+    if (track) {
+      final undoItem = UndoItem(type, id, sign, cost);
+      undoStack!.add(undoItem);
+    }
   }
 }
 
 void setCharacterField(Character character, String fieldName, int value) {
   switch (fieldName) {
-    case "MU":
+    case "ATTR_1":
       character.mu = value;
       break;
-    case "KL":
+    case "ATTR_2":
       character.kl = value;
       break;
-    case "IN":
+    case "ATTR_3":
       character.in_ = value;
       break;
-    case "CH":
+    case "ATTR_4":
       character.ch = value;
       break;
-    case "FF":
+    case "ATTR_5":
       character.ff = value;
       break;
-    case "GE":
+    case "ATTR_6":
       character.ge = value;
       break;
-    case "KO":
+    case "ATTR_7":
       character.ko = value;
       break;
-    case "KK":
+    case "ATTR_8":
       character.kk = value;
       break;
     default:
@@ -333,25 +580,67 @@ class CharacterState {
   List<ComponentWithExplanation> explain() {
     List<ComponentWithExplanation> states = [];
     if (belastung > 0) {
-      states.add(ComponentWithExplanation(-belastung, "Belastung Stufe ${roman(belastung)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -belastung,
+          "Belastung Stufe ${roman(belastung)}",
+          true,
+        ),
+      );
     }
     if (betaeubung > 0) {
-      states.add(ComponentWithExplanation(-betaeubung, "Betäubung Stufe ${roman(betaeubung)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -betaeubung,
+          "Betäubung Stufe ${roman(betaeubung)}",
+          true,
+        ),
+      );
     }
     if (entrueckung > 0) {
-      states.add(ComponentWithExplanation(-entrueckung, "Entrückung Stufe ${roman(entrueckung)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -entrueckung,
+          "Entrückung Stufe ${roman(entrueckung)}",
+          true,
+        ),
+      );
     }
     if (furcht > 0) {
-      states.add(ComponentWithExplanation(-furcht, "Furcht Stufe ${roman(furcht)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -furcht,
+          "Furcht Stufe ${roman(furcht)}",
+          true,
+        ),
+      );
     }
     if (paralyse > 0) {
-      states.add(ComponentWithExplanation(-paralyse, "Paralyse Stufe ${roman(paralyse)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -paralyse,
+          "Paralyse Stufe ${roman(paralyse)}",
+          true,
+        ),
+      );
     }
     if (schmerz > 0) {
-      states.add(ComponentWithExplanation(-schmerz, "Schmerz Stufe ${roman(schmerz)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -schmerz,
+          "Schmerz Stufe ${roman(schmerz)}",
+          true,
+        ),
+      );
     }
     if (verwirrung > 0) {
-      states.add(ComponentWithExplanation(-verwirrung, "Verwirrung Stufe ${roman(verwirrung)}", true));
+      states.add(
+        ComponentWithExplanation(
+          -verwirrung,
+          "Verwirrung Stufe ${roman(verwirrung)}",
+          true,
+        ),
+      );
     }
     return states;
   }
@@ -359,7 +648,13 @@ class CharacterState {
 
 int painLevel(Character c) {
   final m = c.getHealthMax();
-  final lvls = [(0.75*m).round(), (0.5*m).round(), (0.25*m).round(), 5, -1];
+  final lvls = [
+    (0.75 * m).round(),
+    (0.5 * m).round(),
+    (0.25 * m).round(),
+    5,
+    -1,
+  ];
   final lvl = lvls.indexWhere((l) => l < c.lp);
   return lvl;
 }

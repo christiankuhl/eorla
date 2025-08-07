@@ -13,15 +13,7 @@ enum Attribute {
   final String short;
 
   const Attribute(this.id, this.name, this.short);
+  static Map<String, Attribute> get byID => {
+    for (var it in Attribute.values) it.id: it,
+  };
 }
-
-const Map<String, Attribute> attributeKeys = {
-  "ATTR_1": Attribute.mut,
-  "ATTR_2": Attribute.klugheit,
-  "ATTR_3": Attribute.intuition,
-  "ATTR_4": Attribute.charisma,
-  "ATTR_5": Attribute.fingerfertigkeit,
-  "ATTR_6": Attribute.gewandtheit,
-  "ATTR_7": Attribute.konstitution,
-  "ATTR_8": Attribute.koerperkraft,
-};
