@@ -83,14 +83,14 @@ class Character {
       spells: null,
       optolith: Optolith(json),
     );
-    character.race = racesById[json["r"]] ?? Race.menschen;
+    character.race = Race.byID[json["r"]] ?? Race.menschen;
     for (var item in json['attr']['values']) {
       String id = item['id'];
       int value = item['value'];
       setCharacterField(character, id, value);
     }
     json['talents'].forEach((key, value) {
-      var skill = skillKeys[key]!;
+      var skill = Skill.byID[key]!;
       character.talents![skill] = value;
     });
     json['belongings']['items'].forEach((key, value) {
@@ -120,12 +120,12 @@ class Character {
       }
     });
     json['ct'].forEach((key, value) {
-      character.combatTechniques?[combatTechniquesByID[key]!] = value;
+      character.combatTechniques?[CombatTechnique.byID[key]!] = value;
     });
     if (json.containsKey("spells")) {
       character.spells = <Spell, int>{
         for (var e in json["spells"].entries)
-          spellsById[e.key]!: e.value.toInt(),
+          Spell.byID[e.key]!: e.value.toInt(),
       };
     }
     character.undoStack = [];
@@ -155,28 +155,36 @@ class Character {
   String get title => optolith.data["pers"]?["title"] ?? "";
   String get otherInfo => optolith.data["pers"]?["otherinfo"] ?? "";
   String get eyeColour =>
-      eyeColourById[optolith.data["pers"]?["eyecolor"]]?.toString() ?? "";
+      EyeColour.byID[optolith.data["pers"]?["eyecolor"]]?.toString() ?? "";
   String get hairColour =>
-      hairColourById[optolith.data["pers"]?["haircolor"]]?.toString() ?? "";
+      HairColour.byID[optolith.data["pers"]?["haircolor"]]?.toString() ?? "";
   String get gender => optolith.data["sex"] == "m"
       ? "männlich"
       : optolith.data["sex"] == "f"
       ? "weiblich"
       : "";
-  String get culture => culturesById[optolith.data["c"]]?.toString() ?? "";
+  String get culture => Culture.byID[optolith.data["c"]]?.toString() ?? "";
   String get experiencelevel =>
-      levelById[optolith.data["el"]]?.toString() ?? "";
+      ExperienceLevel.byID[optolith.data["el"]]?.toString() ?? "";
   String get profession =>
-      professionsById[optolith.data["p"]]?.description(gender) ?? "";
+      Profession.byID[optolith.data["p"]]?.description(gender) ?? "";
   String get socialStatus =>
-      socialStatusById[optolith.data["pers"]?["socialstatus"]]?.toString() ??
+      SocialStatus.byID[optolith.data["pers"]?["socialstatus"]]?.toString() ??
       "";
   String get raceVariant =>
-      raceVariantsById[optolith.data["rv"]]?.toString() ?? "";
+      RaceVariant.byID[optolith.data["rv"]]?.toString() ?? "";
   String get characteristics => "";
   int get boughtHealthPoints => optolith.data["attr"]["lp"];
   set boughtHealthPoints(int value) {
     optolith.data["attr"]["lp"] = value;
+  }
+
+  List<String> get inventory {
+    List<String> result = [];
+    optolith.data["belongings"]["items"].forEach((key, value) {
+      result.add(value["name"].toString());
+    });
+    return result;
   }
 
   Map<dynamic, dynamic> toJson() {
@@ -302,7 +310,7 @@ class Character {
       String key = entry.key;
       List<dynamic> value = entry.value;
       if (key.startsWith("ADV_") || key.startsWith("DISADV_")) {
-        ActivatableBase? type = activatableById[key];
+        ActivatableBase? type = ActivatableBase.byID[key];
         if (type != null) {
           if (value.isNotEmpty) {
             for (Map<String, dynamic> row in value) {
@@ -311,7 +319,7 @@ class Character {
               if (type.selectOptions.containsKey(sid)) {
                 option = type.selectOptions[sid];
               } else if (sid.toString().startsWith("CT_")) {
-                option = combatTechniquesByID[sid.toString()]?.name;
+                option = CombatTechnique.byID[sid.toString()]?.name;
               } else if (sid != null) {
                 option = sid.toString();
               }
@@ -330,16 +338,16 @@ class Character {
   int getCurrentValue(Upgrade type, String id) {
     switch (type) {
       case Upgrade.attribute:
-        return getAttribute(attributeKeys[id]!);
+        return getAttribute(Attribute.byID[id]!);
       case Upgrade.skill:
-        return getTalentOrSpell(SkillWrapper(skillKeys[id]!));
+        return getTalentOrSpell(SkillWrapper(Skill.byID[id]!));
       case Upgrade.spell:
-        return getTalentOrSpell(SpellWrapper(spellsById[id]!));
+        return getTalentOrSpell(SpellWrapper(Spell.byID[id]!));
       case Upgrade.liturgy:
         // TODO: Implement liturgies
         return -1;
       case Upgrade.combatTechnique:
-        return getCT(combatTechniquesByID[id]!);
+        return getCT(CombatTechnique.byID[id]!);
       case Upgrade.healthPoints:
         return getHealthMax();
       case Upgrade.astralPoints:
@@ -401,16 +409,16 @@ class Character {
         setCharacterField(this, id, value);
         break;
       case Upgrade.skill:
-        talents![skillKeys[id]!] = value;
+        talents![Skill.byID[id]!] = value;
         break;
       case Upgrade.spell:
-        spells![spellsById[id]!] = value;
+        spells![Spell.byID[id]!] = value;
         break;
       case Upgrade.liturgy:
         // TODO: Implement liturgies
         break;
       case Upgrade.combatTechnique:
-        combatTechniques![combatTechniquesByID[id]!] = value;
+        combatTechniques![CombatTechnique.byID[id]!] = value;
         break;
       case Upgrade.healthPoints:
         boughtHealthPoints = value;

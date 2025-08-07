@@ -17,14 +17,9 @@ enum Race {
   String toString() {
     return name;
   }
-}
 
-const Map<String, Race> racesById = {
-  "R_1": Race.menschen,
-  "R_2": Race.elfen,
-  "R_3": Race.halbelfen,
-  "R_4": Race.zwerge,
-};
+  static Map<String, Race> get byID => {for (var it in Race.values) it.id: it};
+}
 
 enum Culture {
   andergaster("C_1", "Andergaster"),
@@ -70,43 +65,11 @@ enum Culture {
   String toString() {
     return name;
   }
-}
 
-const Map<String, Culture> culturesById = {
-  "C_1": Culture.andergaster,
-  "C_2": Culture.aranier,
-  "C_3": Culture.bornlaender,
-  "C_4": Culture.fjarninger,
-  "C_5": Culture.horasier,
-  "C_6": Culture.maraskaner,
-  "C_7": Culture.mhanadistani,
-  "C_8": Culture.mittelreicher,
-  "C_9": Culture.mohas,
-  "C_10": Culture.nivesen,
-  "C_11": Culture.norbarden,
-  "C_12": Culture.nordaventurier,
-  "C_13": Culture.nostrier,
-  "C_14": Culture.novadis,
-  "C_15": Culture.suedaventurier,
-  "C_16": Culture.svellttaler,
-  "C_17": Culture.thorwaler,
-  "C_18": Culture.zyklopaeer,
-  "C_19": Culture.auelfen,
-  "C_20": Culture.firnelfen,
-  "C_21": Culture.waldelfen,
-  "C_22": Culture.ambosszwerge,
-  "C_23": Culture.brillantzwerge,
-  "C_24": Culture.erzzwerge,
-  "C_25": Culture.huegelzwerge,
-  "C_26": Culture.zahori,
-  "C_27": Culture.koboldweltler,
-  "C_28": Culture.steppenelfen,
-  "C_29": Culture.engasaler,
-  "C_30": Culture.ferkina,
-  "C_31": Culture.gjalsker,
-  "C_32": Culture.trollzacker,
-  "C_33": Culture.wildzwerge,
-};
+  static Map<String, Culture> get byID => {
+    for (var it in Culture.values) it.id: it,
+  };
+}
 
 enum RaceVariant {
   mittellaender("RV_1", "Mittelländer"),
@@ -128,17 +91,8 @@ enum RaceVariant {
   String toString() {
     return name;
   }
-}
 
-const Map<String, RaceVariant> raceVariantsById = {
-  "RV_1": RaceVariant.mittellaender,
-  "RV_2": RaceVariant.nivesen,
-  "RV_3": RaceVariant.norbarden,
-  "RV_4": RaceVariant.thorwaler,
-  "RV_5": RaceVariant.tulamiden,
-  "RV_6": RaceVariant.waldmenschen,
-  "RV_7": RaceVariant.utulus,
-  "RV_8": RaceVariant.auelfen,
-  "RV_9": RaceVariant.firnelfen,
-  "RV_10": RaceVariant.waldelfen,
-};
+  static Map<String, RaceVariant> get byID => {
+    for (var it in RaceVariant.values) it.id: it,
+  };
+}

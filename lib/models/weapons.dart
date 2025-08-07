@@ -27,7 +27,7 @@ class Weapon {
     return Weapon(
       value["id"] ?? "unknown_weapon",
       value["name"] ?? "Unbenannte Waffe",
-      combatTechniquesByID[value["combatTechnique"]] ??
+      CombatTechnique.byID[value["combatTechnique"]] ??
           CombatTechnique.schwerter,
       value["at"] ?? 0,
       value["pa"] ?? 0,
@@ -279,6 +279,9 @@ enum CombatTechnique {
     this.hasNoParry,
     this.upgradeCost,
   );
+  static Map<String, CombatTechnique> get byID => {
+    for (var it in CombatTechnique.values) it.id: it,
+  };
 }
 
 enum CombatType {
@@ -288,30 +291,6 @@ enum CombatType {
   final String name;
   const CombatType(this.name);
 }
-
-const Map<String, CombatTechnique> combatTechniquesByID = {
-  "CT_1": CombatTechnique.armbrueste,
-  "CT_2": CombatTechnique.boegen,
-  "CT_3": CombatTechnique.dolche,
-  "CT_4": CombatTechnique.fechtwaffen,
-  "CT_5": CombatTechnique.hiebwaffen,
-  "CT_6": CombatTechnique.kettenwaffen,
-  "CT_7": CombatTechnique.lanzen,
-  "CT_8": CombatTechnique.peitschen,
-  "CT_9": CombatTechnique.raufen,
-  "CT_10": CombatTechnique.schilde,
-  "CT_11": CombatTechnique.schleudern,
-  "CT_12": CombatTechnique.schwerter,
-  "CT_13": CombatTechnique.stangenwaffen,
-  "CT_14": CombatTechnique.wurfwaffen,
-  "CT_15": CombatTechnique.zweihandhiebwaffen,
-  "CT_16": CombatTechnique.zweihandschwerter,
-  "CT_17": CombatTechnique.feuerspeien,
-  "CT_18": CombatTechnique.blasrohre,
-  "CT_19": CombatTechnique.diskusse,
-  "CT_20": CombatTechnique.faecher,
-  "CT_21": CombatTechnique.spiesswaffen,
-};
 
 enum CombatActionType { attack, dodge, parry }
 

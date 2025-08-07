@@ -35,21 +35,16 @@ class CombatTechniqueSelectionScreen extends StatelessWidget {
             ),
             Expanded(
               child: ListView(
-                children:
-                    (combatTechniquesByID)
-                        .map(
-                          (id, ct) => MapEntry(
-                            ct,
-                            WeaponCard(
-                              weaponName: ct.name,
-                              onTap: () {
-                                Navigator.pop(context, ct);
-                              },
-                            ),
-                          ),
-                        )
-                        .values
-                        .toList(),
+                children: (CombatTechnique.values)
+                    .map(
+                      (ct) => WeaponCard(
+                        weaponName: ct.name,
+                        onTap: () {
+                          Navigator.pop(context, ct);
+                        },
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           ],

@@ -438,8 +438,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                 ),
                 ListView(
                   padding: EdgeInsets.all(16),
-                  children: combatTechniquesByID.entries.map((entry) {
-                    final ct = entry.value;
+                  children: CombatTechnique.values.map((ct) {
                     final value = c.getCT(ct);
                     return modifierRow(
                       ct.name,
@@ -491,7 +490,13 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   }
 
   Widget inventoryTab(Character c) {
-    return Center(child: Text('Inventar folgt ...'));
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [for (var it in c.inventory) Text(it)],
+      ),
+    );
   }
 
   Widget _editMenu(Character c) {

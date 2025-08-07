@@ -5,7 +5,6 @@ import '../widgets/plain_card.dart';
 import 'attribute_roll.dart';
 
 class AttributeSelectionScreen extends StatelessWidget {
-
   const AttributeSelectionScreen({super.key});
 
   @override
@@ -14,7 +13,7 @@ class AttributeSelectionScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-              SizedBox(
+            SizedBox(
               height: 100,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -24,12 +23,10 @@ class AttributeSelectionScreen extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     iconSize: 32,
                   ),
-                  Expanded(
-                    child: CharacterCard(),
-                  ),
+                  Expanded(child: CharacterCard()),
                 ],
-                ),
-              ), 
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Align(
@@ -39,7 +36,7 @@ class AttributeSelectionScreen extends StatelessWidget {
             ),
             Expanded(
               child: ListView(
-                children: (attributeKeys.values)
+                children: (Attribute.values)
                     .map(
                       (attribute) => PlainCard(
                         itemName: attribute.name,
@@ -47,9 +44,8 @@ class AttributeSelectionScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => AttributeRollScreen(
-                                attribute: attribute,
-                              ),
+                              builder: (_) =>
+                                  AttributeRollScreen(attribute: attribute),
                             ),
                           );
                         },

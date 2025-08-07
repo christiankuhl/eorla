@@ -1365,4 +1365,8 @@ enum SpecialAbilityBase {
   final SpecialAbilityType type;
 
   const SpecialAbilityBase(this.id, this.name, this.rules, this.ct, this.type);
+
+  static Map<String, SpecialAbilityBase> get byID => {
+    for (var it in SpecialAbilityBase.values) it.id: it,
+  };
 }

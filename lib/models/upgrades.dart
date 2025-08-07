@@ -150,16 +150,16 @@ int calculateUpgradeCost(
   Cost category;
   switch (type) {
     case Upgrade.skill:
-      category = skillKeys[id]!.upgradeCost;
+      category = Skill.byID[id]!.upgradeCost;
       break;
     case Upgrade.spell:
-      category = spellsById[id]!.upgradeCost;
+      category = Spell.byID[id]!.upgradeCost;
       break;
     case Upgrade.liturgy:
       // TODO: implement liturgies
       return -1;
     case Upgrade.combatTechnique:
-      category = combatTechniquesByID[id]!.upgradeCost;
+      category = CombatTechnique.byID[id]!.upgradeCost;
       break;
     case Upgrade.attribute:
       category = Cost.e;
@@ -259,7 +259,7 @@ bool limitReached(Upgrade type, String id, int tgtValue, Character character) {
     case Upgrade.attribute:
       return tgtValue > 20;
     case Upgrade.skill:
-      final skill = skillKeys[id]!;
+      final skill = Skill.byID[id]!;
       final v1 = character.getAttribute(skill.attr1);
       final v2 = character.getAttribute(skill.attr2);
       final v3 = character.getAttribute(skill.attr3);
@@ -271,7 +271,7 @@ bool limitReached(Upgrade type, String id, int tgtValue, Character character) {
       // Liturgien und Zeremonien (ohne Aspektkenntnis) 14
       return tgtValue > 14;
     case Upgrade.combatTechnique:
-      final ct = combatTechniquesByID[id]!;
+      final ct = CombatTechnique.byID[id]!;
       final limit =
           ct.primary
               .map((attr) => character.getAttribute(attr))

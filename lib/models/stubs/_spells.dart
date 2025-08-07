@@ -6981,4 +6981,8 @@ enum Spell {
     this.target,
     this.upgradeCost,
   );
+
+  static Map<String, Spell> get byID => {
+    for (var it in Spell.values) it.id: it,
+  };
 }

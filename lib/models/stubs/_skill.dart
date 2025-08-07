@@ -803,4 +803,8 @@ enum Skill {
   String toString() {
     return name;
   }
+
+  static Map<String, Skill> get byID => {
+    for (var it in Skill.values) it.id: it,
+  };
 }
