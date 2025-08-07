@@ -4,6 +4,7 @@ import 'activatable.dart';
 import 'attributes.dart';
 import 'audit.dart';
 import 'avatar.dart';
+import 'inventory.dart';
 import 'optolith.dart';
 import 'personal.dart';
 import 'races.dart';
@@ -36,6 +37,7 @@ class Character {
   Optolith optolith;
   List<Activatable>? advantages;
   List<Activatable>? disadvantages;
+  Purse? purse;
   List<UndoItem>? undoStack;
 
   Character({
@@ -62,6 +64,7 @@ class Character {
     required this.optolith,
     this.advantages,
     this.disadvantages,
+    this.purse,
     this.undoStack,
   }) {
     talents ??= {};
@@ -136,6 +139,7 @@ class Character {
     }
     character.lp = character.getHealthMax();
     character.loadAdvantagesAndDisadvantages();
+    character.purse = Purse.fromJson(json["belongings"]["purse"]);
     return character;
   }
 
@@ -179,10 +183,10 @@ class Character {
     optolith.data["attr"]["lp"] = value;
   }
 
-  List<String> get inventory {
-    List<String> result = [];
+  List<InventoryItem> get inventory {
+    List<InventoryItem> result = [];
     optolith.data["belongings"]["items"].forEach((key, value) {
-      result.add(value["name"].toString());
+      result.add(InventoryItem.fromJson(value));
     });
     return result;
   }
@@ -208,15 +212,12 @@ class Character {
         for (var v in talents!.entries) v.key.id: v.value,
       },
       "attr": <String, dynamic>{"values": values},
-      "belongings": {"items": belongings},
+      "belongings": {"items": belongings, "purse": purse!.toJson()},
       "activatable": abilitiesOut,
       "ct": <String, int>{
         for (var v in combatTechniques!.entries) v.key.id: v.value,
       },
     };
-    for (Weapon w in weapons ?? []) {
-      belongings[w.id] = w.toJson();
-    }
     for (SpecialAbility a in abilities ?? []) {
       if (a.lowerTier) continue;
       if (!abilitiesOut.containsKey(a.value.id)) {
@@ -371,6 +372,8 @@ class Character {
             .map<Activatable?>((a) => a)
             .firstWhere((a) => a!.type.id == id, orElse: () => null);
         return activatable != null ? activatable.tier ?? 1 : -1;
+      case Upgrade.purse:
+        return int.tryParse(purse!.toJson()[id] ?? "0") ?? 0;
     }
   }
 
@@ -457,6 +460,20 @@ class Character {
         }
         activatable.tier = value;
         break;
+      case Upgrade.purse:
+        if (!"dshk".contains(id) || id.length > 1) {
+          return;
+        }
+        switch (id) {
+          case "d":
+            purse!.d += sign.value;
+          case "s":
+            purse!.s += sign.value;
+          case "h":
+            purse!.h += sign.value;
+          case "k":
+            purse!.k += sign.value;
+        }
     }
     ap -= sign.value * cost;
     if (track) {

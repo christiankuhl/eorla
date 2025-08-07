@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../managers/character_manager.dart';
 import '../models/attributes.dart';
 import '../models/character.dart';
+import '../models/inventory.dart';
 import '../models/skill_groups.dart';
 import '../models/upgrades.dart';
 import '../widgets/widget_helpers.dart';
@@ -43,6 +44,25 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             child: Text(label, style: TextStyle(fontWeight: FontWeight.w500)),
           ),
         Expanded(child: Text(value)),
+      ],
+    ),
+  );
+
+  Widget _inventoryRow(InventoryItem item) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(width: 230, child: Text(item.name)),
+        Expanded(
+          child: Text(
+            item.group.name,
+            style: TextStyle(fontSize: 10, color: Colors.grey),
+            textAlign: TextAlign.right,
+          ),
+        ),
+        SizedBox(width: 15),
+        Text(item.amount?.toString() ?? ""),
       ],
     ),
   );
@@ -490,11 +510,82 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   }
 
   Widget inventoryTab(Character c) {
+    final inventory = c.inventory;
+    inventory.sort((a, b) => a.group.id.compareTo(b.group.id));
     return SingleChildScrollView(
       padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [for (var it in c.inventory) Text(it)],
+        children: [
+          Text(
+            'Geldbeutel',
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          modifierRow(
+            "Dukaten",
+            c.purse!.d,
+            upgradeHandler(Upgrade.purse, "d", c, setState),
+            upgradeHandler(
+              Upgrade.purse,
+              "d",
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
+            active: isEditMode,
+          ),
+          modifierRow(
+            "Silbertaler",
+            c.purse!.s,
+            upgradeHandler(Upgrade.purse, "s", c, setState),
+            upgradeHandler(
+              Upgrade.purse,
+              "s",
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
+            active: isEditMode,
+          ),
+          modifierRow(
+            "Heller",
+            c.purse!.h,
+            upgradeHandler(Upgrade.purse, "h", c, setState),
+            upgradeHandler(
+              Upgrade.purse,
+              "h",
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
+            active: isEditMode,
+          ),
+          modifierRow(
+            "Kreuzer",
+            c.purse!.k,
+            upgradeHandler(Upgrade.purse, "k", c, setState),
+            upgradeHandler(
+              Upgrade.purse,
+              "k",
+              c,
+              setState,
+              sign: Sign.decrement,
+            ),
+            active: isEditMode,
+          ),
+          SizedBox(height: 16),
+          Text(
+            'Inventar',
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          for (var item in inventory) _inventoryRow(item),
+        ],
       ),
     );
   }

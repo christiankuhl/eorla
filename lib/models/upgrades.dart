@@ -20,7 +20,8 @@ enum Upgrade {
   blessing,
   advantage,
   disadvantage,
-  ability;
+  ability,
+  purse;
 
   @override
   String toString() {
@@ -51,6 +52,8 @@ enum Upgrade {
         return "disadv";
       case Upgrade.ability:
         return "ability";
+      case Upgrade.purse:
+        return "purse";
     }
   }
 
@@ -82,6 +85,8 @@ enum Upgrade {
         return Upgrade.disadvantage;
       case "ability":
         return Upgrade.ability;
+      case "purse":
+        return Upgrade.purse;
       default:
         throw UnsupportedError("Unsupported upgrade type: $s");
     }
@@ -172,6 +177,8 @@ int calculateUpgradeCost(
     case Upgrade.blessing:
     case Upgrade.cantrip:
       return 1;
+    case Upgrade.purse:
+      return 0;
     case Upgrade.advantage:
     case Upgrade.disadvantage:
     case Upgrade.ability:
@@ -192,6 +199,9 @@ bool upgradeAllowed(
     // We can allow the decrement of values under two conditions:
     // 1) There is track record (i.e. an undo stack element) that we did the upgrade in the first place
     // 2) There is no dependent element above (type, id) in the undo stack
+    if (type == Upgrade.purse) {
+      return true;
+    }
     final lastTouched = character.undoStack!.lastIndexWhere(
       (item) =>
           item.type == type && item.id == id && item.sign == Sign.increment,
@@ -293,6 +303,8 @@ bool limitReached(Upgrade type, String id, int tgtValue, Character character) {
     case Upgrade.ability:
       // TODO: implement per ability check
       return true;
+    case Upgrade.purse:
+      return tgtValue < 0;
   }
 }
 
