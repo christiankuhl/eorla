@@ -104,7 +104,8 @@ class CharacterSelectionScreen extends StatelessWidget {
           builder: (_) => CharacterDetailScreen(character: newCharacter),
         ),
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrintStack(stackTrace: stackTrace);
       if (context.mounted) {
         Navigator.of(context).pop();
         showErrorDialog(

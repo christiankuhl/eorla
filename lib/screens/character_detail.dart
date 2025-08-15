@@ -120,7 +120,12 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                   },
                   child: Text('AP HINZUFÜGEN'),
                 ),
-                OutlinedButton(onPressed: () {}, child: Text('EXPORTIEREN')),
+                OutlinedButton(
+                  onPressed: () async {
+                    _exportCharacter(c);
+                  },
+                  child: Text('EXPORTIEREN'),
+                ),
               ],
             ),
 
@@ -536,6 +541,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
               sign: Sign.decrement,
             ),
             active: isEditMode,
+            width: 32,
           ),
           modifierRow(
             "Silbertaler",
@@ -549,6 +555,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
               sign: Sign.decrement,
             ),
             active: isEditMode,
+            width: 32,
           ),
           modifierRow(
             "Heller",
@@ -562,6 +569,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
               sign: Sign.decrement,
             ),
             active: isEditMode,
+            width: 32,
           ),
           modifierRow(
             "Kreuzer",
@@ -575,6 +583,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
               sign: Sign.decrement,
             ),
             active: isEditMode,
+            width: 32,
           ),
           SizedBox(height: 16),
           Text(
@@ -677,6 +686,11 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
       ).showSnackBar(SnackBar(content: Text('$addedAp AP hinzugefügt')));
       await manager.saveCharacters();
     }
+  }
+
+  void _exportCharacter(Character c) async {
+    final CharacterManager manager = Provider.of(context, listen: false);
+    await manager.shareCharacterJson();
   }
 
   @override
