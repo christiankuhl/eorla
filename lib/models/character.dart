@@ -321,6 +321,8 @@ class Character {
                 option = type.selectOptions[sid];
               } else if (sid.toString().startsWith("CT_")) {
                 option = CombatTechnique.byID[sid.toString()]?.name;
+              } else if (sid.toString().startsWith("TAL_")) {
+                option = Skill.byID[sid.toString()]?.name;
               } else if (sid != null) {
                 option = sid.toString();
               }
