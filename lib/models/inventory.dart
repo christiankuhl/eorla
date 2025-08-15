@@ -79,10 +79,10 @@ class Purse {
 
   factory Purse.fromJson(Map<String, dynamic> value) {
     return Purse(
-      int.tryParse(value["d"] ?? "0")!,
-      int.tryParse(value["s"] ?? "0")!,
-      int.tryParse(value["h"] ?? "0")!,
-      int.tryParse(value["k"] ?? "0")!,
+      int.tryParse(value["d"] ?? "0") ?? 0,
+      int.tryParse(value["s"] ?? "0") ?? 0,
+      int.tryParse(value["h"] ?? "0") ?? 0,
+      int.tryParse(value["k"] ?? "0") ?? 0,
     );
   }
 
