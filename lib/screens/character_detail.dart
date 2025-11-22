@@ -70,6 +70,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   Widget profileTab(Character c) {
     return Center(
       child: SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: 80),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -162,7 +163,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
 
   Widget attributesTab(Character c) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 80),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -438,7 +439,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             child: TabBarView(
               children: [
                 ListView(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 80),
                   children: skillGroups.entries.map((entry) {
                     return ExpansionTile(
                       title: Text(entry.key.name),
@@ -462,7 +463,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                   }).toList(),
                 ),
                 ListView(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 80),
                   children: CombatTechnique.values.map((ct) {
                     final value = c.getCT(ct);
                     return modifierRow(
@@ -487,7 +488,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                 ),
                 if (hasSpells)
                   ListView(
-                    padding: EdgeInsets.all(16),
+                    padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 80),
                     children: c.spells!.entries.map((entry) {
                       final spell = entry.key;
                       final value = entry.value;
@@ -518,7 +519,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     final inventory = c.inventory;
     inventory.sort((a, b) => a.group.id.compareTo(b.group.id));
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 80),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
